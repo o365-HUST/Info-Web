@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 560" width="100%" height="100%">
+  <defs>
+    <!-- Rich dynamic blue gradients matching CLB o365 HUST official emblem -->
+    <linearGradient id="o365BlueGrad" x1="15%" y1="10%" x2="85%" y2="90%">
+      <stop offset="0%" stop-color="#00A2ED" />
+      <stop offset="35%" stop-color="#0072CE" />
+      <stop offset="70%" stop-color="#004EAA" />
+      <stop offset="100%" stop-color="#072B61" />
+    </linearGradient>
+
+    <linearGradient id="o365Highlight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38B6FF" />
+      <stop offset="50%" stop-color="#0080FF" />
+      <stop offset="100%" stop-color="#0050B3" />
+    </linearGradient>
+
+    <linearGradient id="textBlue" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#005BB5" />
+      <stop offset="100%" stop-color="#003D82" />
+    </linearGradient>
+
+    <filter id="softGlow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#0052B4" flood-opacity="0.25" />
+    </filter>
+  </defs>
+
+  <!-- Main Logo Mark -->
+  <g filter="url(#softGlow)" transform="translate(10, 10)">
+    <!-- Base Outer Ring and Dynamic Body -->
+    <path d="M 240,40 
+             C 350,40 435,125 435,235 
+             C 435,345 350,430 240,430 
+             C 185,430 135,408 100,372 
+             C 98,390 95,418 92,448 
+             C 90,449 88,448 88,446 
+             C 86,395 90,320 102,275 
+             C 92,230 105,175 140,120 
+             C 168,76 202,40 240,40 Z" 
+          fill="url(#o365BlueGrad)" />
+
+    <!-- Negative Space Center Loop -->
+    <ellipse cx="270" cy="255" rx="95" ry="92" fill="#FFFFFF" />
+
+    <!-- Swoosh slash (White dynamic cutting curve through the upper sector) -->
+    <path d="M 125,295 
+             C 170,165 240,88 385,82 
+             C 388,88 385,96 380,98 
+             C 245,108 180,185 135,310 
+             C 130,320 122,310 125,295 Z" 
+          fill="#FFFFFF" />
+
+    <!-- Overlay shading and dimensional wing on upper curve -->
+    <path d="M 235,44 
+             C 340,46 425,126 428,230 
+             C 410,140 330,95 240,94 
+             C 195,94 155,110 128,135 
+             C 160,80 196,44 235,44 Z" 
+          fill="url(#o365Highlight)" opacity="0.9" />
+
+    <!-- Distinctive Lower Left Tail / Speech Notch matching official emblem -->
+    <path d="M 94,440 
+             C 92,390 94,330 110,270 
+             C 95,305 92,365 94,440 Z" 
+          fill="#0096EB" />
+  </g>
+
+  <!-- Typography: CLB o365 - HUST -->
+  <text x="240" y="505" 
+        font-family="system-ui, -apple-system, 'Be Vietnam Pro', 'Segoe UI', Roboto, sans-serif" 
+        font-size="44" 
+        font-weight="800" 
+        letter-spacing="0.5" 
+        text-anchor="middle" 
+        fill="url(#textBlue)">
+    CLB o365 - HUST
+  </text>
+</svg>
