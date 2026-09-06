@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useRef, useLayoutEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 
 export interface SwappingPhrase {
@@ -62,16 +63,35 @@ export default function SwappingWordPill({
   className = "",
 }: SwappingWordPillProps) {
   const current = phrases[currentIndex] || phrases[0];
+  const textRef = useRef<HTMLSpanElement>(null);
+  const [textWidth, setTextWidth] = useState<number | undefined>(undefined);
+
+  // Measure natural text width before paint to drive silky smooth spring width animation
+  useLayoutEffect(() => {
+    if (textRef.current) {
+      setTextWidth(textRef.current.scrollWidth);
+    }
+  }, [currentIndex, current.text]);
 
   return (
     <motion.button
       type="button"
       onClick={onNext}
-      whileHover={{ scale: 1.025 }}
-      whileTap={{ scale: 0.96 }}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.97 }}
       layout
-      transition={{ layout: { duration: 0.3, ease: [0.16, 1, 0.3, 1] } }}
-      className={`inline-flex items-center gap-2.5 sm:gap-3 px-3.5 sm:px-5 py-1 sm:py-1.5 rounded-full border shadow-sm select-none cursor-pointer transition-colors duration-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-ink align-middle ${className}`}
+      transition={{
+        layout: {
+          type: "spring",
+          stiffness: 180,
+          damping: 24,
+          mass: 0.8,
+        },
+        backgroundColor: { duration: 0.35, ease: "easeOut" },
+        borderColor: { duration: 0.35, ease: "easeOut" },
+        color: { duration: 0.35, ease: "easeOut" },
+      }}
+      className={`inline-flex items-center gap-2.5 sm:gap-3 px-4 sm:px-5 py-1 sm:py-1.5 rounded-full border shadow-sm select-none cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-ink align-middle ${className}`}
       style={{
         backgroundColor: current.bg,
         borderColor: current.border,
@@ -92,18 +112,28 @@ export default function SwappingWordPill({
         />
       </span>
 
-      {/* Swapping Text */}
-      <span className="relative overflow-hidden inline-flex items-center min-h-[1.4em]">
-        <AnimatePresence mode="wait" initial={false}>
+      {/* Smooth Spring Width Container */}
+      <motion.span
+        animate={{ width: textWidth }}
+        transition={{
+          type: "spring",
+          stiffness: 180,
+          damping: 24,
+          mass: 0.8,
+        }}
+        className="relative overflow-hidden inline-flex items-center min-h-[1.4em] justify-center"
+      >
+        <AnimatePresence mode="popLayout" initial={false}>
           <motion.span
             key={current.text}
-            initial={{ y: 20, opacity: 0, filter: "blur(4px)" }}
+            ref={textRef}
+            initial={{ y: 20, opacity: 0, filter: "blur(3px)" }}
             animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
-            exit={{ y: -20, opacity: 0, filter: "blur(4px)" }}
+            exit={{ y: -20, opacity: 0, filter: "blur(3px)" }}
             transition={{
               type: "spring",
-              stiffness: 380,
-              damping: 28,
+              stiffness: 240,
+              damping: 24,
               mass: 0.8,
             }}
             className="inline-block whitespace-nowrap font-bold tracking-tight text-lg sm:text-2xl lg:text-3xl"
@@ -111,7 +141,7 @@ export default function SwappingWordPill({
             {current.text}
           </motion.span>
         </AnimatePresence>
-      </span>
+      </motion.span>
     </motion.button>
   );
 }

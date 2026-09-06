@@ -56,16 +56,39 @@ export default function Hero() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="font-extrabold text-4xl sm:text-6xl lg:text-[4rem] text-ink tracking-tight leading-[1.18] sm:leading-[1.15]"
+            className="font-extrabold text-4xl sm:text-6xl lg:text-[4rem] text-ink tracking-tight leading-[1.25] sm:leading-[1.2]"
           >
-            Nơi sinh viên Bách khoa,
+            Nơi sinh viên{" "}
+            <span className="relative inline-block text-[#C41230] font-extrabold tracking-tight">
+              Bách Khoa
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 160 12"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="absolute -bottom-1 sm:-bottom-1.5 left-0 w-full h-2 sm:h-2.5 text-[#F3C409] select-none pointer-events-none"
+              >
+                <path
+                  d="M 3 8.5 C 45 3.5, 115 3.5, 157 7.5"
+                  stroke="currentColor"
+                  strokeWidth="3.5"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </span>
+            ,
           </motion.h1>
 
           {/* Second line with inline swapping pill + doodle annotation */}
           <motion.div
+            layout
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
+            transition={{
+              duration: 0.5,
+              delay: 0.1,
+              layout: { type: "spring", stiffness: 180, damping: 24, mass: 0.8 },
+            }}
             className="relative mt-3 sm:mt-4 flex flex-wrap items-center justify-center gap-3 sm:gap-4"
             onMouseEnter={() => setIsPhraseHovered(true)}
             onMouseLeave={() => setIsPhraseHovered(false)}
@@ -76,7 +99,13 @@ export default function Hero() {
             />
 
             {/* Hand-drawn SVG doodle arrow + Dancing Script annotation (Notion style) */}
-            <div className="hidden sm:inline-flex items-center gap-1.5 ml-1 select-none pointer-events-none">
+            <motion.div
+              layout
+              transition={{
+                layout: { type: "spring", stiffness: 180, damping: 24, mass: 0.8 },
+              }}
+              className="hidden sm:inline-flex items-center gap-1.5 ml-1 select-none pointer-events-none"
+            >
               <svg
                 width="36"
                 height="26"
@@ -102,7 +131,7 @@ export default function Hero() {
               <span className="font-display text-lg lg:text-xl text-ink-light font-medium tracking-wide rotate-[-3deg]">
                 thử click vào đây nè ✦
               </span>
-            </div>
+            </motion.div>
           </motion.div>
         </div>
 
@@ -185,22 +214,6 @@ export default function Hero() {
           >
             Tìm hiểu các ban
           </a>
-        </motion.div>
-
-        {/* Collaborative live badge beneath CTAs */}
-        <motion.div
-          animate={{ y: [0, -4, 0] }}
-          transition={{
-            duration: 5,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          className="mt-8 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface border border-border text-xs font-medium text-ink-light shadow-2xs"
-        >
-          <Users className="w-3.5 h-3.5 text-accent" />
-          <span>
-            <strong className="text-ink font-semibold">100+ thành viên</strong> Gen 11 đang kết nối
-          </span>
         </motion.div>
       </div>
     </section>
