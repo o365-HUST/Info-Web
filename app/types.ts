@@ -50,6 +50,8 @@ export interface BlogPost {
   author?: string;
 }
 
+export type EventStatus = "ongoing" | "upcoming" | "past";
+
 export interface EventItem {
   id: string;
   month: string;
@@ -58,6 +60,13 @@ export interface EventItem {
   linkUrl: string;
   description?: string;
   location?: string;
+  status?: EventStatus;
+  category?: string;
+  drl?: string;
+  isHighlight?: boolean;
+  funnyQuote?: string;
+  targetDate?: string;
+  reactions?: Record<string, number>;
 }
 
 export interface StatItem {

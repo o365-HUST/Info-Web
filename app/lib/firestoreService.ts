@@ -9,8 +9,8 @@ import {
   deleteDoc,
   onSnapshot,
   query,
-  orderBy,
   serverTimestamp,
+  increment,
 } from "firebase/firestore";
 import { db, isFirebaseConfigured } from "./firebase";
 import { deleteMediaAsset } from "./storageService";
@@ -64,7 +64,14 @@ function getLocalEvents(): EventItem[] {
   if (typeof window === "undefined") return EVENTS;
   try {
     const raw = localStorage.getItem(LOCAL_EVENTS_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        // Upgrade legacy cache if missing status
+        const hasStatus = parsed.some((e: EventItem) => e.status);
+        if (hasStatus) return parsed;
+      }
+    }
     localStorage.setItem(LOCAL_EVENTS_KEY, JSON.stringify(EVENTS));
     return EVENTS;
   } catch {
@@ -379,6 +386,38 @@ export async function deleteEvent(id: string): Promise<void> {
 
   const events = getLocalEvents();
   saveLocalEvents(events.filter((e) => e.id !== id));
+}
+
+export async function incrementEventReaction(
+  id: string,
+  reactionKey: string
+): Promise<void> {
+  if (isFirebaseConfigured() && db) {
+    try {
+      const docRef = doc(db, "events", id);
+      await updateDoc(docRef, {
+        [`reactions.${reactionKey}`]: increment(1),
+        updatedAt: serverTimestamp(),
+      });
+      return;
+    } catch (err) {
+      console.warn("Firestore incrementEventReaction failed, using local fallback:", err);
+    }
+  }
+
+  const events = getLocalEvents();
+  const updated = events.map((e) => {
+    if (e.id !== id) return e;
+    const prev = e.reactions || {};
+    return {
+      ...e,
+      reactions: {
+        ...prev,
+        [reactionKey]: (prev[reactionKey] || 0) + 1,
+      },
+    };
+  });
+  saveLocalEvents(updated);
 }
 
 // ──────────────────────────────────────────
