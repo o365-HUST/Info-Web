@@ -153,8 +153,34 @@ export const BLOG_POSTS: BlogPost[] = [
       "Chia sẻ quá trình thiết kế, lựa chọn công nghệ và những bài học rút ra khi đội ngũ kỹ thuật bắt tay vào dự án web mới.",
     tag: "Devlog",
     date: "05/09/2026",
+    author: "Đội ngũ Kỹ thuật o365",
     thumbnail: "/assets/blog/thumb-devlog.jpg",
-    url: "#",
+    url: "/blog/devlog-phan-ban",
+    published: true,
+    content: `## Khởi đầu và Bài toán Đặt ra
+
+Khi bước vào năm học mới 2026, Câu lạc bộ Đại sứ Chuyển đổi số o365 - ĐHBK Hà Nội nhận thấy nhu cầu cấp thiết về một cổng thông tin chính thức. Website cũ không còn đáp ứng được tốc độ cập nhật thông tin tuyển sinh, quản trị các sự kiện thường niên như MOSWC và lưu trữ tài liệu kỹ thuật dành cho sinh viên.
+
+Đội ngũ kỹ thuật của CLB đã họp bàn và đặt ra 3 tiêu chí cốt lõi:
+- **Tốc độ và Trải nghiệm**: Tải trang tức thì, giao diện hiện đại theo phong cách tối giản thanh lịch (Clean & Minimalist).
+- **Hệ thống Quản trị (CMS) tức thời**: Ban Điều hành có thể đăng bài viết, tạo sự kiện và cập nhật form tuyển quân chỉ trong vài giây mà không cần can thiệp vào code.
+- **Khả năng mở rộng**: Dễ dàng tích hợp các tiện ích số dành cho sinh viên Bách khoa trong tương lai.
+
+## Lựa chọn Công nghệ
+
+Sau khi cân nhắc nhiều giải pháp, nhóm quyết định lựa chọn:
+- **Next.js 16 (App Router)**: Cung cấp Server Components, Routing linh hoạt và tối ưu SEO tuyệt đối.
+- **Tailwind CSS v4 & Motion**: Hệ thống design tokens đồng nhất, các hiệu ứng vi mô mượt mà không gây giật lag.
+- **Firebase Auth & Cloud Firestore**: Cơ sở dữ liệu NoSQL thời gian thực, bảo mật phân quyền với Firebase Security Rules.
+- **Firebase Storage**: Lưu trữ an toàn toàn bộ tài nguyên hình ảnh bài viết và ấn phẩm truyền thông.
+
+> "Một sản phẩm công nghệ của sinh viên không chỉ dừng lại ở việc 'chạy được', mà phải đem lại niềm tự hào về mặt thẩm mỹ và sự tiện dụng."
+
+## Những Thách thức Kỹ thuật Đã Vượt qua
+
+Trong quá trình triển khai, đội ngũ đã đối mặt với bài toán đồng bộ dữ liệu hai chiều giữa bộ nhớ đệm ngoại tuyến (Offline Demo fallback) và dữ liệu đám mây Firestore thời gian thực. Bằng cách thiết kế kiến trúc phân tách rõ ràng giữa Service Layer và UI Components, hệ thống có thể chuyển đổi mượt mà giữa chế độ demo và môi trường sản xuất mà không gây lỗi giao diện.
+
+Chúng tôi sẽ tiếp tục cập nhật các tính năng mới trong chuỗi Devlog tiếp theo!`,
   },
   {
     id: "moswc-2026",
@@ -163,8 +189,26 @@ export const BLOG_POSTS: BlogPost[] = [
       "Tổng kết vòng loại MOSWC tại ĐHBK Hà Nội — từ khâu tổ chức, ôn luyện đến những gương mặt xuất sắc đại diện trường.",
     tag: "Cuộc thi",
     date: "28/08/2026",
+    author: "Ban Chuyên môn o365",
     thumbnail: "/assets/blog/thumb-moswc.jpg",
-    url: "#",
+    url: "/blog/moswc-2026",
+    published: true,
+    content: `## Sân chơi Đẳng cấp Quốc tế cho Sinh viên Bách khoa
+
+Cuộc thi Vô địch Tin học Văn phòng Thế giới (MOSWC) hàng năm luôn là một trong những sự kiện trọng tâm mà CLB o365 đồng hành tổ chức tại Đại học Bách khoa Hà Nội. Năm 2026 ghi nhận số lượng thí sinh đăng ký kỷ lục với hơn 1.200 sinh viên tham gia tranh tài ở 3 nội dung: Microsoft Word, Microsoft Excel và Microsoft PowerPoint.
+
+## Công tác Ôn luyện và Huấn luyện Chuyên sâu
+
+Ban Chuyên môn của CLB đã xây dựng lộ trình ôn tập kéo dài 6 tuần:
+- **Bộ đề mô phỏng chuẩn Certiport**: Giúp thí sinh làm quen với cấu trúc đề thi thực tế và áp lực thời gian.
+- **Các buổi Mentor 1-1**: Các cựu thí sinh đạt giải quốc gia trực tiếp giải đáp thắc mắc và chia sẻ mẹo làm bài tối ưu tốc độ.
+- **Hội thảo Chuyên đề**: Hướng dẫn kỹ thuật xử lý các hàm nâng cao trong Excel và thiết kế Master Slide chuyên nghiệp trong PowerPoint.
+
+> "Sự tỉ mỉ và chuẩn xác trong từng thao tác nhỏ chính là chìa khóa để đạt điểm số tuyệt đối 1000/1000 tại đấu trường MOS."
+
+## Kết quả Tự hào
+
+Đoàn sinh viên ĐHBK Hà Nội đã xuất sắc giành được nhiều giải thưởng cao tại vòng loại quốc gia, khẳng định vị thế dẫn đầu trong phong trào nâng cao chuẩn kỹ năng số cho sinh viên kỹ thuật.`,
   },
   {
     id: "hanh-trinh-do",
@@ -173,8 +217,21 @@ export const BLOG_POSTS: BlogPost[] = [
       "Câu chuyện về chuyến nghiên cứu học tập tại Trung Quốc — nơi các thành viên CLB trải nghiệm và hỗ trợ đoàn đại biểu nhà trường.",
     tag: "Hành trình",
     date: "21/04/2026",
+    author: "Ban Truyền thông & Đối ngoại",
     thumbnail: "/assets/blog/thumb-redjourney.jpg",
-    url: "#",
+    url: "/blog/hanh-trinh-do",
+    published: true,
+    content: `## Dấu ấn Giao lưu Văn hóa và Công nghệ
+
+Chuyến công tác và giao lưu học thuật tại Quảng Tây, Trung Quốc là một kỷ niệm khó quên đối với các thành viên đại diện CLB o365. Chuyến đi không chỉ là cơ hội để học hỏi mô hình chuyển đổi số trong giáo dục của nước bạn, mà còn là dịp để sinh viên Bách khoa thể hiện sự năng động và tự tin trên trường quốc tế.
+
+## Những Hoạt động Nổi bật
+
+- **Hội thảo Trao đổi Kỹ năng Số Sinh viên**: Đại diện o365 đã có bài chia sẻ bằng tiếng Anh về mô hình câu lạc bộ sinh viên đồng hành phổ cập công cụ Microsoft 365 tại ĐHBK Hà Nội.
+- **Tham quan Trung tâm Đổi mới Sáng tạo**: Trải nghiệm các giải pháp ứng dụng Trí tuệ nhân tạo (AI) và Điện toán đám mây trong quản lý trường đại học thông minh.
+- **Giao lưu Văn hóa**: Kết nối bạn bè quốc tế, lan tỏa hình ảnh sinh viên Bách khoa Hà Nội nhiệt huyết, tài năng và hội nhập.
+
+Hành trình đã mang lại nguồn cảm hứng to lớn để CLB tiếp tục đổi mới và sáng tạo trong các hoạt động sắp tới!`,
   },
 ];
 
