@@ -1,55 +1,25 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 460" width="100%" height="100%">
-  <defs>
-    <linearGradient id="o365MarkGrad" x1="15%" y1="10%" x2="85%" y2="90%">
-      <stop offset="0%" stop-color="#00A2ED" />
-      <stop offset="35%" stop-color="#0072CE" />
-      <stop offset="70%" stop-color="#004EAA" />
-      <stop offset="100%" stop-color="#072B61" />
-    </linearGradient>
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
+ "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+ width="2250.000000pt" height="2250.000000pt" viewBox="0 0 2250.000000 2250.000000"
+ preserveAspectRatio="xMidYMid meet">
 
-    <linearGradient id="o365MarkHighlight" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#38B6FF" />
-      <stop offset="50%" stop-color="#0080FF" />
-      <stop offset="100%" stop-color="#0050B3" />
-    </linearGradient>
-  </defs>
-
-  <g transform="translate(10, 5)">
-    <!-- Base Outer Ring and Dynamic Body -->
-    <path d="M 230,25 
-             C 340,25 425,110 425,220 
-             C 425,330 340,415 230,415 
-             C 175,415 125,393 90,357 
-             C 88,375 85,403 82,433 
-             C 80,434 78,433 78,431 
-             C 76,380 80,305 92,260 
-             C 82,215 95,160 130,105 
-             C 158,61 192,25 230,25 Z" 
-          fill="url(#o365MarkGrad)" />
-
-    <!-- Negative Space Center Loop -->
-    <ellipse cx="260" cy="240" rx="95" ry="92" fill="#FFFFFF" />
-
-    <!-- Swoosh slash (White dynamic cutting curve through the upper sector) -->
-    <path d="M 115,280 
-             C 160,150 230,73 375,67 
-             C 378,73 375,81 370,83 
-             C 235,93 170,170 125,295 
-             C 120,305 112,295 115,280 Z" 
-          fill="#FFFFFF" />
-
-    <!-- Overlay shading and dimensional wing on upper curve -->
-    <path d="M 225,29 
-             C 330,31 415,111 418,215 
-             C 400,125 320,80 230,79 
-             C 185,79 145,95 118,120 
-             C 150,65 186,29 225,29 Z" 
-          fill="url(#o365MarkHighlight)" opacity="0.9" />
-
-    <!-- Distinctive Lower Left Tail / Speech Notch -->
-    <path d="M 84,425 
-             C 82,375 84,315 100,255 
-             C 85,290 82,350 84,425 Z" 
-          fill="#0096EB" />
-  </g>
+<g transform="translate(0.000000,2250.000000) scale(0.100000,-0.100000)"
+fill="#000000" stroke="none">
+<path d="M10890 20333 c-2693 -119 -5142 -1443 -6710 -3628 -151 -210 -432
+-647 -455 -707 -4 -10 344 -623 911 -1604 504 -874 941 -1631 971 -1682 l54
+-92 56 82 c917 1358 2102 2521 3548 3483 1505 1000 3100 1618 4815 1865 482
+69 879 99 1415 107 538 7 917 -11 1418 -68 98 -11 183 -19 188 -17 17 6 -359
+324 -596 504 -1523 1155 -3386 1775 -5290 1762 -143 -1 -289 -3 -325 -5z"/>
+<path d="M15129 16889 c-2126 -83 -4237 -825 -6132 -2155 -1607 -1129 -2860
+-2506 -3734 -4104 -150 -274 -148 -268 -130 -304 36 -75 1038 -1801 1045
+-1801 5 0 48 50 97 110 230 286 523 610 831 921 1051 1060 2448 1967 3989
+2589 1433 579 2981 911 4431 951 l241 7 23 -74 c281 -926 274 -1935 -22 -2849
+-434 -1342 -1453 -2429 -2768 -2955 -1069 -428 -2303 -443 -3389 -44 -541 199
+-994 467 -1485 878 -18 16 -18 15 -3 -14 9 -16 675 -1171 1480 -2565 l1464
+-2535 139 -3 c278 -6 785 24 1139 69 3065 385 5698 2374 6913 5225 378 885
+596 1792 672 2789 6 77 14 286 17 465 31 1722 -434 3373 -1360 4828 -83 129
+-61 116 -325 198 -899 279 -2045 416 -3133 373z"/>
+</g>
 </svg>
