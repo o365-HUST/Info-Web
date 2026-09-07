@@ -72,6 +72,7 @@ export default function AdminPage() {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [recruitment, setRecruitment] = useState<RecruitmentInfo | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [adminEventTab, setAdminEventTab] = useState<"all" | "ongoing" | "upcoming" | "past">("all");
 
   // Modals state
   const [postModalOpen, setPostModalOpen] = useState(false);
@@ -517,16 +518,13 @@ export default function AdminPage() {
                     className="pl-8 pr-3 py-1.5 rounded-xl border border-border bg-surface text-xs text-ink placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-accent/40"
                   />
                 </div>
-                <button
-                  onClick={() => {
-                    setEditingPost(null);
-                    setPostModalOpen(true);
-                  }}
+                <Link
+                  href="/admin/editor"
                   className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-ink text-surface text-xs font-semibold hover:bg-ink/90 transition-colors shadow-xs cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>Bài viết mới</span>
-                </button>
+                </Link>
               </>
             )}
 
@@ -608,16 +606,13 @@ export default function AdminPage() {
                         ID: {post.id.slice(0, 8)}
                       </span>
                       <div className="flex items-center gap-1">
-                        <button
-                          onClick={() => {
-                            setEditingPost(post);
-                            setPostModalOpen(true);
-                          }}
+                        <Link
+                          href={`/admin/editor?id=${post.id}`}
                           className="p-1.5 rounded-lg text-ink-muted hover:text-ink hover:bg-card transition-colors cursor-pointer"
-                          title="Chỉnh sửa"
+                          title="Chỉnh sửa bài viết"
                         >
                           <Edit2 className="w-3.5 h-3.5" />
-                        </button>
+                        </Link>
                         <button
                           onClick={() => handleDeletePost(post.id, post.title)}
                           className="p-1.5 rounded-lg text-ink-muted hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
@@ -639,62 +634,174 @@ export default function AdminPage() {
         {/* ────────────────────────────────────────── */}
         {activeTab === "events" && (
           <div className="space-y-4">
+            {/* Status Filter Bar */}
+            <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-2xl bg-surface border border-border shadow-xs">
+              <div className="flex items-center gap-1.5 overflow-x-auto">
+                {(
+                  [
+                    { id: "all", label: "Tất cả", count: events.length },
+                    {
+                      id: "ongoing",
+                      label: "Đang diễn ra",
+                      count: events.filter((e) => e.status === "ongoing").length,
+                    },
+                    {
+                      id: "upcoming",
+                      label: "Sắp diễn ra",
+                      count: events.filter((e) => e.status === "upcoming").length,
+                    },
+                    {
+                      id: "past",
+                      label: "Đã diễn ra",
+                      count: events.filter((e) => e.status === "past").length,
+                    },
+                  ] as const
+                ).map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setAdminEventTab(tab.id)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      adminEventTab === tab.id
+                        ? "bg-ink text-surface shadow-xs"
+                        : "text-ink-muted hover:text-ink hover:bg-card"
+                    }`}
+                  >
+                    <span>{tab.label}</span>
+                    <span
+                      className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+                        adminEventTab === tab.id
+                          ? "bg-surface/20 text-surface"
+                          : "bg-card text-ink-light"
+                      }`}
+                    >
+                      {tab.count}
+                    </span>
+                  </button>
+                ))}
+              </div>
+
+              <div className="text-xs text-ink-muted">
+                Tổng cộng: <strong className="text-ink">{events.length}</strong> sự kiện
+              </div>
+            </div>
+
+            {/* Events List */}
             <div className="rounded-2xl border border-border bg-surface shadow-card overflow-hidden">
               <div className="divide-y divide-border/80">
-                {events.map((ev) => (
-                  <div
-                    key={ev.id}
-                    className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-card/40 transition-colors"
-                  >
-                    <div className="flex items-start gap-4">
-                      <span className="px-3 py-1 rounded-xl bg-card border border-border text-xs font-mono font-bold text-ink shrink-0">
-                        {ev.month}
-                      </span>
-                      <div>
-                        <h4 className="font-bold text-sm text-ink mb-1">{ev.title}</h4>
-                        {ev.description && (
-                          <p className="text-xs text-ink-light mb-1.5">{ev.description}</p>
-                        )}
-                        {ev.location && (
-                          <span className="text-[11px] text-ink-muted font-mono">
-                            📍 {ev.location}
-                          </span>
-                        )}
-                      </div>
-                    </div>
+                {events
+                  .filter((ev) => {
+                    if (adminEventTab === "all") return true;
+                    return ev.status === adminEventTab;
+                  })
+                  .map((ev) => {
+                    const isOngoing = ev.status === "ongoing";
+                    const isUpcoming = ev.status === "upcoming";
+                    const isPast = ev.status === "past";
 
-                    <div className="flex items-center gap-3 self-end sm:self-center shrink-0">
-                      {ev.linkUrl && ev.linkUrl !== "#" && (
-                        <a
-                          href={ev.linkUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-xs text-accent font-medium hover:underline flex items-center gap-1"
-                        >
-                          <span>{ev.linkLabel || "Xem link"}</span>
-                          <ExternalLink className="w-3 h-3" />
-                        </a>
-                      )}
-                      <button
-                        onClick={() => {
-                          setEditingEvent(ev);
-                          setEventModalOpen(true);
-                        }}
-                        className="p-1.5 rounded-lg text-ink-muted hover:text-ink hover:bg-card transition-colors cursor-pointer"
-                        title="Chỉnh sửa"
+                    return (
+                      <div
+                        key={ev.id}
+                        className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-card/40 transition-colors"
                       >
-                        <Edit2 className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteEvent(ev.id, ev.title)}
-                        className="p-1.5 rounded-lg text-ink-muted hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
-                        title="Xóa sự kiện"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
+                        <div className="flex items-start gap-4">
+                          {/* Date badge */}
+                          <div className="flex flex-col items-center shrink-0">
+                            <span className="px-3 py-1 rounded-xl bg-card border border-border text-xs font-mono font-bold text-ink">
+                              {ev.month}
+                            </span>
+                            {ev.drl && (
+                              <span className="mt-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md">
+                                {ev.drl}
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="space-y-1">
+                            {/* Meta row: status badge + category + highlight */}
+                            <div className="flex flex-wrap items-center gap-2">
+                              {isOngoing && (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                  Đang diễn ra
+                                </span>
+                              )}
+                              {isUpcoming && (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/15 text-blue-700 dark:text-blue-300">
+                                  Sắp diễn ra
+                                </span>
+                              )}
+                              {isPast && (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/15 text-purple-700 dark:text-purple-300">
+                                  Đã diễn ra
+                                </span>
+                              )}
+
+                              {ev.category && (
+                                <span className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-card text-ink-light border border-border/60">
+                                  {ev.category}
+                                </span>
+                              )}
+
+                              {ev.isHighlight && (
+                                <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-500/15 text-amber-700 dark:text-amber-300">
+                                  ⭐ HOT / 10s
+                                </span>
+                              )}
+                            </div>
+
+                            <h4 className="font-bold text-sm text-ink">{ev.title}</h4>
+
+                            {ev.funnyQuote && (
+                              <p className="text-xs text-accent italic font-medium">
+                                “{ev.funnyQuote}”
+                              </p>
+                            )}
+
+                            {ev.description && (
+                              <p className="text-xs text-ink-light line-clamp-2">{ev.description}</p>
+                            )}
+
+                            {ev.location && (
+                              <span className="text-[11px] text-ink-muted font-mono block">
+                                📍 {ev.location}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-3 self-end sm:self-center shrink-0">
+                          {ev.linkUrl && ev.linkUrl !== "#" && (
+                            <a
+                              href={ev.linkUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-xs text-accent font-medium hover:underline flex items-center gap-1"
+                            >
+                              <span>{ev.linkLabel || "Xem link"}</span>
+                              <ExternalLink className="w-3 h-3" />
+                            </a>
+                          )}
+                          <button
+                            onClick={() => {
+                              setEditingEvent(ev);
+                              setEventModalOpen(true);
+                            }}
+                            className="p-1.5 rounded-lg text-ink-muted hover:text-ink hover:bg-card transition-colors cursor-pointer"
+                            title="Chỉnh sửa"
+                          >
+                            <Edit2 className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteEvent(ev.id, ev.title)}
+                            className="p-1.5 rounded-lg text-ink-muted hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                            title="Xóa sự kiện"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
               </div>
             </div>
           </div>
