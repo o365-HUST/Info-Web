@@ -34,6 +34,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="vi"
       className={`${beVietnamPro.variable} ${dancingScript.variable} scroll-smooth`}
+      data-scroll-behavior="smooth"
     >
       <body className="min-h-dvh flex flex-col">{children}</body>
     </html>
