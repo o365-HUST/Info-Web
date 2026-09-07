@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 import { NAV_LINKS, RECRUITMENT_INFO } from "@/app/data/clubData";
-import { Menu, X, ArrowUpRight } from "lucide-react";
+import { Menu, X, ArrowUpRight, Lock } from "lucide-react";
 import Image from "next/image";
 
 export default function Navbar() {
@@ -76,8 +77,16 @@ export default function Navbar() {
           ))}
         </nav>
 
-        {/* Right: CTA + mobile toggle */}
-        <div className="flex items-center gap-2.5">
+        {/* Right: CTA + CMS + mobile toggle */}
+        <div className="flex items-center gap-2">
+          <Link
+            href="/admin"
+            className="p-2 rounded-lg border border-border bg-surface hover:bg-card text-ink-light hover:text-ink transition-colors shadow-2xs"
+            title="Quản trị CMS (Firestore)"
+          >
+            <Lock className="w-4 h-4" />
+          </Link>
+
           <a
             href={RECRUITMENT_INFO.formUrl}
             target="_blank"

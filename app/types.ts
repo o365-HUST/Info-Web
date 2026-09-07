@@ -45,6 +45,9 @@ export interface BlogPost {
   date: string;
   thumbnail: string;
   url: string;
+  content?: string;
+  published?: boolean;
+  author?: string;
 }
 
 export interface EventItem {
@@ -53,6 +56,8 @@ export interface EventItem {
   title: string;
   linkLabel: string;
   linkUrl: string;
+  description?: string;
+  location?: string;
 }
 
 export interface StatItem {

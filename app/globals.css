@@ -95,3 +95,148 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* ─── TipTap & Rich Text Prose Styles ─── */
+.tiptap {
+  outline: none;
+  min-height: 220px;
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+  color: var(--ink-muted);
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.prose-o365 h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  margin-top: 1.75rem;
+  margin-bottom: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(214, 227, 240, 0.4);
+}
+
+.prose-o365 h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.prose-o365 p {
+  color: var(--ink-light);
+  font-size: 0.95rem;
+  line-height: 1.75;
+  margin-bottom: 0.85rem;
+}
+
+.prose-o365 strong {
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.prose-o365 em {
+  font-style: italic;
+  color: var(--ink);
+}
+
+.prose-o365 s {
+  text-decoration: line-through;
+  opacity: 0.75;
+}
+
+.prose-o365 a {
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.prose-o365 a:hover {
+  color: var(--ink-light);
+}
+
+.prose-o365 blockquote {
+  margin: 1.25rem 0;
+  padding: 1rem 1.25rem;
+  border-radius: 1rem;
+  background-color: var(--card);
+  border-left: 4px solid var(--accent);
+  color: var(--ink);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.6;
+}
+
+.prose-o365 ul {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+  list-style-type: disc;
+}
+
+.prose-o365 ol {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+  list-style-type: decimal;
+}
+
+.prose-o365 li {
+  color: var(--ink-light);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  margin-bottom: 0.35rem;
+}
+
+.prose-o365 pre {
+  margin: 1.25rem 0;
+  padding: 1rem 1.25rem;
+  border-radius: 1rem;
+  background-color: var(--ink);
+  color: var(--surface);
+  font-family: monospace;
+  font-size: 0.85rem;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+}
+
+.prose-o365 code {
+  font-family: monospace;
+  font-size: 0.85em;
+  background-color: var(--card);
+  color: var(--ink);
+  padding: 0.15rem 0.35rem;
+  border-radius: 0.375rem;
+  border: 1px solid var(--border);
+  font-weight: 600;
+}
+
+.prose-o365 pre code {
+  background-color: transparent;
+  color: inherit;
+  padding: 0;
+  border: none;
+  font-weight: normal;
+}
+
+.prose-o365 img {
+  border-radius: 1rem;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+  margin: 1.5rem auto;
+  max-width: 100%;
+  height: auto;
+}
+
+.prose-o365 hr {
+  margin: 2rem 0;
+  border-top: 1px solid var(--border);
+}
+

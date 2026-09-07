@@ -1,13 +1,23 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, useInView } from "motion/react";
 import { EVENTS } from "@/app/data/clubData";
+import { subscribeEvents } from "@/app/lib/firestoreService";
+import type { EventItem } from "@/app/types";
 import { ArrowRight, CalendarDays } from "lucide-react";
 
 export default function EventsTimeline() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
+  const [events, setEvents] = useState<EventItem[]>(EVENTS);
+
+  useEffect(() => {
+    const unsub = subscribeEvents((liveEvents) => {
+      setEvents(liveEvents);
+    });
+    return () => unsub();
+  }, []);
 
   return (
     <section
@@ -47,7 +57,7 @@ export default function EventsTimeline() {
             boxShadow: "var(--shadow-card)",
           }}
         >
-          {EVENTS.map((event, i) => (
+          {events.map((event, i) => (
             <motion.div
               key={event.id}
               initial={{ opacity: 0, x: -16 }}
@@ -56,7 +66,7 @@ export default function EventsTimeline() {
               className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 px-6 py-5"
               style={{
                 borderBottom:
-                  i < EVENTS.length - 1
+                  i < events.length - 1
                     ? "1px solid var(--border)"
                     : "none",
               }}
