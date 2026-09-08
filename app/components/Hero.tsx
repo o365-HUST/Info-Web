@@ -1,220 +1,120 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { motion } from "motion/react";
-import SwappingWordPill, { HERO_PHRASES } from "./SwappingWordPill";
-import { Users, Sparkles, ArrowRight } from "lucide-react";
+import { ArrowRight, Play } from "lucide-react";
+import { RECRUITMENT_INFO } from "@/app/data/clubData";
 
 export default function Hero() {
-  const [phraseIndex, setPhraseIndex] = useState(0);
-  const [isPhraseHovered, setIsPhraseHovered] = useState(false);
-
-  // Auto-swap phrases every 3.5s unless hovered
-  useEffect(() => {
-    if (isPhraseHovered) return;
-    const timer = setInterval(() => {
-      setPhraseIndex((prev) => (prev + 1) % HERO_PHRASES.length);
-    }, 3500);
-    return () => clearInterval(timer);
-  }, [isPhraseHovered]);
-
-  const handleNextPhrase = () => {
-    setPhraseIndex((prev) => (prev + 1) % HERO_PHRASES.length);
-  };
-
   return (
     <section
       id="top"
-      className="relative pt-28 sm:pt-36 pb-12 sm:pb-16 flex flex-col items-center justify-center overflow-hidden"
+      className="relative pt-28 lg:pt-32 pb-16 lg:pb-24 overflow-hidden flex items-center min-h-[75vh]"
       style={{ background: "var(--bg)" }}
     >
-      {/* Subtle dot pattern */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-[0.04]"
-        style={{
-          backgroundImage:
-            "radial-gradient(var(--ink) 0.75px, transparent 0.75px)",
-          backgroundSize: "20px 20px",
-        }}
-      />
+      {/* Background Illustration covering the right side seamlessly without cropping */}
+      <div className="absolute inset-0 z-0 select-none pointer-events-none overflow-hidden">
+        {/* Main image container covering full width. 
+            bg-[length:auto_85%] ensures the image scales to 85% of height, anchoring to right-bottom, pulling it away from the text to the left. */}
+        <div className="absolute inset-0 bg-[url('/assets/hero-illustration.png')] bg-cover sm:bg-[length:auto_85%] lg:bg-[length:auto_85%] bg-bottom sm:bg-right-bottom bg-no-repeat translate-x-8 sm:translate-x-16 lg:translate-x-24" />
+        
+        {/* Soft edge on the left - A massive gradient covering the left side to blend the image edge seamlessly into the background */}
+        <div className="absolute inset-y-0 left-0 w-full lg:w-[65%] bg-gradient-to-r from-[var(--bg)] via-[var(--bg)]/90 to-transparent" />
+        
+        {/* Gradient edge on the bottom to feather out harsh lines */}
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[var(--bg)] via-[var(--bg)]/50 to-transparent" />
+        
+        {/* Overlay to hide Gemini watermark at bottom right gracefully */}
+        <div className="absolute bottom-[-20px] right-[-20px] w-56 h-36 bg-[var(--bg)] rounded-tl-full blur-2xl z-10" />
+      </div>
 
-      <div className="relative max-w-5xl mx-auto px-5 sm:px-6 w-full flex flex-col items-center text-center z-10">
-        {/* Top mini club tag */}
+      <div className="relative z-10 max-w-[1440px] mx-auto px-5 lg:px-12 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        {/* Left Column: Text Content */}
         <motion.div
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-semibold tracking-wide uppercase mb-6 border border-border/80 bg-surface/80 text-ink-light backdrop-blur-xs shadow-2xs"
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
+          className="flex flex-col items-start text-left"
         >
-          <Sparkles className="w-3.5 h-3.5 text-accent" />
-          <span>Đại sứ Chuyển đổi số • ĐHBK Hà Nội</span>
-        </motion.div>
-
-        {/* Main Headline spanning fully */}
-        <div className="max-w-4xl mx-auto flex flex-col items-center">
-          <motion.h1
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="font-extrabold text-4xl sm:text-6xl lg:text-[4rem] text-ink tracking-tight leading-[1.25] sm:leading-[1.2]"
-          >
-            Nơi sinh viên{" "}
-            <span className="relative inline-block text-[#C41230] font-extrabold tracking-tight">
-              Bách Khoa
-              <svg
-                aria-hidden="true"
-                viewBox="0 0 160 12"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="absolute -bottom-1 sm:-bottom-1.5 left-0 w-full h-2 sm:h-2.5 text-[#F3C409] select-none pointer-events-none"
-              >
-                <path
-                  d="M 3 8.5 C 45 3.5, 115 3.5, 157 7.5"
-                  stroke="currentColor"
-                  strokeWidth="3.5"
-                  strokeLinecap="round"
-                />
-              </svg>
+          <div className="mb-4">
+            <span className="text-[10px] sm:text-[11px] font-semibold tracking-[0.3em] text-[#3B82F6] uppercase opacity-70">
+              CÂU LẠC BỘ
             </span>
-            ,
-          </motion.h1>
+          </div>
 
-          {/* Second line with inline swapping pill + doodle annotation */}
-          <motion.div
-            layout
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.5,
-              delay: 0.1,
-              layout: { type: "spring", stiffness: 180, damping: 24, mass: 0.8 },
-            }}
-            className="relative mt-3 sm:mt-4 flex flex-wrap items-center justify-center gap-3 sm:gap-4"
-            onMouseEnter={() => setIsPhraseHovered(true)}
-            onMouseLeave={() => setIsPhraseHovered(false)}
-          >
-            <SwappingWordPill
-              currentIndex={phraseIndex}
-              onNext={handleNextPhrase}
-            />
+          <h1 className="font-extrabold text-6xl sm:text-7xl lg:text-[5.5rem] tracking-tight leading-[1] mb-5 flex flex-wrap items-center gap-x-4">
+            <span className="text-[#E2E8F0] tracking-tighter">o365</span> 
+            <span className="text-[#3B82F6] font-[900]">- HUST</span>
+          </h1>
 
-            {/* Hand-drawn SVG doodle arrow + Dancing Script annotation (Notion style) */}
-            <motion.div
-              layout
-              transition={{
-                layout: { type: "spring", stiffness: 180, damping: 24, mass: 0.8 },
-              }}
-              className="hidden sm:inline-flex items-center gap-1.5 ml-1 select-none pointer-events-none"
+          <h2 className="text-2xl sm:text-3xl lg:text-[2.2rem] font-bold text-white leading-[1.3] mb-5">
+            Đại sứ chuyển đổi số <br className="hidden lg:block" />
+            của sinh viên Bách Khoa
+          </h2>
+
+          <p className="text-[15px] sm:text-base text-[#94A3B8] max-w-[440px] mb-10 leading-relaxed font-medium">
+            Cùng học hỏi, kết nối và sáng tạo với công nghệ để kiến tạo phiên bản tốt hơn của chính mình.
+          </p>
+
+          {/* Buttons */}
+          <div className="flex flex-col sm:flex-row items-center gap-4 mb-14 w-full sm:w-auto">
+            <a
+              href={RECRUITMENT_INFO.formUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full text-[15px] font-semibold text-white shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:shadow-[0_0_35px_rgba(59,130,246,0.6)] transition-all bg-[#2563EB] hover:bg-[#1D4ED8]"
             >
-              <svg
-                width="36"
-                height="26"
-                viewBox="0 0 38 28"
-                fill="none"
-                className="text-ink-muted/70 -rotate-3"
-              >
-                <path
-                  d="M3 14 C 14 6, 24 16, 32 18"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                  strokeLinecap="round"
-                  strokeDasharray="1 0"
-                />
-                <path
-                  d="M24 13 L 33 19 L 26 23"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              <span className="font-display text-lg lg:text-xl text-ink-light font-medium tracking-wide rotate-[-3deg]">
-                thử click vào đây nè ✦
+              Tham gia ngay 
+              <ArrowRight className="w-4 h-4 ml-1" />
+            </a>
+            
+            <a
+              href="#about"
+              onClick={(e) => {
+                e.preventDefault();
+                document.querySelector("#about")?.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-3.5 rounded-full text-[15px] font-semibold text-white hover:text-white border border-[#334155] hover:border-[#475569] transition-all bg-transparent"
+            >
+              <span className="flex items-center justify-center w-6 h-6 rounded-full bg-white text-[#0A192F]">
+                <Play className="w-3 h-3 ml-0.5 fill-current" />
               </span>
-            </motion.div>
-          </motion.div>
-        </div>
+              Tìm hiểu thêm
+            </a>
+          </div>
 
-        {/* Interactive Word Progress Dots */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.25 }}
-          className="flex items-center justify-center gap-1.5 mt-4 mb-6"
-          aria-label="Chọn cụm từ khẩu hiệu"
-        >
-          {HERO_PHRASES.map((phrase, idx) => {
-            const isActive = idx === phraseIndex;
-            return (
-              <button
-                key={phrase.text}
-                type="button"
-                onClick={() => setPhraseIndex(idx)}
-                title={phrase.text}
-                aria-label={`Chuyển đến: ${phrase.text}`}
-                className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
-                  isActive
-                    ? "w-7 bg-ink"
-                    : "w-2 bg-border hover:bg-ink-muted"
-                }`}
-              />
-            );
-          })}
+          {/* Stats Row */}
+          <div className="flex flex-wrap items-center gap-x-12 gap-y-6 sm:gap-14 text-left">
+            <div className="flex flex-col items-start gap-1">
+              <span className="text-2xl sm:text-3xl font-bold text-[#3B82F6]">500+</span>
+              <span className="text-[10px] font-bold text-[#94A3B8] uppercase tracking-wider">Thành viên</span>
+            </div>
+            <div className="flex flex-col items-start gap-1">
+              <span className="text-2xl sm:text-3xl font-bold text-[#3B82F6]">50+</span>
+              <span className="text-[10px] font-bold text-[#94A3B8] uppercase tracking-wider">Sự kiện</span>
+            </div>
+            <div className="flex flex-col items-start gap-1">
+              <span className="text-2xl sm:text-3xl font-bold text-[#3B82F6]">1000+</span>
+              <span className="text-[10px] font-bold text-[#94A3B8] uppercase tracking-wider">Lượt tiếp cận</span>
+            </div>
+            <div className="flex flex-col items-start gap-1">
+              <span className="text-2xl sm:text-3xl font-bold text-[#3B82F6] text-shadow-glow">∞</span>
+              <span className="text-[10px] font-bold text-[#94A3B8] uppercase tracking-wider">Cơ hội phát triển</span>
+            </div>
+          </div>
+
+           {/* Hand-written stylized text bottom left */}
+           <div className="mt-14 hidden lg:block opacity-70 transform -rotate-[8deg] ml-6 pb-4">
+             <span className="font-display text-4xl text-ink font-medium block opacity-90" style={{ fontFamily: "var(--font-display), cursive" }}>
+                Students
+             </span>
+             <span className="font-display text-4xl text-ink font-medium block ml-6 mt-1 opacity-90" style={{ fontFamily: "var(--font-display), cursive" }}>
+                Create Tomorrow <span className="inline-block text-accent text-2xl -rotate-12 translate-y-1">🎵</span>
+             </span>
+          </div>
         </motion.div>
 
-        {/* Centered Subtitle */}
-        <motion.p
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.25 }}
-          className="text-base sm:text-lg lg:text-xl leading-relaxed max-w-2xl mx-auto mb-8"
-          style={{ color: "var(--ink-light)" }}
-        >
-          Một chỗ đứng cho những ai muốn học, làm, và kết nối cùng nhau tại Đại học Bách khoa Hà Nội. Đồng hành bồi dưỡng kỹ năng tin học văn phòng quốc tế và chuẩn bị cho MOSWC.
-        </motion.p>
-
-        {/* Centered CTAs */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.35 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full sm:w-auto"
-        >
-          <a
-            href="#events"
-            onClick={(e) => {
-              e.preventDefault();
-              document
-                .querySelector("#events")
-                ?.scrollIntoView({ behavior: "smooth" });
-            }}
-            className="inline-flex items-center justify-center gap-2 px-7 py-3 rounded-lg text-sm font-semibold transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5"
-            style={{
-              backgroundColor: "var(--accent)",
-              color: "var(--ink)",
-            }}
-          >
-            <span>Xem sự kiện sắp tới</span>
-            <ArrowRight className="w-4 h-4" />
-          </a>
-          <a
-            href="#departments"
-            onClick={(e) => {
-              e.preventDefault();
-              document
-                .querySelector("#departments")
-                ?.scrollIntoView({ behavior: "smooth" });
-            }}
-            className="inline-flex items-center justify-center px-7 py-3 rounded-lg text-sm font-semibold transition-all hover:bg-card/70 hover:border-ink-muted/50"
-            style={{
-              backgroundColor: "transparent",
-              color: "var(--ink-light)",
-              border: "1px solid var(--border)",
-            }}
-          >
-            Tìm hiểu các ban
-          </a>
-        </motion.div>
+        {/* Right Column: Intentionally left transparent so the absolute background illustration is shown fully */}
+        <div className="hidden lg:block w-full h-[600px] pointer-events-none" />
       </div>
     </section>
   );

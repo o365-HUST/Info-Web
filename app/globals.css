@@ -2,20 +2,20 @@
 
 /* ─── Design Tokens ─── */
 :root {
-  --bg: #F7FAFD;
-  --card: #E7F0FA;
-  --accent: #AECDEC;
-  --warm: #F1EBDC;
-  --ink: #26406B;
-  --ink-light: #5A7BA5;
-  --ink-muted: #8DA4C0;
-  --border: #D6E3F0;
-  --surface: #FFFFFF;
+  --bg: #0A192F;
+  --card: #112240;
+  --accent: #3B82F6;
+  --warm: #1E293B;
+  --ink: #F8FAFC;
+  --ink-light: #94A3B8;
+  --ink-muted: #64748B;
+  --border: #1E293B;
+  --surface: #0f172a;
 
-  --shadow-sm: 0 1px 3px rgba(38, 64, 107, 0.06);
-  --shadow-card: 0 2px 8px rgba(38, 64, 107, 0.05);
-  --shadow-md: 0 4px 12px rgba(38, 64, 107, 0.08);
-  --shadow-lg: 0 8px 24px rgba(38, 64, 107, 0.10);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.5);
 
   --radius-sm: 6px;
   --radius-md: 12px;
