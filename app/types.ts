@@ -24,17 +24,41 @@ export interface RecruitmentInfo {
   callToAction: string;
 }
 
+export interface DepartmentBentoItem {
+  id: string;
+  title: string;
+  subtitle?: string;
+  image?: string;
+  type: "photo" | "stat" | "quote" | "skills" | "activity";
+  colSpan?: string; // Tailwind grid col class e.g. "col-span-1" | "col-span-2"
+  accent?: string;
+  badge?: string;
+  description?: string;
+  quoteAuthor?: string;
+  skills?: string[];
+  statValue?: string;
+  statLabel?: string;
+}
+
 export interface Department {
   id: string;
   index: string;
   name: string;
+  slugs?: string[];
   icon: string; // lucide icon name
   image: string;
   color: string; // pastel hex for card bg
   accentColor: string; // stronger accent for icon/border
   tagline: string;
   description: string;
-  leader?: { name: string; role: string };
+  fullDescription?: string;
+  mission?: string;
+  leader?: { name: string; role: string; quote?: string; avatar?: string };
+  viceLeaders?: Array<{ name: string; role: string; avatar?: string }>;
+  stats?: Array<{ label: string; value: string; desc?: string }>;
+  keyActivities?: Array<{ title: string; desc: string; icon?: string }>;
+  skillsLearned?: string[];
+  bentoItems?: DepartmentBentoItem[];
 }
 
 export interface BlogPost {
