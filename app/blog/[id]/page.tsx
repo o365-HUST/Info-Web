@@ -5,7 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { getPostById, getRelatedPosts } from "@/app/lib/firestoreService";
 import type { BlogPost } from "@/app/types";
-import BlogNavbar from "../components/BlogNavbar";
 import PostContentSkeleton from "../components/PostContentSkeleton";
 import Footer from "@/app/components/Footer";
 import {
@@ -77,8 +76,6 @@ export default function SinglePostPage({ params }: PostPageProps) {
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-ink flex flex-col">
-      <BlogNavbar />
-
       <main className="flex-1">
         {loading ? (
           <PostContentSkeleton />
@@ -105,22 +102,8 @@ export default function SinglePostPage({ params }: PostPageProps) {
         ) : (
           /* Post Reader View */
           <article className="max-w-[var(--max-width)] mx-auto px-5 sm:px-6 py-8 sm:py-12">
-            {/* Top Breadcrumb & Navigation */}
-            <div className="flex items-center justify-between gap-4 mb-8">
-              <nav className="flex items-center gap-2 text-xs text-ink-muted">
-                <Link href="/" className="hover:text-ink transition-colors">
-                  Trang chủ
-                </Link>
-                <span>/</span>
-                <Link href="/blog" className="hover:text-ink transition-colors">
-                  Bài viết
-                </Link>
-                <span>/</span>
-                <span className="text-ink font-medium truncate max-w-[160px] sm:max-w-xs">
-                  {post.tag}
-                </span>
-              </nav>
-
+            {/* Back to blog list */}
+            <div className="mb-8">
               <Link
                 href="/blog"
                 className="inline-flex items-center gap-1.5 text-xs font-semibold text-ink-light hover:text-ink transition-colors"
@@ -216,11 +199,6 @@ export default function SinglePostPage({ params }: PostPageProps) {
 
               {/* End of article signature */}
               <div className="mt-12 pt-8 border-t border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-2 text-xs text-ink-muted">
-                  <Sparkles className="w-3.5 h-3.5 text-accent" />
-                  <span>CLB Đại sứ Chuyển đổi số o365 • Đại học Bách khoa Hà Nội</span>
-                </div>
-
                 <div className="flex items-center gap-2">
                   <button
                     onClick={handleCopyLink}
@@ -229,13 +207,6 @@ export default function SinglePostPage({ params }: PostPageProps) {
                     <Share2 className="w-3 h-3 text-accent" />
                     <span>{copied ? "Đã copy link" : "Chia sẻ bài viết"}</span>
                   </button>
-                  <Link
-                    href="/blog"
-                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-ink text-surface text-xs font-semibold hover:bg-ink/90 transition-colors cursor-pointer"
-                  >
-                    <ArrowLeft className="w-3 h-3" />
-                    <span>Về danh sách</span>
-                  </Link>
                 </div>
               </div>
             </div>

@@ -2,21 +2,17 @@
 
 import { useState, useEffect, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import Link from "next/link";
-import Image from "next/image";
 import { BLOG_POSTS } from "@/app/data/clubData";
 import { subscribePosts } from "@/app/lib/firestoreService";
+import { sortPostsNewestFirst } from "@/app/lib/blogUtils";
 import type { BlogPost } from "@/app/types";
-import BlogNavbar from "./components/BlogNavbar";
 import BlogCard from "./components/BlogCard";
+import BlogBento from "./components/BlogBento";
 import Footer from "@/app/components/Footer";
 import {
   Search,
-  ArrowRight,
   Sparkles,
   Code2,
-  Calendar,
-  User as UserIcon,
   X,
   FileText,
 } from "lucide-react";
@@ -40,7 +36,6 @@ function BlogContent() {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
 
-  // Sync category with URL if param changes
   useEffect(() => {
     const cat = searchParams.get("category");
     if (cat && CATEGORIES.includes(cat)) {
@@ -48,7 +43,6 @@ function BlogContent() {
     }
   }, [searchParams]);
 
-  // Subscribe to live Firestore posts
   useEffect(() => {
     const unsub = subscribePosts((livePosts) => {
       const published = livePosts.filter((p) => p.published !== false);
@@ -59,9 +53,9 @@ function BlogContent() {
     return () => unsub();
   }, []);
 
-  // Filter posts by category and search
   const filteredPosts = useMemo(() => {
-    return posts.filter((post) => {
+    const sorted = sortPostsNewestFirst(posts);
+    return sorted.filter((post) => {
       const matchesCategory =
         selectedCategory === "Tất cả" || post.tag === selectedCategory;
       const query = searchQuery.trim().toLowerCase();
@@ -77,90 +71,74 @@ function BlogContent() {
   }, [posts, selectedCategory, searchQuery]);
 
   const isDevlogActive = selectedCategory === "Devlog";
+  const useBento =
+    !loading &&
+    selectedCategory === "Tất cả" &&
+    !searchQuery.trim() &&
+    filteredPosts.length >= 3;
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-ink flex flex-col">
-      <BlogNavbar />
-
       <main className="flex-1 max-w-[var(--max-width)] w-full mx-auto px-5 sm:px-6 py-10 sm:py-16">
-        {/* Header Hero */}
-        <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-card text-ink border border-border mb-4 shadow-2xs">
+        <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg text-xs font-semibold bg-card text-ink border border-border mb-4 shadow-2xs">
             <Sparkles className="w-3.5 h-3.5 text-accent" />
             <span>Bản Tin &amp; Chia Sẻ Tri Thức</span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-ink mb-4">
+          <h1 className="font-display text-3xl sm:text-5xl font-extrabold tracking-tight text-ink mb-4">
             Khám Phá Góc Nhìn Từ o365
           </h1>
           <p className="text-sm sm:text-base text-ink-light leading-relaxed">
             Hành trình chuyển đổi số, chuyên môn Microsoft 365, phóng sự cuộc thi và
-            nhật ký kỹ thuật từ cộng đồng sinh viên Đại học Bách khoa Hà Nội.
+            nhật ký kỹ thuật từ CLB.
           </p>
         </div>
 
-        {/* Dedicated Devlog Banner (Shown when Devlog is selected) */}
-        {isDevlogActive && (
-          <div className="mb-10 p-6 sm:p-8 rounded-3xl bg-surface border border-border shadow-card relative overflow-hidden animate-in fade-in slide-in-from-top-3">
-            <div className="absolute -right-8 -bottom-8 w-40 h-40 rounded-full bg-accent/10 pointer-events-none blur-2xl" />
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-card border border-border flex items-center justify-center text-ink shrink-0">
-                  <Code2 className="w-6 h-6 text-accent" />
-                </div>
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <h2 className="font-extrabold text-lg sm:text-xl text-ink">
-                      o365 Engineering &amp; Devlog
-                    </h2>
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-accent/30 text-ink">
-                      Kỹ thuật số
-                    </span>
-                  </div>
-                  <p className="text-xs sm:text-sm text-ink-light">
-                    Kênh chia sẻ chuyên sâu về kiến trúc phần mềm, Next.js, Firebase, Cloud và giải pháp công nghệ.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Search & Category Filter Bar */}
-        <div className="space-y-4 mb-10">
-          {/* Search Input */}
-          <div className="relative max-w-md mx-auto sm:mx-0">
-            <Search className="w-4 h-4 text-ink-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
+        {/* Compact search + category toolbar */}
+        <div className="mb-8 sm:mb-10 flex flex-col sm:flex-row sm:items-center gap-3">
+          <div className="relative w-full sm:flex-1 sm:min-w-[200px] sm:max-w-sm">
+            <Search
+              className="w-4 h-4 text-ink-muted absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
+              aria-hidden="true"
+            />
             <input
-              type="text"
+              type="search"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Tìm kiếm bài viết, tác giả, chuyên mục..."
-              className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-border bg-surface text-ink text-sm placeholder:text-ink-muted/60 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent shadow-2xs"
+              placeholder="Tìm bài viết, tác giả…"
+              aria-label="Tìm kiếm bài viết"
+              className="w-full pl-9 pr-9 py-2 rounded-lg border border-border bg-surface text-ink text-sm placeholder:text-ink-muted/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:border-accent"
             />
             {searchQuery && (
               <button
+                type="button"
                 onClick={() => setSearchQuery("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-ink-muted hover:text-ink"
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-md text-ink-muted hover:text-ink cursor-pointer focus-visible:outline-2 focus-visible:outline-accent"
                 title="Xóa tìm kiếm"
+                aria-label="Xóa tìm kiếm"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
             )}
           </div>
 
-          {/* Category Pills */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+          <div
+            className="flex items-center gap-1.5 overflow-x-auto scrollbar-none pb-0.5 sm:pb-0 -mx-1 px-1 sm:mx-0 sm:px-0 sm:flex-1"
+            role="toolbar"
+            aria-label="Lọc chuyên mục"
+          >
             {CATEGORIES.map((cat) => {
               const active = selectedCategory === cat;
               return (
                 <button
                   key={cat}
+                  type="button"
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+                  className={`px-2.5 py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer shrink-0 focus-visible:outline-2 focus-visible:outline-accent ${
                     active
-                      ? "bg-ink text-surface shadow-xs"
-                      : "bg-surface border border-border text-ink-light hover:text-ink hover:bg-card shadow-2xs"
+                      ? "bg-ink text-surface"
+                      : "bg-surface border border-border text-ink-light hover:text-ink hover:bg-card"
                   }`}
                 >
                   {cat}
@@ -170,30 +148,55 @@ function BlogContent() {
           </div>
         </div>
 
-        {/* Posts Grid */}
-        {filteredPosts.length === 0 ? (
-          <div className="py-20 text-center rounded-3xl bg-surface border border-border p-8 shadow-card max-w-lg mx-auto">
-            <div className="w-12 h-12 rounded-2xl bg-card border border-border mx-auto flex items-center justify-center text-ink-muted mb-3">
+        {isDevlogActive && (
+          <div className="mb-8 p-5 sm:p-6 rounded-2xl bg-surface border border-border relative overflow-hidden">
+            <div className="absolute -right-8 -bottom-8 w-40 h-40 rounded-full bg-accent/10 pointer-events-none blur-2xl" />
+            <div className="flex items-start sm:items-center gap-4 relative z-10">
+              <div className="w-11 h-11 rounded-xl bg-card border border-border flex items-center justify-center shrink-0">
+                <Code2 className="w-5 h-5 text-accent" />
+              </div>
+              <div>
+                <h2 className="font-extrabold text-base sm:text-lg text-ink m-0 mb-1">
+                  o365 Engineering &amp; Devlog
+                </h2>
+                <p className="text-xs sm:text-sm text-ink-light m-0">
+                  Kiến trúc phần mềm, Next.js, Firebase, Cloud và giải pháp công nghệ.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {loading ? (
+          <div className="py-24 flex justify-center">
+            <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+          </div>
+        ) : filteredPosts.length === 0 ? (
+          <div className="py-16 text-center rounded-2xl bg-surface border border-border p-8 max-w-lg mx-auto">
+            <div className="w-12 h-12 rounded-xl bg-card border border-border mx-auto flex items-center justify-center text-ink-muted mb-3">
               <FileText className="w-6 h-6 opacity-60" />
             </div>
             <h3 className="font-bold text-base text-ink mb-1">
               Không tìm thấy bài viết phù hợp
             </h3>
             <p className="text-xs text-ink-light mb-5">
-              Thử tìm kiếm với từ khóa khác hoặc xóa bộ lọc để xem toàn bộ bài viết.
+              Thử từ khóa khác hoặc xóa bộ lọc để xem toàn bộ bài viết.
             </p>
             <button
+              type="button"
               onClick={() => {
                 setSelectedCategory("Tất cả");
                 setSearchQuery("");
               }}
-              className="px-4 py-2 rounded-xl bg-ink text-surface text-xs font-semibold hover:bg-ink/90 transition-colors shadow-xs cursor-pointer"
+              className="px-4 py-2 rounded-lg bg-ink text-surface text-xs font-semibold hover:bg-ink/90 transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-accent"
             >
               Xem tất cả bài viết
             </button>
           </div>
+        ) : useBento ? (
+          <BlogBento posts={filteredPosts} />
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {filteredPosts.map((post, i) => (
               <BlogCard key={post.id} post={post} priority={i === 0} />
             ))}
