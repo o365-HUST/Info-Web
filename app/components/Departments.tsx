@@ -8,8 +8,17 @@ import { DEPARTMENTS } from "@/app/data/clubData";
 import type { Department } from "@/app/types";
 import { ArrowRight, ExternalLink, X } from "lucide-react";
 
-/** Carousel shows operating bans only — Ban Chủ nhiệm stays on /departments pages. */
-const CAROUSEL_DEPARTMENTS = DEPARTMENTS.filter((d) => d.id !== "ban-chu-nhiem");
+/** Ban Chủ nhiệm sits in the middle of the operating bans. */
+const OPERATING_DEPARTMENTS = DEPARTMENTS.filter((d) => d.id !== "ban-chu-nhiem");
+const LEADERSHIP_DEPT = DEPARTMENTS.find((d) => d.id === "ban-chu-nhiem");
+const midInsert = Math.floor(OPERATING_DEPARTMENTS.length / 2);
+const CAROUSEL_DEPARTMENTS = LEADERSHIP_DEPT
+  ? [
+      ...OPERATING_DEPARTMENTS.slice(0, midInsert),
+      LEADERSHIP_DEPT,
+      ...OPERATING_DEPARTMENTS.slice(midInsert),
+    ]
+  : OPERATING_DEPARTMENTS;
 
 export default function Departments() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -24,7 +33,7 @@ export default function Departments() {
   /** True only after a real pan — blocks click-to-preview. */
   const didDragRef = useRef(false);
 
-  // Center on the gap between the two middle cards (4 cards → between index 1 and 2)
+  // Center the track on Ban Chủ nhiệm (middle card)
   useEffect(() => {
     const calculateLayout = () => {
       if (!containerRef.current) return;
@@ -35,15 +44,14 @@ export default function Departments() {
       const gapW = isMobile ? 20 : 28;
       const step = cardW + gapW;
       const count = CAROUSEL_DEPARTMENTS.length;
-      if (count < 2) return;
+      if (count < 1) return;
 
       const containerW = containerRef.current.clientWidth;
       const screenCenter = containerW / 2;
 
-      // Gap midpoint between card[midLeft] and card[midRight]
-      const midLeft = Math.floor(count / 2) - 1; // with 4 cards: 1 (Truyền thông)
-      const gapCenter = midLeft * step + cardW + gapW / 2;
-      const initialCenterOffset = screenCenter - gapCenter;
+      const centerIndex = Math.floor(count / 2);
+      const cardCenter = centerIndex * step + cardW / 2;
+      const initialCenterOffset = screenCenter - cardCenter;
 
       const firstCenter = cardW / 2;
       const lastCenter = (count - 1) * step + cardW / 2;
@@ -133,7 +141,7 @@ export default function Departments() {
           aria-hidden="true"
         />
 
-        {/* Draggable track — centered on gap between the two middle cards */}
+        {/* Draggable track — initially centered on Ban Chủ nhiệm */}
         <motion.div
           drag="x"
           dragConstraints={constraints}
@@ -189,10 +197,9 @@ export default function Departments() {
                     sizes="(max-width: 640px) 340px, (max-width: 1024px) 440px, 520px"
                     className="object-cover object-center transition-transform duration-300 group-hover:scale-[1.03]"
                     priority={
+                      dept.id === "ban-chu-nhiem" ||
                       dept.id === "truyen-thong" ||
-                      dept.id === "chuyen-mon" ||
-                      dept.id === "su-kien" ||
-                      dept.id === "tai-chinh-nhan-su"
+                      dept.id === "chuyen-mon"
                     }
                   />
                   <div className="absolute inset-x-0 top-0 flex items-center justify-between p-3 sm:p-4">
