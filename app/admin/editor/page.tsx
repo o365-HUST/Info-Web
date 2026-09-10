@@ -1,7 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { useState, useEffect, Suspense, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -27,6 +26,10 @@ import {
   Loader2,
   Globe,
   ImageIcon,
+  RotateCcw,
+  RotateCw,
+  FlipHorizontal,
+  RefreshCw,
 } from "lucide-react";
 
 const CATEGORIES = [
@@ -37,7 +40,249 @@ const CATEGORIES = [
   "Kỹ năng số",
   "Thông báo",
 ];
+import Cropper from "cropperjs";
+import "cropperjs/dist/cropper.css";
+import { useState, useEffect, Suspense, useMemo, useRef } from "react";
 
+function ImageEditorModal({
+  file,
+  onSave,
+  onCancel,
+}: {
+  file: File;
+  onSave: (file: File, url: string) => void;
+  onCancel: () => void;
+}) {
+  const imageRef = useRef<HTMLImageElement>(null);
+  const cropperRef = useRef<Cropper | null>(null);
+
+  const [brightness, setBrightness] = useState(100);
+  const [contrast, setContrast] = useState(100);
+  const [saturation, setSaturation] = useState(100);
+  const [sepia, setSepia] = useState(0);
+
+  useEffect(() => {
+    if (imageRef.current) {
+      const url = URL.createObjectURL(file);
+      imageRef.current.src = url;
+
+      cropperRef.current = new Cropper(imageRef.current, {
+        viewMode: 2,
+        dragMode: "crop",
+        aspectRatio: 16 / 9,
+        autoCropArea: 1,
+        cropBoxMovable: true,
+        cropBoxResizable: true,
+        guides: true,
+        ready: function () {
+          const cropper = cropperRef.current;
+          if (cropper) {
+            cropper.zoomTo(0);
+          }
+        },
+      });
+
+      return () => {
+        cropperRef.current?.destroy();
+        URL.revokeObjectURL(url);
+      };
+    }
+  }, [file]);
+
+  const filterStyle = `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%) sepia(${sepia}%)`;
+
+  const handleAction = (action: string, param?: number) => {
+    const cropper = cropperRef.current;
+    if (!cropper) return;
+
+    if (action === "rotate") {
+      cropper.rotate(param || 90);
+
+      cropper.zoomTo(0);
+    }
+    if (action === "flip-x") {
+      cropper.scaleX(cropper.getImageData().scaleX === 1 ? -1 : 1);
+    }
+    if (action === "reset") {
+      cropper.reset();
+    }
+  };
+
+  const handleExport = () => {
+    const cropper = cropperRef.current;
+    if (!cropper) return;
+
+    const sourceCanvas = cropper.getCroppedCanvas({ fillColor: "#fff" });
+    const finalCanvas = document.createElement("canvas");
+    finalCanvas.width = sourceCanvas.width;
+    finalCanvas.height = sourceCanvas.height;
+    const ctx = finalCanvas.getContext("2d");
+    if (!ctx) return;
+
+    ctx.filter = filterStyle;
+    ctx.drawImage(sourceCanvas, 0, 0);
+    ctx.filter = "none";
+
+    finalCanvas.toBlob(
+      (blob) => {
+        if (blob) {
+          const editedFile = new File([blob], file.name, {
+            type: "image/jpeg",
+          });
+          const localBlobUrl = URL.createObjectURL(editedFile);
+          onSave(editedFile, localBlobUrl);
+        }
+      },
+      "image/jpeg",
+      0.9,
+    );
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 sm:p-8">
+      <div className="bg-surface w-full max-w-5xl h-[85vh] rounded-3xl flex flex-col overflow-hidden border border-border shadow-2xl">
+        <div className="flex justify-between items-center p-4 border-b border-border bg-card">
+          <h2 className="text-sm font-bold text-ink uppercase tracking-wider">
+            Chỉnh sửa ảnh bìa
+          </h2>
+          <button
+            onClick={onCancel}
+            className="text-ink-muted hover:text-red-500"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+          {/* Vùng Canvas */}
+          <div className="flex-1 bg-card/50 p-4 flex items-center justify-center overflow-hidden">
+            <div
+              className="w-full h-[400px] sm:h-[500px]"
+              style={{ filter: filterStyle }}
+            >
+              <img ref={imageRef} className="max-w-full block" alt="Source" />
+            </div>
+          </div>
+
+          {/* Cột điều khiển */}
+          <div className="w-full md:w-80 bg-surface border-l border-border p-5 overflow-y-auto space-y-6">
+            {/* Cắt & Xoay */}
+            <div className="space-y-2">
+              <h3 className="text-xs font-bold text-ink-muted uppercase">
+                Xoay & Lật
+              </h3>
+              <div className="grid grid-cols-4 gap-2">
+                <button
+                  onClick={() => handleAction("rotate", -90)}
+                  className="flex items-center justify-center p-2.5 border border-border bg-card hover:bg-surface rounded-xl transition-colors text-ink-muted hover:text-ink shadow-sm"
+                  title="Xoay trái -90°"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => handleAction("rotate", 90)}
+                  className="flex items-center justify-center p-2.5 border border-border bg-card hover:bg-surface rounded-xl transition-colors text-ink-muted hover:text-ink shadow-sm"
+                  title="Xoay phải +90°"
+                >
+                  <RotateCw className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => handleAction("flip-x")}
+                  className="flex items-center justify-center p-2.5 border border-border bg-card hover:bg-surface rounded-xl transition-colors text-ink-muted hover:text-ink shadow-sm"
+                  title="Lật ngang"
+                >
+                  <FlipHorizontal className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => handleAction("reset")}
+                  className="flex items-center justify-center p-2.5 border border-border bg-card hover:bg-surface rounded-xl transition-colors text-ink-muted hover:text-red-500 shadow-sm"
+                  title="Khôi phục gốc"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Màu sắc */}
+            <div className="space-y-4">
+              <h3 className="text-xs font-bold text-ink-muted uppercase">
+                Màu sắc
+              </h3>
+              <div>
+                <label className="text-[11px] font-semibold">
+                  Độ sáng ({brightness}%)
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="200"
+                  value={brightness}
+                  onChange={(e) => setBrightness(Number(e.target.value))}
+                  className="w-full accent-accent"
+                />
+              </div>
+              <div>
+                <label className="text-[11px] font-semibold">
+                  Tương phản ({contrast}%)
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="200"
+                  value={contrast}
+                  onChange={(e) => setContrast(Number(e.target.value))}
+                  className="w-full accent-accent"
+                />
+              </div>
+              <div>
+                <label className="text-[11px] font-semibold">
+                  Bão hòa ({saturation}%)
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="200"
+                  value={saturation}
+                  onChange={(e) => setSaturation(Number(e.target.value))}
+                  className="w-full accent-accent"
+                />
+              </div>
+              <div>
+                <label className="text-[11px] font-semibold">
+                  Sepia ({sepia}%)
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={sepia}
+                  onChange={(e) => setSepia(Number(e.target.value))}
+                  className="w-full accent-accent"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="p-4 border-t border-border bg-card flex justify-end gap-3">
+          <button
+            onClick={onCancel}
+            className="px-5 py-2 rounded-xl text-xs font-semibold text-ink border border-border hover:bg-surface"
+          >
+            Hủy
+          </button>
+          <button
+            onClick={handleExport}
+            className="px-5 py-2 rounded-xl text-xs font-bold bg-ink text-surface hover:bg-ink/90"
+          >
+            Áp dụng & Lưu
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 function PostEditorContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -47,13 +292,12 @@ function PostEditorContent() {
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
-  // Form states
   const [title, setTitle] = useState("");
   const [tag, setTag] = useState("Devlog");
   const [date, setDate] = useState(() => {
     const today = new Date();
     return `${String(today.getDate()).padStart(2, "0")}/${String(
-      today.getMonth() + 1
+      today.getMonth() + 1,
     ).padStart(2, "0")}/${today.getFullYear()}`;
   });
   const [author, setAuthor] = useState("CLB o365 - HUST");
@@ -62,16 +306,16 @@ function PostEditorContent() {
   const [content, setContent] = useState("");
   const [published, setPublished] = useState(true);
 
-  // Deferred cover upload state
   const [selectedCoverFile, setSelectedCoverFile] = useState<File | null>(null);
   const [coverPreviewUrl, setCoverPreviewUrl] = useState("");
+
+  const [rawFileForEditor, setRawFileForEditor] = useState<File | null>(null);
+  const [showImageEditor, setShowImageEditor] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadError, setUploadError] = useState("");
 
-  // Preview tab state: 'article' | 'card'
   const [previewMode, setPreviewMode] = useState<"article" | "card">("article");
 
-  // Load existing post if editing
   useEffect(() => {
     if (!postId) return;
 
@@ -101,7 +345,6 @@ function PostEditorContent() {
     };
   }, [postId]);
 
-  // Handle Cover file selection
   const handleCoverFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -112,13 +355,11 @@ function PostEditorContent() {
     }
 
     setUploadError("");
-    setSelectedCoverFile(file);
 
-    if (coverPreviewUrl && coverPreviewUrl.startsWith("blob:")) {
-      URL.revokeObjectURL(coverPreviewUrl);
-    }
-    const localBlobUrl = URL.createObjectURL(file);
-    setCoverPreviewUrl(localBlobUrl);
+    setRawFileForEditor(file);
+    setShowImageEditor(true);
+
+    e.target.value = "";
   };
 
   const handleClearSelectedCover = () => {
@@ -130,13 +371,11 @@ function PostEditorContent() {
     setThumbnail("");
   };
 
-  // Estimated reading time
   const readTimeMinutes = useMemo(() => {
     const textToCount = content ? content.replace(/<[^>]*>/g, " ") : excerpt;
     return Math.max(1, Math.ceil(textToCount.trim().split(/\s+/).length / 180));
   }, [content, excerpt]);
 
-  // Handle Save (Draft or Publish)
   const handleSave = async (overridePublished?: boolean) => {
     if (!title.trim() || !excerpt.trim()) {
       alert("Vui lòng điền Tiêu đề và Tóm tắt bài viết trước khi lưu.");
@@ -149,14 +388,16 @@ function PostEditorContent() {
     try {
       let finalThumbnail = thumbnail.trim() || "/assets/blog/blog-devlog.jpg";
 
-      // Upload image to Firebase Storage only upon save
       if (selectedCoverFile) {
         setUploadProgress(0);
-        finalThumbnail = await uploadMediaAsset(selectedCoverFile, "blog", (progress) => {
-          setUploadProgress(progress);
-        });
+        finalThumbnail = await uploadMediaAsset(
+          selectedCoverFile,
+          "blog",
+          (progress) => {
+            setUploadProgress(progress);
+          },
+        );
 
-        // Clean up previous image if editing
         if (
           thumbnail &&
           thumbnail !== finalThumbnail &&
@@ -166,7 +407,8 @@ function PostEditorContent() {
         }
       }
 
-      const isPublic = overridePublished !== undefined ? overridePublished : published;
+      const isPublic =
+        overridePublished !== undefined ? overridePublished : published;
 
       const postData: Omit<BlogPost, "id"> = {
         title: title.trim(),
@@ -191,13 +433,13 @@ function PostEditorContent() {
         router.push("/admin");
       }, 700);
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Lưu bài viết thất bại.";
+      const message =
+        err instanceof Error ? err.message : "Lưu bài viết thất bại.";
       setUploadError(message);
       setIsSaving(false);
     }
   };
 
-  // Quick hashtag insertion into content
   const handleInsertTag = (hashtag: string) => {
     setContent((prev) => `${prev} <p><strong>${hashtag}</strong></p>`);
   };
@@ -206,8 +448,12 @@ function PostEditorContent() {
     return (
       <div className="min-h-screen bg-[var(--bg)] flex flex-col items-center justify-center p-6 text-center">
         <Loader2 className="w-8 h-8 text-accent animate-spin mb-3" />
-        <h2 className="text-base font-bold text-ink">Đang tải dữ liệu bài viết...</h2>
-        <p className="text-xs text-ink-muted mt-1">Vui lòng chờ trong giây lát</p>
+        <h2 className="text-base font-bold text-ink">
+          Đang tải dữ liệu bài viết...
+        </h2>
+        <p className="text-xs text-ink-muted mt-1">
+          Vui lòng chờ trong giây lát
+        </p>
       </div>
     );
   }
@@ -216,7 +462,27 @@ function PostEditorContent() {
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-ink flex flex-col">
-      {/* ─── TOP WORKSPACE HEADER ─── */}
+      {showImageEditor && rawFileForEditor && (
+        <ImageEditorModal
+          file={rawFileForEditor}
+          onCancel={() => {
+            setShowImageEditor(false);
+            setRawFileForEditor(null);
+          }}
+          onSave={(editedFile, blobUrl) => {
+            setSelectedCoverFile(editedFile);
+
+            if (coverPreviewUrl && coverPreviewUrl.startsWith("blob:")) {
+              URL.revokeObjectURL(coverPreviewUrl);
+            }
+
+            setCoverPreviewUrl(blobUrl);
+            setShowImageEditor(false);
+            setRawFileForEditor(null);
+          }}
+        />
+      )}
+
       <header className="sticky top-0 z-40 border-b border-border bg-surface/90 backdrop-blur-md px-4 sm:px-6 lg:px-8 py-3.5 shadow-2xs">
         <div className="max-w-[1700px] mx-auto flex items-center justify-between gap-4">
           {/* Breadcrumb & Back */}
@@ -235,7 +501,9 @@ function PostEditorContent() {
               <span className="text-xs text-ink-muted">Bài viết</span>
               <span className="text-border">/</span>
               <span className="text-xs font-bold text-ink truncate max-w-xs sm:max-w-md">
-                {postId ? `Chỉnh sửa: ${title || "Bài viết"}` : "Tạo bài viết mới"}
+                {postId
+                  ? `Chỉnh sửa: ${title || "Bài viết"}`
+                  : "Tạo bài viết mới"}
               </span>
             </div>
           </div>
@@ -285,7 +553,9 @@ function PostEditorContent() {
               ) : (
                 <>
                   <Sparkles className="w-3.5 h-3.5 text-accent" />
-                  <span>{postId ? "Cập nhật bài viết" : "Xuất bản bài viết"}</span>
+                  <span>
+                    {postId ? "Cập nhật bài viết" : "Xuất bản bài viết"}
+                  </span>
                 </>
               )}
             </button>
@@ -312,7 +582,9 @@ function PostEditorContent() {
                     o365
                   </div>
                   <div>
-                    <div className="text-sm font-bold text-ink">CLB o365 - HUST</div>
+                    <div className="text-sm font-bold text-ink">
+                      CLB o365 - HUST
+                    </div>
                     <div className="text-[11px] text-ink-muted flex items-center gap-1">
                       <Globe className="w-3 h-3 text-accent" />
                       <span>Đại sứ Chuyển đổi số ĐHBK Hà Nội</span>
@@ -354,8 +626,7 @@ function PostEditorContent() {
                     onChange={(e) => setDate(e.target.value)}
                     placeholder="DD/MM/YYYY"
                     className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent font-mono"
-                  >
-                  </input>
+                  ></input>
                 </div>
               </div>
             </div>
@@ -368,7 +639,8 @@ function PostEditorContent() {
                     Media / Ảnh bìa
                   </h3>
                   <p className="text-xs text-ink-light mt-0.5">
-                    Ảnh bìa nổi bật hiển thị ở đầu bài viết và trên toàn bộ hệ thống
+                    Ảnh bìa nổi bật hiển thị ở đầu bài viết và trên toàn bộ hệ
+                    thống
                   </p>
                 </div>
               </div>
@@ -377,7 +649,11 @@ function PostEditorContent() {
               <div className="mt-3">
                 <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-border bg-card hover:bg-card/80 text-xs font-semibold text-ink transition-colors shadow-2xs">
                   <Upload className="w-3.5 h-3.5 text-accent" />
-                  <span>{selectedCoverFile ? "Đổi ảnh từ máy..." : "Add photo / Chọn ảnh từ máy"}</span>
+                  <span>
+                    {selectedCoverFile
+                      ? "Đổi ảnh từ máy..."
+                      : "Add photo / Chọn ảnh từ máy"}
+                  </span>
                   <input
                     type="file"
                     accept="image/*"
@@ -426,7 +702,9 @@ function PostEditorContent() {
                     />
                     <div className="flex-1 min-w-0 text-xs">
                       <p className="font-semibold text-ink truncate">
-                        {selectedCoverFile ? selectedCoverFile.name : "Ảnh bìa đã chọn"}
+                        {selectedCoverFile
+                          ? selectedCoverFile.name
+                          : "Ảnh bìa đã chọn"}
                       </p>
                       <p className="text-[11px] text-ink-muted">
                         {selectedCoverFile
@@ -454,7 +732,9 @@ function PostEditorContent() {
                 )}
 
                 {uploadError && (
-                  <p className="mt-2 text-xs text-red-600 font-medium">{uploadError}</p>
+                  <p className="mt-2 text-xs text-red-600 font-medium">
+                    {uploadError}
+                  </p>
                 )}
               </div>
             </div>
@@ -699,7 +979,7 @@ function PostEditorContent() {
                   {/* Cover Image Hero or Dashed Placeholder */}
                   <div className="mb-8">
                     {activeCoverUrl ? (
-                      <div className="aspect-[16/9] sm:aspect-[21/10] relative rounded-3xl overflow-hidden bg-card border border-border shadow-card">
+                      <div className="aspect-[16/9] sm:aspect-[16/9] relative rounded-3xl overflow-hidden bg-card border border-border shadow-card">
                         <img
                           src={activeCoverUrl}
                           alt={title || "Cover preview"}
@@ -708,7 +988,7 @@ function PostEditorContent() {
                       </div>
                     ) : (
                       /* Dashed Placeholder Matching User Reference */
-                      <div className="aspect-[16/9] sm:aspect-[21/10] rounded-3xl border-2 border-dashed border-border/80 bg-card/40 flex flex-col items-center justify-center p-6 text-center group">
+                      <div className="aspect-[16/9] sm:aspect-[16/9] rounded-3xl border-2 border-dashed border-border/80 bg-card/40 flex flex-col items-center justify-center p-6 text-center group">
                         <div className="w-14 h-14 rounded-2xl bg-surface border border-border flex items-center justify-center text-ink-muted mb-3 shadow-2xs">
                           <ImageIcon className="w-7 h-7 text-ink-muted/60" />
                         </div>
@@ -716,7 +996,8 @@ function PostEditorContent() {
                           Chưa có ảnh bìa bài viết
                         </p>
                         <p className="text-[11px] text-ink-muted max-w-xs">
-                          Bấm &quot;Add photo / Chọn ảnh từ máy&quot; ở bảng điều khiển bên trái để tải ảnh lên.
+                          Bấm &quot;Add photo / Chọn ảnh từ máy&quot; ở bảng
+                          điều khiển bên trái để tải ảnh lên.
                         </p>
                       </div>
                     )}
@@ -735,7 +1016,8 @@ function PostEditorContent() {
                       <MarkdownRenderer content={content} />
                     ) : (
                       <div className="py-10 text-center border-2 border-dashed border-border/60 rounded-2xl text-xs text-ink-muted">
-                        Bắt đầu soạn thảo nội dung ở cột bên trái để xem trước định dạng bài viết thực tế...
+                        Bắt đầu soạn thảo nội dung ở cột bên trái để xem trước
+                        định dạng bài viết thực tế...
                       </div>
                     )}
                   </div>
@@ -786,7 +1068,8 @@ function PostEditorContent() {
                     </h3>
 
                     <p className="text-xs text-ink-light leading-relaxed line-clamp-3 mb-4">
-                      {excerpt || "Tóm tắt ngắn gọn nội dung bài viết sẽ hiển thị tại đây..."}
+                      {excerpt ||
+                        "Tóm tắt ngắn gọn nội dung bài viết sẽ hiển thị tại đây..."}
                     </p>
 
                     <div className="pt-3 border-t border-border/70 flex items-center justify-between text-[11px] text-ink-muted font-mono">
