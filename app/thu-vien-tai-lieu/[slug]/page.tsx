@@ -36,7 +36,7 @@ export default function DocumentDetailPage({ params }: PageProps) {
       return;
     }
 
-    // Check Auth
+    // Check Authn
     const savedDemo = localStorage.getItem("o365_admin_demo_logged_in");
     if (savedDemo === "true") {
       setIsAdmin(true);
