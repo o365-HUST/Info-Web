@@ -24,6 +24,7 @@ import {
 // Lightweight canvas confetti burst (no external dependencies)
 function triggerConfetti() {
   if (typeof window === "undefined") return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   const canvas = document.createElement("canvas");
   canvas.style.position = "fixed";
   canvas.style.top = "0";
@@ -163,6 +164,16 @@ export default function EventsTimeline() {
     }, 1000);
     return () => clearInterval(interval);
   }, [speedrunMode]);
+
+  // Close roulette on Escape
+  useEffect(() => {
+    if (!isRouletteOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsRouletteOpen(false);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isRouletteOpen]);
 
   // Tab counts
   const tabCounts = useMemo(() => {
@@ -348,14 +359,15 @@ export default function EventsTimeline() {
         <div className="flex flex-wrap items-center justify-between gap-3 mb-8 p-3 rounded-2xl bg-surface border border-border shadow-xs">
           {/* 10s Speed Briefing Button */}
           <button
+            type="button"
             onClick={toggleSpeedrunMode}
-            className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs ${
+            className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-[0.96] focus-visible:outline-2 focus-visible:outline-accent ${
               speedrunMode
-                ? "bg-amber-500 text-white shadow-amber-500/20 scale-[1.02]"
+                ? "bg-amber-500 text-white shadow-amber-500/20"
                 : "bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/20"
             }`}
           >
-            <Zap className={`w-4 h-4 ${speedrunMode ? "animate-bounce" : ""}`} />
+            <Zap className="w-4 h-4" />
             <span>{speedrunMode ? "Đóng Điểm Tin 10s" : "⚡ Điểm Tin 10s (Bách Khoa Speedrun)"}</span>
             <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-700 dark:text-amber-300 font-mono">
               &lt; 10s
@@ -364,10 +376,11 @@ export default function EventsTimeline() {
 
           {/* Random Roulette Button */}
           <button
+            type="button"
             onClick={startEventRoulette}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-card hover:bg-card/80 text-ink border border-border hover:border-accent/40 transition-all cursor-pointer shadow-xs hover:scale-[1.02]"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-card hover:bg-card/80 text-ink border border-border hover:border-accent/40 transition-all cursor-pointer shadow-xs active:scale-[0.96] focus-visible:outline-2 focus-visible:outline-accent"
           >
-            <Dices className="w-4 h-4 text-accent animate-spin-slow" />
+            <Dices className="w-4 h-4 text-accent" />
             <span>🎲 Chọn hộ kèo sự kiện (Cứu ĐRL cấp tốc)</span>
           </button>
         </div>
@@ -789,16 +802,26 @@ export default function EventsTimeline() {
       {/* ─── ROULETTE / BÁCH KHOA EVENT PICKER MODAL ─── */}
       <AnimatePresence>
         {isRouletteOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/40 backdrop-blur-xs">
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-overlay backdrop-blur-xs"
+            onClick={() => setIsRouletteOpen(false)}
+          >
             <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Xúc Xắc Cứu Điểm Rèn Luyện Bách Khoa"
+              initial={{ opacity: 0, scale: 0.94, y: 16 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative w-full max-w-lg rounded-3xl bg-surface border-2 border-accent/40 shadow-2xl overflow-hidden p-6 sm:p-8"
+              exit={{ opacity: 0, scale: 0.94, y: 16 }}
+              transition={{ duration: 0.25 }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative w-full max-w-lg rounded-2xl bg-surface border border-border shadow-2xl overflow-hidden p-6 sm:p-8"
             >
               <button
+                type="button"
                 onClick={() => setIsRouletteOpen(false)}
-                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-card hover:bg-card/80 text-ink-muted hover:text-ink flex items-center justify-center cursor-pointer transition-colors"
+                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-card hover:bg-card/80 text-ink-muted hover:text-ink flex items-center justify-center cursor-pointer transition-colors focus-visible:outline-2 focus-visible:outline-accent active:scale-[0.96]"
+                aria-label="Đóng bảng chọn sự kiện"
               >
                 <X className="w-4 h-4" />
               </button>
