@@ -4,18 +4,12 @@ import { useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence, useMotionValue } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
-import { DEPARTMENTS, RECRUITMENT_INFO } from "@/app/data/clubData";
+import { DEPARTMENTS } from "@/app/data/clubData";
 import type { Department } from "@/app/types";
-import {
-  Sparkles,
-  MoveHorizontal,
-  ArrowRight,
-  ExternalLink,
-  X,
-  CheckCircle2,
-  Zap,
-  Eye,
-} from "lucide-react";
+import { ArrowRight, ExternalLink, X } from "lucide-react";
+
+/** Carousel shows operating bans only — Ban Chủ nhiệm stays on /departments pages. */
+const CAROUSEL_DEPARTMENTS = DEPARTMENTS.filter((d) => d.id !== "ban-chu-nhiem");
 
 export default function Departments() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -25,39 +19,37 @@ export default function Departments() {
   });
   const x = useMotionValue(0);
 
-  // Selected department for Quick-Preview Modal
   const [previewDept, setPreviewDept] = useState<Department | null>(null);
 
-  // Track dragging to prevent accidental modal opens on drag release
-  const dragDistanceRef = useRef(0);
+  /** True only after a real pan — blocks click-to-preview. */
+  const didDragRef = useRef(false);
 
-  // Center the cards range on Card 3 and calculate balanced drag constraints
+  // Center on the gap between the two middle cards (4 cards → between index 1 and 2)
   useEffect(() => {
     const calculateLayout = () => {
       if (!containerRef.current) return;
       const isMobile = window.innerWidth < 640;
       const isTablet = window.innerWidth < 1024;
 
-      const cardW = isMobile ? 300 : isTablet ? 350 : 390;
+      const cardW = isMobile ? 340 : isTablet ? 440 : 520;
       const gapW = isMobile ? 20 : 28;
       const step = cardW + gapW;
+      const count = CAROUSEL_DEPARTMENTS.length;
+      if (count < 2) return;
 
-      // Center coordinate of the viewport / carousel container
       const containerW = containerRef.current.clientWidth;
       const screenCenter = containerW / 2;
 
-      // Center of Card 3 (index 2: Card 1, Card 2, [Card 3], Card 4, Card 5)
-      const card3Center = 2 * step + cardW / 2;
-      const initialCenterOffset = screenCenter - card3Center;
+      // Gap midpoint between card[midLeft] and card[midRight]
+      const midLeft = Math.floor(count / 2) - 1; // with 4 cards: 1 (Truyền thông)
+      const gapCenter = midLeft * step + cardW + gapW / 2;
+      const initialCenterOffset = screenCenter - gapCenter;
 
-      // Card 1 center and Card 5 center
-      const card1Center = cardW / 2;
-      const card5Center = 4 * step + cardW / 2;
-
-      // Generous drag constraints so both Card 1 and Card 5 can be dragged smoothly into center
+      const firstCenter = cardW / 2;
+      const lastCenter = (count - 1) * step + cardW / 2;
       const clearance = isMobile ? 60 : 120;
-      const maxRight = screenCenter - card1Center + clearance;
-      const minLeft = screenCenter - card5Center - clearance;
+      const maxRight = screenCenter - firstCenter + clearance;
+      const minLeft = screenCenter - lastCenter - clearance;
 
       setConstraints({ left: minLeft, right: maxRight });
       x.set(initialCenterOffset);
@@ -72,12 +64,20 @@ export default function Departments() {
     };
   }, [x]);
 
-  const handleCardClick = (dept: Department) => {
-    // If dragged more than 6px, treat as pan, don't open modal
-    if (Math.abs(dragDistanceRef.current) < 6) {
-      setPreviewDept(dept);
-    }
+  const handleCardActivate = (dept: Department) => {
+    if (didDragRef.current) return;
+    setPreviewDept(dept);
   };
+
+  // Close modal on Escape key
+  useEffect(() => {
+    if (!previewDept) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setPreviewDept(null);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [previewDept]);
 
   return (
     <section
@@ -99,140 +99,151 @@ export default function Departments() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 border-b border-border/70">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-mono font-medium uppercase tracking-wider mb-2 bg-surface border border-border text-ink-light shadow-2xs">
-              <Sparkles className="w-3 h-3 text-accent" />
-              <span>CƠ CẤU TỔ CHỨC</span>
-            </div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-ink tracking-tight">
               Bộ Máy Hoạt Động o365
             </h2>
-            <p className="mt-1 text-xs sm:text-sm text-ink-light max-w-xl">
-              Khám phá 5 ban chuyên trách kiến tạo sân chơi công nghệ và kỹ năng số cho sinh viên Bách Khoa. Bấm vào từng ban để xem nhanh hoặc mở trang chi tiết.
+            <p className="mt-1 text-xs sm:text-sm text-ink-light max-w-xl text-pretty">
+              Khám phá {CAROUSEL_DEPARTMENTS.length} ban chuyên trách kiến tạo sân chơi công nghệ và kỹ năng số cho sinh viên Bách Khoa. Bấm vào từng ban để xem nhanh hoặc mở trang chi tiết.
             </p>
           </div>
 
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface border border-border text-xs font-mono text-ink-muted shadow-2xs self-start md:self-end">
-            <MoveHorizontal className="w-3.5 h-3.5 text-accent animate-pulse" />
-            <span>Kéo tự do 2 bên</span>
-          </div>
         </div>
       </div>
 
       {/* Free-Dragging Carousel Track with Cinematic Edge Fades */}
       <div
         ref={containerRef}
-        className="relative w-full overflow-hidden mt-6 sm:mt-8 py-4 sm:py-6"
+        className="relative w-full overflow-hidden mt-6 sm:mt-8 py-8 sm:py-10"
       >
-        {/* Left & Right gradient edge fades */}
-        <div className="absolute inset-y-0 left-0 w-8 sm:w-20 bg-gradient-to-r from-[var(--bg)] to-transparent pointer-events-none z-10" />
-        <div className="absolute inset-y-0 right-0 w-8 sm:w-20 bg-gradient-to-l from-[var(--bg)] to-transparent pointer-events-none z-10" />
+        {/* Left & Right edge fades — wider on large screens so cropped cards don't look hard-cut */}
+        <div
+          className="absolute inset-y-0 left-0 z-10 pointer-events-none w-12 sm:w-24 md:w-32 lg:w-40 xl:w-52"
+          style={{
+            background:
+              "linear-gradient(to right, var(--bg) 0%, var(--bg) 28%, transparent 100%)",
+          }}
+          aria-hidden="true"
+        />
+        <div
+          className="absolute inset-y-0 right-0 z-10 pointer-events-none w-12 sm:w-24 md:w-32 lg:w-40 xl:w-52"
+          style={{
+            background:
+              "linear-gradient(to left, var(--bg) 0%, var(--bg) 28%, transparent 100%)",
+          }}
+          aria-hidden="true"
+        />
 
-        {/* Free-Moving Draggable Track centered at Card 3 */}
+        {/* Draggable track — centered on gap between the two middle cards */}
         <motion.div
           drag="x"
           dragConstraints={constraints}
-          dragElastic={0.14}
+          dragElastic={0.12}
+          dragMomentum={true}
+          onPointerDown={() => {
+            didDragRef.current = false;
+          }}
           onDragStart={() => {
-            dragDistanceRef.current = 0;
+            didDragRef.current = false;
           }}
           onDrag={(_, info) => {
-            dragDistanceRef.current += Math.abs(info.delta.x);
+            if (Math.abs(info.offset.x) > 12) {
+              didDragRef.current = true;
+            }
+          }}
+          onDragEnd={(_, info) => {
+            if (Math.abs(info.offset.x) > 12) {
+              didDragRef.current = true;
+            }
           }}
           dragTransition={{
-            power: 0.28,
-            timeConstant: 240,
+            power: 0.22,
+            timeConstant: 220,
             bounceStiffness: 280,
-            bounceDamping: 26,
+            bounceDamping: 28,
           }}
           style={{ x }}
           whileTap={{ cursor: "grabbing" }}
           className="flex gap-5 sm:gap-7 cursor-grab active:cursor-grabbing will-change-transform pl-5 sm:pl-6"
         >
-          {DEPARTMENTS.map((dept) => {
-            const isCard3 = dept.index === "03";
-
+          {CAROUSEL_DEPARTMENTS.map((dept) => {
             return (
               <div
                 key={dept.id}
-                onClick={() => handleCardClick(dept)}
-                className={`w-[300px] sm:w-[350px] lg:w-[390px] shrink-0 flex flex-col justify-between rounded-2xl bg-surface border p-6 sm:p-7 shadow-card transition-all duration-300 hover:shadow-lg hover:-translate-y-1.5 group select-none cursor-pointer relative ${
-                  isCard3
-                    ? "border-accent/80 ring-1 ring-accent/30"
-                    : "border-border hover:border-accent/50"
-                }`}
+                role="button"
+                tabIndex={0}
+                onPointerUp={() => handleCardActivate(dept)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    handleCardActivate(dept);
+                  }
+                }}
+                className="w-[340px] sm:w-[440px] lg:w-[520px] shrink-0 flex flex-col rounded-2xl bg-surface border border-border hover:border-accent/50 shadow-card transition-all duration-300 hover:shadow-lg hover:-translate-y-1.5 group select-none cursor-pointer relative overflow-hidden focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
               >
-                {/* Top Bracketed Index & Direct Link */}
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-mono text-xs sm:text-sm font-semibold tracking-widest text-ink-muted/80">
-                    [&nbsp; {dept.index} &nbsp;]
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <Link
-                      href={`/co-cau/${dept.id}`}
-                      onClick={(e) => e.stopPropagation()}
-                      className="p-1 rounded-lg text-ink-muted hover:text-accent hover:bg-card transition-colors"
-                      title="Mở trang ban riêng"
-                    >
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </Link>
-                    <span
-                      className={`inline-block w-2.5 h-2.5 rounded-full ${
-                        isCard3
-                          ? "bg-accent scale-110 shadow-2xs"
-                          : "bg-border group-hover:bg-accent/70"
-                      } transition-colors`}
-                    />
-                  </div>
-                </div>
-
-                {/* Isometric Line-Art Illustration */}
-                <div className="relative w-full aspect-square max-w-[210px] sm:max-w-[230px] mx-auto my-3 flex items-center justify-center pointer-events-none">
+                {/* Wide group-photo band */}
+                <div className="relative w-full aspect-[16/10] sm:aspect-[3/2] pointer-events-none bg-card">
                   <Image
                     src={dept.image}
                     alt={dept.name}
                     fill
-                    sizes="(max-width: 768px) 240px, 390px"
-                    className="object-contain p-1 transition-transform duration-300 group-hover:scale-105"
-                    priority={dept.index === "02" || dept.index === "03" || dept.index === "04"}
+                    sizes="(max-width: 640px) 340px, (max-width: 1024px) 440px, 520px"
+                    className="object-cover object-center transition-transform duration-300 group-hover:scale-[1.03]"
+                    priority={
+                      dept.id === "truyen-thong" ||
+                      dept.id === "chuyen-mon" ||
+                      dept.id === "su-kien" ||
+                      dept.id === "tai-chinh-nhan-su"
+                    }
                   />
+                  <div className="absolute inset-x-0 top-0 flex items-center justify-between p-3 sm:p-4">
+                    <span className="font-mono text-[11px] sm:text-xs font-semibold tracking-widest text-white/90 drop-shadow-sm">
+                      [&nbsp; {dept.index} &nbsp;]
+                    </span>
+                    <span className="inline-block w-2 h-2 rounded-full bg-white/70 group-hover:bg-accent transition-colors" />
+                  </div>
                 </div>
 
-                {/* Title & Slogan */}
-                <div className="mt-2">
-                  <h3 className="font-extrabold text-lg sm:text-xl text-ink tracking-tight uppercase mb-1 line-clamp-1 group-hover:text-accent transition-colors">
-                    {dept.name}
-                  </h3>
-                  <p className="text-xs font-medium text-ink-light italic mb-2.5 line-clamp-1">
+                <div className="flex flex-col flex-1 p-5 sm:p-6">
+                  <div className="flex items-start justify-between gap-2 mb-1.5">
+                    <h3 className="font-extrabold text-xl sm:text-2xl text-ink tracking-tight uppercase line-clamp-1 group-hover:text-accent transition-colors">
+                      {dept.name}
+                    </h3>
+                    <Link
+                      href={`/departments/${dept.id}`}
+                      onClick={(e) => e.stopPropagation()}
+                      onPointerDown={(e) => e.stopPropagation()}
+                      onPointerUp={(e) => e.stopPropagation()}
+                      className="mt-1 p-1 rounded-lg text-ink-muted hover:text-accent hover:bg-card transition-colors focus-visible:outline-2 focus-visible:outline-accent shrink-0"
+                      title="Mở trang ban riêng"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                    </Link>
+                  </div>
+                  <p className="text-sm sm:text-base font-medium text-ink-light italic mb-3 line-clamp-1">
                     {dept.tagline}
                   </p>
-                  <p className="text-xs sm:text-sm leading-relaxed text-ink-light/90 line-clamp-3">
+                  <p className="text-base sm:text-[1.05rem] leading-relaxed text-ink-light line-clamp-3">
                     {dept.description}
                   </p>
-                </div>
 
-                {/* Leader Info Chip & Quick Action */}
-                <div className="pt-4 mt-4 border-t border-border/70 flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <div
-                      className="w-7 h-7 rounded-full text-white font-bold flex items-center justify-center text-xs shrink-0 shadow-2xs"
-                      style={{ backgroundColor: dept.accentColor }}
-                    >
-                      {dept.leader?.name.charAt(0)}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="font-semibold text-ink text-[12px] leading-tight truncate">
-                        {dept.leader?.name}
-                      </p>
-                      <p className="text-[10px] text-ink-muted leading-tight truncate">
-                        {dept.leader?.role}
-                      </p>
+                  <div className="pt-4 mt-auto border-t border-border/70 flex items-center">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div
+                        className="w-9 h-9 rounded-full text-white font-bold flex items-center justify-center text-sm shrink-0 shadow-2xs"
+                        style={{ backgroundColor: dept.accentColor }}
+                      >
+                        {dept.leader?.name.charAt(0)}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-semibold text-ink text-sm sm:text-base leading-tight truncate">
+                          {dept.leader?.name}
+                        </p>
+                        <p className="text-xs sm:text-sm text-ink-muted leading-tight truncate">
+                          {dept.leader?.role}
+                        </p>
+                      </div>
                     </div>
                   </div>
-
-                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-accent group-hover:translate-x-0.5 transition-transform shrink-0">
-                    <span>Xem nhanh</span>
-                    <Eye className="w-3 h-3" />
-                  </span>
                 </div>
               </div>
             );
@@ -240,125 +251,87 @@ export default function Departments() {
         </motion.div>
       </div>
 
-      {/* ─── HYBRID QUICK-PREVIEW MODAL ─── */}
+      {/* ─── QUICK-PREVIEW MODAL ─── */}
       <AnimatePresence>
         {previewDept && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/40 backdrop-blur-xs">
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-overlay backdrop-blur-xs"
+            onClick={() => setPreviewDept(null)}
+          >
             <motion.div
-              initial={{ opacity: 0, scale: 0.94, y: 16 }}
+              role="dialog"
+              aria-modal="true"
+              aria-label={`Xem nhanh ${previewDept.name}`}
+              initial={{ opacity: 0, scale: 0.96, y: 12 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.94, y: 16 }}
-              transition={{ duration: 0.25 }}
-              className="relative w-full max-w-xl max-h-[90vh] flex flex-col rounded-3xl bg-surface border-2 border-border shadow-2xl overflow-hidden"
+              exit={{ opacity: 0, scale: 0.96, y: 12 }}
+              transition={{ duration: 0.2 }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative w-full max-w-md max-h-[90vh] flex flex-col rounded-2xl bg-surface border border-border shadow-lg overflow-hidden"
             >
-              {/* Modal Header */}
-              <div
-                className="relative p-6 sm:p-7 border-b border-border/80 flex items-start justify-between"
-                style={{
-                  backgroundColor: previewDept.color,
-                }}
-              >
-                <div className="space-y-1 relative z-10 pr-6">
-                  <span className="inline-block text-[11px] font-mono font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-white/70 backdrop-blur-xs text-ink shadow-2xs">
-                    BAN [{previewDept.index}] / 05
-                  </span>
-                  <h3 className="text-xl sm:text-2xl font-black text-ink tracking-tight uppercase">
-                    {previewDept.name}
-                  </h3>
-                  <p
-                    className="text-xs sm:text-sm font-medium italic"
-                    style={{ color: previewDept.accentColor }}
-                  >
-                    “{previewDept.tagline}”
-                  </p>
-                </div>
-
+              <div className="relative w-full aspect-[16/9] bg-card shrink-0">
+                <Image
+                  src={previewDept.image}
+                  alt=""
+                  fill
+                  sizes="(max-width: 448px) 100vw, 448px"
+                  className="object-cover"
+                />
                 <button
+                  type="button"
                   onClick={() => setPreviewDept(null)}
-                  className="w-8 h-8 rounded-full bg-surface/80 hover:bg-surface text-ink flex items-center justify-center cursor-pointer transition-colors shrink-0 shadow-2xs"
+                  className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-surface/90 border border-border text-ink flex items-center justify-center cursor-pointer transition-colors hover:bg-card focus-visible:outline-2 focus-visible:outline-accent active:scale-[0.96]"
+                  aria-label="Đóng"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
-              {/* Modal Body */}
-              <div className="p-6 sm:p-7 overflow-y-auto space-y-5 text-sm">
-                {/* Description & Mission */}
-                <p className="text-xs sm:text-sm text-ink-light leading-relaxed">
-                  {previewDept.fullDescription || previewDept.description}
+              <div className="p-5 sm:p-6 flex flex-col gap-4 overflow-y-auto">
+                <header>
+                  <p className="text-[11px] font-semibold tracking-[0.2em] uppercase text-accent mb-2 m-0">
+                    Ban {previewDept.index}
+                  </p>
+                  <h3 className="font-display text-xl sm:text-2xl font-extrabold text-ink tracking-tight m-0 mb-1">
+                    {previewDept.name}
+                  </h3>
+                  <p className="text-sm text-ink-muted italic m-0">
+                    {previewDept.tagline}
+                  </p>
+                </header>
+
+                <p className="text-sm sm:text-base text-ink-light leading-relaxed m-0">
+                  {previewDept.description}
                 </p>
 
-                {previewDept.mission && (
-                  <div className="p-4 rounded-2xl bg-card border border-border/80 text-xs text-ink leading-relaxed flex items-start gap-2.5">
-                    <Sparkles className="w-4 h-4 text-accent shrink-0 mt-0.5" />
-                    <div>
-                      <strong className="font-bold">Sứ mệnh: </strong>
-                      <span>{previewDept.mission}</span>
-                    </div>
-                  </div>
-                )}
-
-                {/* Key Stats Chips */}
-                {previewDept.stats && previewDept.stats.length > 0 && (
-                  <div>
-                    <h4 className="text-[11px] font-mono font-bold uppercase tracking-wider text-ink-muted mb-2.5">
-                      Điểm Nhấn Nổi Bật
-                    </h4>
-                    <div className="grid grid-cols-3 gap-2.5 text-center">
-                      {previewDept.stats.map((st) => (
-                        <div
-                          key={st.label}
-                          className="p-3 rounded-xl bg-card border border-border shadow-2xs"
+                {previewDept.keyActivities &&
+                  previewDept.keyActivities.length > 0 && (
+                    <ul className="m-0 p-0 list-none space-y-2">
+                      {previewDept.keyActivities.slice(0, 3).map((item) => (
+                        <li
+                          key={item.title}
+                          className="flex gap-2.5 text-sm text-ink leading-snug"
                         >
-                          <div
-                            className="text-lg sm:text-xl font-black"
-                            style={{ color: previewDept.accentColor }}
-                          >
-                            {st.value}
-                          </div>
-                          <div className="text-[10px] text-ink-muted truncate">
-                            {st.label}
-                          </div>
-                        </div>
+                          <span
+                            className="mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0"
+                            aria-hidden
+                          />
+                          <span>{item.title}</span>
+                        </li>
                       ))}
-                    </div>
-                  </div>
-                )}
+                    </ul>
+                  )}
 
-                {/* Skills Preview */}
-                {previewDept.skillsLearned && previewDept.skillsLearned.length > 0 && (
-                  <div>
-                    <h4 className="text-[11px] font-mono font-bold uppercase tracking-wider text-ink-muted mb-2">
-                      Kỹ Năng Đào Tạo
-                    </h4>
-                    <div className="flex flex-wrap gap-1.5">
-                      {previewDept.skillsLearned.map((sk) => (
-                        <span
-                          key={sk}
-                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-card text-[11px] font-medium text-ink border border-border/80"
-                        >
-                          <CheckCircle2 className="w-3 h-3 text-emerald-500" />
-                          <span>{sk}</span>
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Leader Card */}
                 {previewDept.leader && (
-                  <div className="p-3.5 rounded-2xl bg-card border border-border flex items-center gap-3">
-                    <div
-                      className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs text-white shrink-0"
-                      style={{ backgroundColor: previewDept.accentColor }}
-                    >
+                  <div className="flex items-center gap-3 pt-1">
+                    <div className="w-9 h-9 rounded-full bg-accent text-accent-fg flex items-center justify-center font-bold text-sm shrink-0">
                       {previewDept.leader.name.charAt(0)}
                     </div>
                     <div className="min-w-0">
-                      <p className="font-bold text-xs text-ink truncate">
+                      <p className="font-semibold text-sm text-ink truncate m-0">
                         {previewDept.leader.name}
                       </p>
-                      <p className="text-[10px] text-ink-muted truncate">
+                      <p className="text-xs text-ink-muted truncate m-0">
                         {previewDept.leader.role}
                       </p>
                     </div>
@@ -366,35 +339,15 @@ export default function Departments() {
                 )}
               </div>
 
-              {/* Modal Footer Actions */}
-              <div className="p-4 sm:p-5 border-t border-border/80 bg-surface flex items-center justify-between gap-3">
-                <button
+              <div className="p-4 sm:p-5 border-t border-border bg-surface shrink-0">
+                <Link
+                  href={`/departments/${previewDept.id}`}
                   onClick={() => setPreviewDept(null)}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold text-ink-muted hover:text-ink hover:bg-card transition-colors cursor-pointer"
+                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-accent text-accent-fg text-sm font-semibold hover:bg-accent-hover transition-[background-color,scale] active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-accent"
                 >
-                  Đóng
-                </button>
-
-                <div className="flex items-center gap-2">
-                  <a
-                    href={RECRUITMENT_INFO.formUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-border bg-card hover:bg-card/80 text-xs font-bold text-ink transition-colors"
-                  >
-                    <Zap className="w-3.5 h-3.5 text-amber-500" />
-                    <span>Ứng tuyển</span>
-                  </a>
-
-                  <Link
-                    href={`/co-cau/${previewDept.id}`}
-                    onClick={() => setPreviewDept(null)}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-ink text-surface hover:bg-ink/90 text-xs font-bold transition-transform active:scale-95 shadow-xs"
-                  >
-                    <span>Xem trang đầy đủ</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
-                </div>
+                  <span>Xem trang ban</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
               </div>
             </motion.div>
           </div>

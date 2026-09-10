@@ -15,25 +15,25 @@ export interface GallerySlide {
 
 export const GALLERY_SLIDES: GallerySlide[] = [
   {
-    src: "/assets/hero-illustration.jpg",
-    alt: "Nhóm sinh viên cùng học tập, thảo luận và kết nối công nghệ",
+    src: "/assets/hero/hero-campus.svg",
+    alt: "Không gian hoạt động CLB o365 HUST (ảnh sẽ cập nhật)",
     title: "Không gian học tập & kết nối",
-    badge: "01 • Teamwork & Chuyển đổi số",
-    desc: "Môi trường học tập năng động, cùng thảo luận và xây dựng các dự án công nghệ sinh viên.",
+    badge: "01 • Campus & cộng đồng",
+    desc: "Ảnh thật đang được thu thập — trạm hỗ trợ, workshop và sự kiện CLB.",
   },
   {
-    src: "/assets/hero-illustration-workshop.jpg",
-    alt: "Workshop chia sẻ kỹ năng số và đào tạo Microsoft 365",
-    title: "Workshop chuyên môn & kỹ năng",
-    badge: "02 • Kỹ năng Microsoft 365 & MOS",
-    desc: "Đào tạo thực chiến tin học văn phòng quốc tế: Word, Excel, PowerPoint chuẩn Certiport.",
+    src: "/assets/about/about-support.svg",
+    alt: "Trạm hỗ trợ Office 365 (ảnh sẽ cập nhật)",
+    title: "Trạm hỗ trợ sinh viên",
+    badge: "02 • Microsoft 365",
+    desc: "Tư vấn tài khoản và công cụ số cho sinh viên toàn trường.",
   },
   {
-    src: "/assets/hero-illustration-award.jpg",
-    alt: "Sinh viên ăn mừng chiến thắng và nhận giải thưởng MOSWC",
-    title: "Vinh danh thành tích & Bứt phá",
-    badge: "03 • MOSWC National Champion",
-    desc: "Bệ phóng đưa sinh viên Bách khoa chinh phục các giải thưởng trí tuệ công nghệ quốc gia.",
+    src: "/assets/about/about-event.svg",
+    alt: "Kỹ thuật sự kiện CLB (ảnh sẽ cập nhật)",
+    title: "Sự kiện & kỹ thuật",
+    badge: "03 • Hội trường & workshop",
+    desc: "Đồng hành kỹ thuật các sự kiện lớn và hoạt động đào tạo.",
   },
 ];
 
@@ -144,50 +144,6 @@ export default function GallerySection({
           className="relative w-full select-none"
           style={{ perspective: 1200 }}
         >
-          {/* Floating collaborative sticky badge 1 (top right) */}
-          <motion.div
-            animate={{ y: [0, -6, 0] }}
-            transition={{
-              duration: 4.2,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            className="absolute -top-5 right-3 sm:right-8 z-30 hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface border border-border shadow-sm text-xs font-medium text-ink"
-          >
-            <Award className="w-3.5 h-3.5 text-accent" />
-            <span>MOSWC 2026: Vòng loại Quốc gia</span>
-          </motion.div>
-
-          {/* Floating collaborative sticky badge 2 (bottom left) */}
-          <motion.div
-            animate={{ y: [0, 5, 0] }}
-            transition={{
-              duration: 4.8,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: 0.8,
-            }}
-            className="absolute -bottom-4 left-3 sm:left-8 z-30 hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface border border-border shadow-sm text-xs font-medium text-ink"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-accent" />
-            <span>Microsoft 365 Certified Club</span>
-          </motion.div>
-
-          {/* Floating collaborative sticky badge 3 (bottom right) */}
-          <motion.div
-            animate={{ y: [0, -5, 0] }}
-            transition={{
-              duration: 5.2,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: 1.4,
-            }}
-            className="absolute -bottom-4 right-3 sm:right-8 z-30 hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface/95 border border-border text-[11px] font-medium text-ink-muted shadow-xs"
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-            <span>Hệ sinh thái chuyển đổi số HUST</span>
-          </motion.div>
-
           <motion.div
             style={{ rotateX, rotateY }}
             className="relative w-full rounded-2xl bg-surface border border-border p-4 sm:p-6 shadow-card overflow-hidden group transition-shadow duration-300 hover:shadow-lg"
@@ -195,43 +151,47 @@ export default function GallerySection({
             {/* Top Status Bar inside Card */}
             <div className="flex items-center justify-between gap-2 pb-3 px-1 border-b border-border/60 text-xs font-medium text-ink-muted">
               <div className="flex items-center gap-2">
-                <span className="inline-block w-2 h-2 rounded-full bg-accent animate-pulse" />
+                <span className="inline-block w-2 h-2 rounded-full bg-accent" />
                 <span className="text-ink font-semibold tracking-wide">
                   {activeSlide.badge}
                 </span>
               </div>
 
-              <div className="flex items-center gap-2 text-[11px]">
+              <div className="flex items-center gap-3 text-[11px]">
+                <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-card/60 text-ink-light border border-border/40">
+                  <Award className="w-3 h-3 text-accent" />
+                  <span>MOSWC HUST</span>
+                </span>
                 {isPaused ? (
                   <span className="inline-flex items-center gap-1 text-ink-light bg-card px-2.5 py-0.5 rounded-full">
                     <Pause className="w-2.5 h-2.5" /> Đã tạm dừng
                   </span>
                 ) : (
                   <span className="inline-flex items-center gap-1 text-ink-muted opacity-80">
-                    <Play className="w-2.5 h-2.5 opacity-60" /> Tự động đổi ({intervalMs / 1000}s)
+                    <Play className="w-2.5 h-2.5 opacity-60" /> Tự động đổi
                   </span>
                 )}
               </div>
             </div>
 
-            {/* Gallery Image Display Area */}
-            <div className="relative aspect-[16/10] sm:aspect-[16/9] max-h-[500px] w-full overflow-hidden rounded-xl bg-bg/40 mt-3">
+            {/* Gallery Image Display Area with image-depth outline */}
+            <div className="relative aspect-[16/10] sm:aspect-[16/9] max-h-[500px] w-full overflow-hidden rounded-xl bg-bg/40 mt-3 image-depth">
               <AnimatePresence mode="wait" initial={false} custom={direction}>
                 <motion.div
                   key={activeSlide.src}
                   custom={direction}
                   initial={{
                     opacity: 0,
-                    x: direction > 0 ? 40 : -40,
-                    scale: 0.98,
+                    x: direction > 0 ? 30 : -30,
+                    scale: 0.99,
                   }}
                   animate={{ opacity: 1, x: 0, scale: 1 }}
                   exit={{
                     opacity: 0,
-                    x: direction > 0 ? -40 : 40,
-                    scale: 0.98,
+                    x: direction > 0 ? -30 : 30,
+                    scale: 0.99,
                   }}
-                  transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                  transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                   className="absolute inset-0 flex items-center justify-center p-4 sm:p-6"
                 >
                   <Image
@@ -241,12 +201,13 @@ export default function GallerySection({
                     sizes="(max-width: 1024px) 100vw, 1000px"
                     className="object-contain"
                     priority={current === 0}
+                    unoptimized={activeSlide.src.endsWith(".svg")}
                   />
                 </motion.div>
               </AnimatePresence>
 
-              {/* Navigation Overlay Buttons */}
-              <div className="absolute inset-x-3 top-1/2 -translate-y-1/2 flex items-center justify-between pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              {/* Navigation Overlay Buttons (accessible on focus & hover) */}
+              <div className="absolute inset-x-3 top-1/2 -translate-y-1/2 flex items-center justify-between pointer-events-none opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-200">
                 <button
                   type="button"
                   onClick={(e) => {
@@ -254,7 +215,7 @@ export default function GallerySection({
                     prevSlide();
                   }}
                   aria-label="Hình trước"
-                  className="pointer-events-auto w-9 h-9 rounded-full bg-surface/90 hover:bg-surface border border-border text-ink flex items-center justify-center shadow-sm hover:scale-105 transition-transform cursor-pointer"
+                  className="pointer-events-auto w-9 h-9 rounded-full bg-surface/95 hover:bg-surface border border-border text-ink flex items-center justify-center shadow-card hover:scale-105 active:scale-[0.96] transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-accent"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
@@ -265,7 +226,7 @@ export default function GallerySection({
                     nextSlide();
                   }}
                   aria-label="Hình kế tiếp"
-                  className="pointer-events-auto w-9 h-9 rounded-full bg-surface/90 hover:bg-surface border border-border text-ink flex items-center justify-center shadow-sm hover:scale-105 transition-transform cursor-pointer"
+                  className="pointer-events-auto w-9 h-9 rounded-full bg-surface/95 hover:bg-surface border border-border text-ink flex items-center justify-center shadow-card hover:scale-105 active:scale-[0.96] transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-accent"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
