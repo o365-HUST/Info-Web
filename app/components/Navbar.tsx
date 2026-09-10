@@ -2,13 +2,18 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { NAV_LINKS, RECRUITMENT_INFO } from "@/app/data/clubData";
-import { Menu, X, ArrowRight, Lock, Search } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { NAV_LINKS, RECRUITMENT_INFO, DOCUMENT_CATEGORIES } from "@/app/data/clubData";
+import { Menu, X, ArrowRight, Lock, Search, ChevronDown } from "lucide-react";
 import Image from "next/image";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [hoverDoc, setHoverDoc] = useState(false);
+  
+  const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 20);
@@ -19,12 +24,28 @@ export default function Navbar() {
 
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-      e.preventDefault();
       setMobileOpen(false);
-      const el = document.querySelector(href);
-      if (el) el.scrollIntoView({ behavior: "smooth" });
+      setHoverDoc(false);
+      
+      // If the link is an anchor link (starts with #)
+      if (href.startsWith("#")) {
+        e.preventDefault();
+        
+        if (pathname !== "/") {
+          // If not on homepage, navigate to homepage with the hash
+          router.push(`/${href}`);
+        } else {
+          // If on homepage, smooth scroll to the element
+          const el = document.querySelector(href);
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth" });
+          } else if (href === "#top") {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }
+        }
+      }
     },
-    []
+    [pathname, router]
   );
 
   return (
@@ -65,16 +86,63 @@ export default function Navbar() {
 
         {/* Desktop nav centered */}
         <nav className="hidden lg:flex items-center justify-center gap-7 flex-1" aria-label="Điều hướng chính">
-          {NAV_LINKS.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              onClick={(e) => handleClick(e, link.href)}
-              className="text-sm font-medium text-ink-light hover:text-ink transition-colors hover:glow-text"
-            >
-              {link.label}
-            </a>
-          ))}
+          {NAV_LINKS.map((link) => {
+            if (link.href === "#documents") {
+              return (
+                <div
+                  key={link.href}
+                  className="relative group py-4"
+                  onMouseEnter={() => setHoverDoc(true)}
+                  onMouseLeave={() => setHoverDoc(false)}
+                >
+                  <a
+                    href={link.href}
+                    onClick={(e) => handleClick(e, link.href)}
+                    className="flex items-center gap-1 text-sm font-medium text-ink-light hover:text-ink transition-colors hover:glow-text"
+                  >
+                    {link.label}
+                    <ChevronDown className="w-3.5 h-3.5 opacity-70 group-hover:rotate-180 transition-transform" />
+                  </a>
+                  
+                  {hoverDoc && (
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-0 w-[320px] bg-white rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] border border-slate-100 p-2 opacity-100 translate-y-0 animate-in fade-in zoom-in-95 duration-200">
+                      <div className="flex flex-col">
+                        {DOCUMENT_CATEGORIES.map((cat) => (
+                          <Link
+                            key={cat.id}
+                            href={`/thu-vien-tai-lieu/${cat.id}`}
+                            className="p-3 hover:bg-slate-50 rounded-lg transition-colors flex flex-col gap-0.5"
+                            onClick={() => setHoverDoc(false)}
+                          >
+                            <span className="text-sm font-semibold text-slate-800">{cat.title}</span>
+                          </Link>
+                        ))}
+                        <div className="h-px bg-slate-100 my-1 mx-2" />
+                        <Link 
+                          href="/thu-vien-tai-lieu"
+                          className="p-3 hover:bg-slate-50 rounded-lg transition-colors flex items-center justify-center gap-1 text-sm font-semibold text-blue-600"
+                          onClick={() => setHoverDoc(false)}
+                        >
+                          Xem tất cả thư viện <ArrowRight className="w-3.5 h-3.5" />
+                        </Link>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
+            return (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={(e) => handleClick(e, link.href)}
+                className="text-sm font-medium text-ink-light hover:text-ink transition-colors hover:glow-text"
+              >
+                {link.label}
+              </a>
+            );
+          })}
         </nav>
 
         {/* Right: Search, Admin Lock + CTA + Mobile Toggle */}

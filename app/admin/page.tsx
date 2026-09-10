@@ -33,6 +33,7 @@ import {
 import type { BlogPost, EventItem, RecruitmentInfo } from "@/app/types";
 import PostEditorModal from "./components/PostEditorModal";
 import EventEditorModal from "./components/EventEditorModal";
+import DocumentEditorModal from "./components/DocumentEditorModal";
 import {
   FileText,
   Calendar,
@@ -51,7 +52,9 @@ import {
   Mail,
   User as UserIcon,
   RefreshCw,
+  Folder,
 } from "lucide-react";
+import { DOCUMENT_CATEGORIES } from "@/app/data/clubData";
 
 export default function AdminPage() {
   const [user, setUser] = useState<User | null>(null);
@@ -65,7 +68,7 @@ export default function AdminPage() {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   // Active dashboard tab
-  const [activeTab, setActiveTab] = useState<"posts" | "events" | "settings">("posts");
+  const [activeTab, setActiveTab] = useState<"posts" | "events" | "settings" | "documents">("posts");
 
   // Data states
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -79,6 +82,8 @@ export default function AdminPage() {
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
   const [eventModalOpen, setEventModalOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<EventItem | null>(null);
+  const [docModalOpen, setDocModalOpen] = useState(false);
+  const [editingDocSlug, setEditingDocSlug] = useState("");
 
   // Seeding state feedback
   const [isSeeding, setIsSeeding] = useState(false);
@@ -360,6 +365,19 @@ export default function AdminPage() {
             <span>Đăng nhập với Google</span>
           </button>
 
+          {/* Tạm thời: Bypass Login Button */}
+          <button
+            onClick={() => {
+              setDemoLoggedIn(true);
+              localStorage.setItem("o365_admin_demo_logged_in", "true");
+            }}
+            type="button"
+            className="w-full mt-3 py-2.5 px-4 rounded-xl border border-blue-500/30 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 text-sm font-semibold flex items-center justify-center gap-2.5 transition-colors cursor-pointer"
+          >
+            <Sparkles className="w-4 h-4" />
+            <span>Đăng nhập nhanh (Bỏ qua Email)</span>
+          </button>
+
           <div className="mt-6 text-center">
             <Link
               href="/"
@@ -489,6 +507,18 @@ export default function AdminPage() {
             >
               <Calendar className="w-3.5 h-3.5" />
               <span>Sự Kiện ({events.length})</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab("documents")}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                activeTab === "documents"
+                  ? "bg-ink text-surface shadow-xs"
+                  : "text-ink-muted hover:text-ink hover:bg-card"
+              }`}
+            >
+              <Folder className="w-3.5 h-3.5" />
+              <span>Thư Viện Tài Liệu ({DOCUMENT_CATEGORIES.length})</span>
             </button>
 
             <button
@@ -808,6 +838,49 @@ export default function AdminPage() {
         )}
 
         {/* ────────────────────────────────────────── */}
+        {/* TAB 4: DOCUMENT LIBRARY */}
+        {/* ────────────────────────────────────────── */}
+        {activeTab === "documents" && (
+          <div className="max-w-4xl mx-auto rounded-2xl bg-surface border border-border p-6 sm:p-8 shadow-card">
+            <h3 className="font-bold text-lg text-ink tracking-tight mb-1">
+              Thư Viện Tài Liệu
+            </h3>
+            <p className="text-xs text-ink-light mb-6">
+              Bạn có thể chỉnh sửa nội dung, tải lên file đính kèm, ảnh và video cho 4 chuyên mục tài liệu dưới đây. Nhấp vào "Chỉnh sửa nội dung" để mở trình soạn thảo CMS Tiptap.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              {DOCUMENT_CATEGORIES.map((cat) => (
+                <div
+                  key={cat.id}
+                  className="flex flex-col p-5 rounded-2xl bg-card border border-border/60 hover:border-accent/40 hover:shadow-md transition-all duration-300 group"
+                >
+                  <h4 className="font-bold text-ink mb-1.5 group-hover:text-accent transition-colors">
+                    {cat.title}
+                  </h4>
+                  <p className="text-xs text-ink-muted mb-5 flex-1 line-clamp-3">
+                    {cat.description}
+                  </p>
+
+                  <div className="pt-4 border-t border-border/60 flex justify-end">
+                    <button
+                      onClick={() => {
+                        setEditingDocSlug(cat.id);
+                        setDocModalOpen(true);
+                      }}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-accent text-white text-xs font-semibold hover:bg-accent/90 transition-colors shadow-xs cursor-pointer"
+                    >
+                      <Edit2 className="w-3.5 h-3.5" />
+                      <span>Chỉnh sửa nội dung</span>
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ────────────────────────────────────────── */}
         {/* TAB 3: RECRUITMENT & CLUB SETTINGS */}
         {/* ────────────────────────────────────────── */}
         {activeTab === "settings" && recruitment && (
@@ -905,6 +978,12 @@ export default function AdminPage() {
         event={editingEvent}
         onClose={() => setEventModalOpen(false)}
         onSave={handleSaveEvent}
+      />
+
+      <DocumentEditorModal
+        isOpen={docModalOpen}
+        onClose={() => setDocModalOpen(false)}
+        slug={editingDocSlug}
       />
     </div>
   );

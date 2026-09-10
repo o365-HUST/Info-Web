@@ -725,4 +725,12 @@ export const NAV_LINKS = [
   { label: "Cơ cấu ban", href: "#departments" },
   { label: "Blog", href: "#blog" },
   { label: "Sự kiện", href: "#events" },
+  { label: "Thư viện tài liệu", href: "#documents" },
+] as const;
+
+export const DOCUMENT_CATEGORIES = [
+  { id: "huong-dan-tai-office-365", title: "Hướng dẫn tải Office 365", description: "Cài đặt và kích hoạt bộ công cụ Office 365 bản quyền sinh viên ĐHBK", icon: "DownloadCloud" },
+  { id: "huong-dan-su-dung-microsoft-teams", title: "Hướng dẫn sử dụng Microsoft Teams", description: "Sử dụng Teams trong học tập và làm việc nhóm hiệu quả", icon: "MessageSquare" },
+  { id: "xay-dung-ke-hoach-hoc-tap", title: "Xây dựng kế hoạch học tập", description: "Phương pháp và biểu mẫu quản lý thời gian, học tập khoa học", icon: "CalendarDays" },
+  { id: "khoa-hoc-ky-nang-tin-hoc-van-phong", title: "Khóa học kỹ năng tin học văn phòng", description: "Tài liệu đào tạo MOS Word, Excel, PowerPoint", icon: "BookOpen" },
 ] as const;
