@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
-import { Be_Vietnam_Pro, Dancing_Script } from "next/font/google";
+import Script from "next/script";
+import { Archivo, Be_Vietnam_Pro } from "next/font/google";
+import { ThemeProvider } from "@/app/components/ThemeProvider";
+import SiteChrome from "@/app/components/SiteChrome";
 import "./globals.css";
 
 const beVietnamPro = Be_Vietnam_Pro({
@@ -9,34 +12,45 @@ const beVietnamPro = Be_Vietnam_Pro({
   display: "swap",
 });
 
-const dancingScript = Dancing_Script({
-  variable: "--font-dancing-script",
+const archivo = Archivo({
+  variable: "--font-archivo",
   subsets: ["latin", "vietnamese"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["600", "700", "800", "900"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "CLB o365 - HUST | Đại sứ Chuyển đổi số Đại học Bách khoa Hà Nội",
+  metadataBase: new URL("https://clbo365.hust.edu.vn"),
+  title: "CLB o365 - HUST | Đại sứ số học đường Đại học Bách khoa Hà Nội",
   description:
     "Website chính thức của Câu lạc bộ o365 - Đại học Bách khoa Hà Nội. Kết nối đam mê, lan tỏa giá trị — đồng hành kỹ năng số, Microsoft 365 và MOSWC.",
   openGraph: {
     type: "website",
-    title: "CLB o365 - HUST | Đại sứ Chuyển đổi số ĐHBK Hà Nội",
+    title: "CLB o365 - HUST | Đại sứ số học đường ĐHBK Hà Nội",
     description:
-      "Câu lạc bộ Đại sứ Chuyển đổi số ĐHBK Hà Nội. Kết nối đam mê công nghệ, bồi dưỡng kỹ năng tin học văn phòng chuẩn quốc tế.",
-    images: ["/logo.svg"],
+      "Câu lạc bộ Đại sứ số học đường ĐHBK Hà Nội. Kết nối đam mê công nghệ, bồi dưỡng kỹ năng tin học văn phòng chuẩn quốc tế.",
+    images: ["/logo-transparent.png"],
   },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+const themeInitScript = `(function(){try{var t=localStorage.getItem("o365-theme");if(t!=="light"&&t!=="dark")t="dark";document.documentElement.classList.remove("light","dark");document.documentElement.classList.add(t);}catch(e){document.documentElement.classList.add("dark");}})();`;
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="vi"
-      className={`${beVietnamPro.variable} ${dancingScript.variable} scroll-smooth`}
+      className={`${beVietnamPro.variable} ${archivo.variable} scroll-smooth`}
       data-scroll-behavior="smooth"
+      suppressHydrationWarning
     >
-      <body className="min-h-dvh flex flex-col">{children}</body>
+      <body className="min-h-dvh flex flex-col">
+        <Script id="o365-theme-init" strategy="beforeInteractive">
+          {themeInitScript}
+        </Script>
+        <ThemeProvider>
+          <SiteChrome>{children}</SiteChrome>
+        </ThemeProvider>
+      </body>
     </html>
   );
 }

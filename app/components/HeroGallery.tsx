@@ -14,22 +14,22 @@ export interface GallerySlide {
 
 export const GALLERY_SLIDES: GallerySlide[] = [
   {
-    src: "/assets/hero-illustration.jpg",
-    alt: "Nhóm sinh viên cùng học tập, thảo luận và kết nối công nghệ",
+    src: "/assets/hero/hero-campus.svg",
+    alt: "Không gian hoạt động CLB o365 HUST (ảnh sẽ cập nhật)",
     title: "Không gian học tập & kết nối",
-    badge: "01 • Teamwork & Chuyển đổi số",
+    badge: "01 • Campus & cộng đồng",
   },
   {
-    src: "/assets/hero-illustration-workshop.jpg",
-    alt: "Workshop chia sẻ kỹ năng số và đào tạo Microsoft 365",
-    title: "Workshop chuyên môn & kỹ năng",
-    badge: "02 • Kỹ năng Microsoft 365 & MOS",
+    src: "/assets/about/about-support.svg",
+    alt: "Trạm hỗ trợ Office 365 (ảnh sẽ cập nhật)",
+    title: "Trạm hỗ trợ sinh viên",
+    badge: "02 • Microsoft 365",
   },
   {
-    src: "/assets/hero-illustration-award.jpg",
-    alt: "Sinh viên ăn mừng chiến thắng và nhận giải thưởng MOSWC",
-    title: "Vinh danh thành tích & Bứt phá",
-    badge: "03 • MOSWC National Champion",
+    src: "/assets/about/about-event.svg",
+    alt: "Kỹ thuật sự kiện CLB (ảnh sẽ cập nhật)",
+    title: "Sự kiện & kỹ thuật",
+    badge: "03 • Hội trường & workshop",
   },
 ];
 
@@ -160,6 +160,7 @@ export default function HeroGallery({
                 sizes="(max-width: 768px) 100vw, 550px"
                 className="object-contain"
                 priority={current === 0}
+                unoptimized={activeSlide.src.endsWith(".svg")}
               />
             </motion.div>
           </AnimatePresence>

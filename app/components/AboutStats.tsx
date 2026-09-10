@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * @deprecated This component's functionality and compact stat cards have been
+ * moved directly into `app/components/Hero.tsx` as a docked bottom strip.
+ */
+
 import { useRef, useEffect, useState } from "react";
 import { motion, useInView } from "motion/react";
 import { STATS } from "@/app/data/clubData";
