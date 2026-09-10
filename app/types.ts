@@ -58,6 +58,8 @@ export interface Department {
   stats?: Array<{ label: string; value: string; desc?: string }>;
   keyActivities?: Array<{ title: string; desc: string; icon?: string }>;
   skillsLearned?: string[];
+  /** Thành tích / dấu ấn thành viên tiêu biểu */
+  memberHighlights?: Array<{ name: string; detail: string }>;
   bentoItems?: DepartmentBentoItem[];
 }
 
@@ -98,4 +100,20 @@ export interface StatItem {
   suffix: string;
   label: string;
   icon: string; // lucide icon name
+}
+
+export interface Advisor {
+  id: string;
+  name: string;
+  medal: string;
+  event: string;
+  app: "excel" | "powerpoint" | "word";
+  medalTier: "gold" | "bronze";
+  subjectLabel: string;
+  year: number;
+}
+
+export interface MissionItem {
+  title: string;
+  detail: string;
 }
