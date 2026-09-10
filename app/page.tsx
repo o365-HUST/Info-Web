@@ -4,6 +4,7 @@ import Achievements from "./components/Achievements";
 import Departments from "./components/Departments";
 import BlogPosts from "./components/BlogPosts";
 import EventsTimeline from "./components/EventsTimeline";
+import DocumentSection from "./components/DocumentSection";
 import Footer from "./components/Footer";
 
 export default function Page() {
@@ -14,6 +15,7 @@ export default function Page() {
         <AboutUs />
         <Achievements />
         <Departments />
+        <DocumentSection />
         <BlogPosts />
         <EventsTimeline />
       </main>

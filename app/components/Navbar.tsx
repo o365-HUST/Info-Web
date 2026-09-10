@@ -4,8 +4,12 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { NAV_LINKS, RECRUITMENT_INFO } from "@/app/data/clubData";
-import { Menu, X, ArrowRight } from "lucide-react";
+import {
+  NAV_LINKS,
+  RECRUITMENT_INFO,
+  DOCUMENT_CATEGORIES,
+} from "@/app/data/clubData";
+import { Menu, X, ArrowRight, ChevronDown } from "lucide-react";
 import ThemeToggle from "@/app/components/ThemeToggle";
 
 function resolveNavHref(href: string, isHome: boolean) {
@@ -20,6 +24,7 @@ export default function Navbar() {
   const isHome = pathname === "/";
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [hoverDoc, setHoverDoc] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 20);
@@ -30,16 +35,22 @@ export default function Navbar() {
 
   useEffect(() => {
     setMobileOpen(false);
+    setHoverDoc(false);
   }, [pathname]);
 
   const handleHashClick = useCallback(
     (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+      setHoverDoc(false);
       if (!href.startsWith("#") || !isHome) return;
       e.preventDefault();
       setMobileOpen(false);
+      if (href === "#top") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
       document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
     },
-    [isHome]
+    [isHome],
   );
 
   const solid = !isHome || isScrolled;
@@ -75,19 +86,68 @@ export default function Navbar() {
           aria-label="Điều hướng chính"
         >
           {NAV_LINKS.map((link) => {
+            if (link.href === "#documents") {
+              return (
+                <div
+                  key={link.href}
+                  className="relative py-4"
+                  onMouseEnter={() => setHoverDoc(true)}
+                  onMouseLeave={() => setHoverDoc(false)}
+                >
+                  <Link
+                    href={resolveNavHref(link.href, isHome)}
+                    onClick={(e) => handleHashClick(e, link.href)}
+                    className="flex items-center gap-1 text-sm font-medium text-ink-light hover:text-ink transition-colors rounded-md py-1 px-1.5 focus-visible:outline-2 focus-visible:outline-accent"
+                  >
+                    {link.label}
+                    <ChevronDown
+                      className={`w-3.5 h-3.5 opacity-70 transition-transform ${
+                        hoverDoc ? "rotate-180" : ""
+                      }`}
+                    />
+                  </Link>
+
+                  {hoverDoc && (
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-0 w-[320px] bg-surface rounded-xl shadow-lg border border-border p-2 z-50">
+                      <div className="flex flex-col">
+                        {DOCUMENT_CATEGORIES.map((cat) => (
+                          <Link
+                            key={cat.id}
+                            href={`/thu-vien-tai-lieu/${cat.id}`}
+                            className="p-3 hover:bg-card rounded-lg transition-colors flex flex-col gap-0.5"
+                            onClick={() => setHoverDoc(false)}
+                          >
+                            <span className="text-sm font-semibold text-ink">
+                              {cat.title}
+                            </span>
+                          </Link>
+                        ))}
+                        <div className="h-px bg-border my-1 mx-2" />
+                        <Link
+                          href="/thu-vien-tai-lieu"
+                          className="p-3 hover:bg-card rounded-lg transition-colors flex items-center justify-center gap-1 text-sm font-semibold text-accent"
+                          onClick={() => setHoverDoc(false)}
+                        >
+                          Xem tất cả thư viện{" "}
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </Link>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
             const href = resolveNavHref(link.href, isHome);
             const active =
-              (!link.href.startsWith("#") && pathname.startsWith(link.href)) ||
-              (isHome);
+              !link.href.startsWith("#") && pathname.startsWith(link.href);
             return (
               <Link
                 key={link.href}
                 href={href}
                 onClick={(e) => handleHashClick(e, link.href)}
                 className={`text-sm font-medium transition-colors rounded-md py-1 px-1.5 focus-visible:outline-2 focus-visible:outline-accent ${
-                  active
-                    ? "text-ink"
-                    : "text-ink-light hover:text-ink"
+                  active ? "text-ink" : "text-ink-light hover:text-ink"
                 }`}
               >
                 {link.label}
@@ -132,16 +192,25 @@ export default function Navbar() {
             onClick={() => setMobileOpen(!mobileOpen)}
             className="lg:hidden p-2 rounded-lg text-ink hover:text-accent transition-colors focus-visible:outline-2 focus-visible:outline-accent cursor-pointer"
             aria-expanded={mobileOpen}
-            aria-label={mobileOpen ? "Đóng menu điều hướng" : "Mở menu điều hướng"}
+            aria-label={
+              mobileOpen ? "Đóng menu điều hướng" : "Mở menu điều hướng"
+            }
           >
-            {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {mobileOpen ? (
+              <X className="w-6 h-6" />
+            ) : (
+              <Menu className="w-6 h-6" />
+            )}
           </button>
         </div>
       </div>
 
       {mobileOpen && (
         <div className="lg:hidden bg-[var(--bg)]/95 backdrop-blur-md border-b border-border px-5 py-4 shadow-xl">
-          <nav className="flex flex-col gap-1.5" aria-label="Điều hướng trên di động">
+          <nav
+            className="flex flex-col gap-1.5"
+            aria-label="Điều hướng trên di động"
+          >
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
