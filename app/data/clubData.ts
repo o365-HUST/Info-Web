@@ -852,7 +852,6 @@ export const EVENTS: EventItem[] = [
 ];
 
 export const NAV_LINKS = [
-  { label: "Trang chủ", href: "#top" },
   { label: "Giới thiệu", href: "#about" },
   { label: "Tài liệu", href: "/resources" },
   { label: "Cơ cấu ban", href: "#departments" },

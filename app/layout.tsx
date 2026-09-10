@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import { Archivo, Be_Vietnam_Pro } from "next/font/google";
 import { ThemeProvider } from "@/app/components/ThemeProvider";
+import ThemeInitScript from "@/app/components/ThemeInitScript";
 import SiteChrome from "@/app/components/SiteChrome";
 import "./globals.css";
 
@@ -33,8 +33,6 @@ export const metadata: Metadata = {
   },
 };
 
-const themeInitScript = `(function(){try{var t=localStorage.getItem("o365-theme");if(t!=="light"&&t!=="dark")t="dark";document.documentElement.classList.remove("light","dark");document.documentElement.classList.add(t);}catch(e){document.documentElement.classList.add("dark");}})();`;
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
@@ -44,9 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       suppressHydrationWarning
     >
       <body className="min-h-dvh flex flex-col">
-        <Script id="o365-theme-init" strategy="beforeInteractive">
-          {themeInitScript}
-        </Script>
+        <ThemeInitScript />
         <ThemeProvider>
           <SiteChrome>{children}</SiteChrome>
         </ThemeProvider>

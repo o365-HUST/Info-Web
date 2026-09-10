@@ -78,7 +78,7 @@ export default function Navbar() {
             const href = resolveNavHref(link.href, isHome);
             const active =
               (!link.href.startsWith("#") && pathname.startsWith(link.href)) ||
-              (link.href === "#top" && isHome);
+              (isHome);
             return (
               <Link
                 key={link.href}
