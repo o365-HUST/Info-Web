@@ -20,7 +20,6 @@ const iconMap: Record<string, React.ReactNode> = {
 export default function DocumentLibraryPage() {
   return (
     <>
-      <Navbar />
       <main className="flex-1 bg-slate-50 min-h-screen pt-24 pb-20">
         <div className="max-w-[var(--max-width)] mx-auto px-5 sm:px-8">
           
