@@ -1,45 +1,114 @@
 @import "tailwindcss";
 
-/* ─── Design Tokens ─── */
-:root {
-  --bg: #0A192F;
-  --card: #112240;
-  --accent: #3B82F6;
-  --warm: #1E293B;
-  --ink: #F8FAFC;
-  --ink-light: #94A3B8;
-  --ink-muted: #64748B;
-  --border: #1E293B;
-  --surface: #0f172a;
+/* ─── Design Tokens (dark = default) ─── */
+:root,
+html.dark {
+  color-scheme: dark;
+  --bg: #071525;
+  --card: #0E1F38;
+  --surface: #0A1A30;
+  --surface-hover: #132844;
+  --accent: #2B7FFF;
+  --accent-hover: #1A6AE8;
+  --accent-fg: #ffffff;
+  --warm: #152338;
+  --ink: #F4F7FB;
+  --ink-light: #9AADC4;
+  --ink-muted: #6B8099;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-subtle: rgba(255, 255, 255, 0.05);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --overlay: rgba(2, 8, 18, 0.62);
+  --image-outline: rgba(255, 255, 255, 0.1);
 
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
-  --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.5);
+  --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 8px 28px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.55);
 
   --radius-sm: 6px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-2xl: 28px;
 
   --max-width: 1120px;
   --nav-height: 64px;
+  --breadcrumb-height: 40px;
+
+  --photo-scrim: linear-gradient(
+    105deg,
+    rgba(7, 21, 37, 0.94) 0%,
+    rgba(7, 21, 37, 0.78) 42%,
+    rgba(7, 21, 37, 0.35) 68%,
+    rgba(7, 21, 37, 0.15) 100%
+  );
+  --photo-scrim-bottom: linear-gradient(
+    to top,
+    rgba(7, 21, 37, 0.92) 0%,
+    rgba(7, 21, 37, 0.45) 45%,
+    transparent 100%
+  );
+}
+
+html.light {
+  color-scheme: light;
+  --bg: #f4f6f9;
+  --card: #ffffff;
+  --surface: #e8eef5;
+  --surface-hover: #dde6f0;
+  --accent: #1a6ae8;
+  --accent-hover: #1558c4;
+  --accent-fg: #ffffff;
+  --warm: #e2e9f2;
+  --ink: #0b1a2e;
+  --ink-light: #4a5d73;
+  --ink-muted: #718399;
+  --border: rgba(11, 26, 46, 0.1);
+  --border-subtle: rgba(11, 26, 46, 0.06);
+  --border-strong: rgba(11, 26, 46, 0.18);
+  --overlay: rgba(11, 26, 46, 0.45);
+  --image-outline: rgba(0, 0, 0, 0.1);
+
+  --shadow-sm: 0 1px 3px rgba(11, 26, 46, 0.08);
+  --shadow-card: 0 4px 16px rgba(11, 26, 46, 0.1);
+  --shadow-md: 0 8px 28px rgba(11, 26, 46, 0.12);
+  --shadow-lg: 0 16px 48px rgba(11, 26, 46, 0.14);
+
+  --photo-scrim: linear-gradient(
+    105deg,
+    rgba(244, 246, 249, 0.72) 0%,
+    rgba(244, 246, 249, 0.45) 38%,
+    rgba(244, 246, 249, 0.12) 62%,
+    transparent 100%
+  );
+  --photo-scrim-bottom: linear-gradient(
+    to top,
+    rgba(244, 246, 249, 0.88) 0%,
+    rgba(244, 246, 249, 0.35) 42%,
+    transparent 100%
+  );
 }
 
 /* ─── TailwindCSS v4 Theme ─── */
 @theme inline {
   --color-bg: var(--bg);
   --color-card: var(--card);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
   --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-fg: var(--accent-fg);
   --color-warm: var(--warm);
   --color-ink: var(--ink);
   --color-ink-light: var(--ink-light);
   --color-ink-muted: var(--ink-muted);
   --color-border: var(--border);
-  --color-surface: var(--surface);
+  --color-border-strong: var(--border-strong);
+  --color-overlay: var(--overlay);
 
   --font-body: var(--font-be-vietnam-pro);
-  --font-display: var(--font-dancing-script);
+  --font-display: var(--font-archivo);
 
   --shadow-sm: var(--shadow-sm);
   --shadow-card: var(--shadow-card);
@@ -50,6 +119,7 @@
 /* ─── Base ─── */
 html {
   scroll-behavior: smooth;
+  font-size: 106.25%; /* ~17px — slightly larger site type scale */
 }
 
 body {
@@ -58,6 +128,74 @@ body {
   font-family: var(--font-body), system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Global Focus-Visible (better-accessibility) ─── */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ─── Typography Balance & Pretty (better-typography) ─── */
+h1, h2, h3, h4, h5, h6 {
+  text-wrap: balance;
+}
+
+p, .text-pretty {
+  text-wrap: pretty;
+}
+
+/* ─── Subtle Image Depth (better-ui) ─── */
+.image-depth {
+  outline: 1px solid var(--image-outline);
+  outline-offset: -1px;
+}
+
+/* Color PNG mark — do not invert (would wash brand blues) */
+.logo-transparent {
+  filter: none;
+}
+
+/* ─── Display type (brand / section headlines) ─── */
+.font-display {
+  font-family: var(--font-display), var(--font-body), system-ui, sans-serif;
+}
+
+/* ─── Full-bleed photo media + scrims ─── */
+.hero-media {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.hero-media img {
+  object-fit: cover;
+  object-position: center;
+}
+
+.photo-scrim {
+  position: absolute;
+  inset: 0;
+  background: var(--photo-scrim);
+  pointer-events: none;
+}
+
+.photo-scrim-bottom {
+  position: absolute;
+  inset: 0;
+  background: var(--photo-scrim-bottom);
+  pointer-events: none;
+}
+
+.photo-slot {
+  position: relative;
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.photo-slot img {
+  object-fit: cover;
+  object-position: center;
 }
 
 ::selection {
