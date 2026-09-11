@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, use } from "react";
-import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import { DOCUMENT_CATEGORIES } from "@/app/data/clubData";
 import { doc, getDoc } from "firebase/firestore";
@@ -81,7 +80,6 @@ export default function DocumentDetailPage({ params }: PageProps) {
 
   return (
     <>
-      <Navbar />
       <main className="flex-1 bg-slate-50 min-h-screen pt-24 pb-20">
         <div className="max-w-[var(--max-width)] mx-auto px-5 sm:px-8">
           

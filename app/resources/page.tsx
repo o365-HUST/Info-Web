@@ -1,4 +1,3 @@
-import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { DOCUMENT_CATEGORIES } from "@/app/data/clubData";
 import Link from "next/link";
@@ -37,7 +36,7 @@ export default function DocumentLibraryPage() {
             {DOCUMENT_CATEGORIES.map((cat) => (
               <Link
                 key={cat.id}
-                href={`/thu-vien-tai-lieu/${cat.id}`}
+                href={`/resources/${cat.id}`}
                 className="bg-white rounded-3xl p-8 shadow-sm border border-slate-200 hover:shadow-lg hover:-translate-y-1 transition-all group relative overflow-hidden"
               >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full blur-3xl opacity-50 group-hover:bg-blue-100 transition-colors pointer-events-none" />

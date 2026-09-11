@@ -856,7 +856,7 @@ export const NAV_LINKS = [
   { label: "Tài liệu", href: "/resources" },
   { label: "Cơ cấu ban", href: "#departments" },
   { label: "Sự kiện", href: "#events" },
-  { label: "Thư viện tài liệu", href: "#documents" },
+  { label: "Blog", href: "/blog" },
 ] as const;
 
 export const DOCUMENT_CATEGORIES = [

@@ -33,29 +33,45 @@ export default function Departments() {
   /** True only after a real pan — blocks click-to-preview. */
   const didDragRef = useRef(false);
 
-  // Center the track on Ban Chủ nhiệm (middle card)
+  const [canDrag, setCanDrag] = useState(true);
+
+  // Center the track on Ban Chủ nhiệm (middle card); lock when all cards fit
   useEffect(() => {
     const calculateLayout = () => {
       if (!containerRef.current) return;
       const isMobile = window.innerWidth < 640;
       const isTablet = window.innerWidth < 1024;
 
-      const cardW = isMobile ? 340 : isTablet ? 440 : 520;
-      const gapW = isMobile ? 20 : 28;
+      // Keep in sync with card width classes below
+      const cardW = isMobile ? 260 : isTablet ? 300 : 320;
+      const gapW = isMobile ? 16 : 20;
+      const padX = isMobile ? 20 : 24;
       const step = cardW + gapW;
       const count = CAROUSEL_DEPARTMENTS.length;
       if (count < 1) return;
 
       const containerW = containerRef.current.clientWidth;
-      const screenCenter = containerW / 2;
+      const trackW = count * cardW + (count - 1) * gapW;
+      const contentW = trackW + padX;
 
+      // Wide / zoomed-out: all cards fit — center and disable drag
+      if (contentW <= containerW) {
+        const offset = (containerW - trackW) / 2 - padX;
+        setConstraints({ left: offset, right: offset });
+        setCanDrag(false);
+        x.set(offset);
+        return;
+      }
+
+      setCanDrag(true);
+      const screenCenter = containerW / 2;
       const centerIndex = Math.floor(count / 2);
-      const cardCenter = centerIndex * step + cardW / 2;
+      const cardCenter = padX + centerIndex * step + cardW / 2;
       const initialCenterOffset = screenCenter - cardCenter;
 
-      const firstCenter = cardW / 2;
-      const lastCenter = (count - 1) * step + cardW / 2;
-      const clearance = isMobile ? 60 : 120;
+      const firstCenter = padX + cardW / 2;
+      const lastCenter = padX + (count - 1) * step + cardW / 2;
+      const clearance = isMobile ? 40 : 80;
       const maxRight = screenCenter - firstCenter + clearance;
       const minLeft = screenCenter - lastCenter - clearance;
 
@@ -121,32 +137,36 @@ export default function Departments() {
       {/* Free-Dragging Carousel Track with Cinematic Edge Fades */}
       <div
         ref={containerRef}
-        className="relative w-full overflow-hidden mt-6 sm:mt-8 py-8 sm:py-10"
+        className="relative w-full overflow-hidden mt-5 sm:mt-6 py-5 sm:py-6"
       >
-        {/* Left & Right edge fades — wider on large screens so cropped cards don't look hard-cut */}
-        <div
-          className="absolute inset-y-0 left-0 z-10 pointer-events-none w-12 sm:w-24 md:w-32 lg:w-40 xl:w-52"
-          style={{
-            background:
-              "linear-gradient(to right, var(--bg) 0%, var(--bg) 28%, transparent 100%)",
-          }}
-          aria-hidden="true"
-        />
-        <div
-          className="absolute inset-y-0 right-0 z-10 pointer-events-none w-12 sm:w-24 md:w-32 lg:w-40 xl:w-52"
-          style={{
-            background:
-              "linear-gradient(to left, var(--bg) 0%, var(--bg) 28%, transparent 100%)",
-          }}
-          aria-hidden="true"
-        />
+        {/* Edge fades only while the track overflows (drag mode) */}
+        {canDrag && (
+          <>
+            <div
+              className="absolute inset-y-0 left-0 z-10 pointer-events-none w-10 sm:w-16 md:w-24"
+              style={{
+                background:
+                  "linear-gradient(to right, var(--bg) 0%, var(--bg) 20%, transparent 100%)",
+              }}
+              aria-hidden="true"
+            />
+            <div
+              className="absolute inset-y-0 right-0 z-10 pointer-events-none w-10 sm:w-16 md:w-24"
+              style={{
+                background:
+                  "linear-gradient(to left, var(--bg) 0%, var(--bg) 20%, transparent 100%)",
+              }}
+              aria-hidden="true"
+            />
+          </>
+        )}
 
         {/* Draggable track — initially centered on Ban Chủ nhiệm */}
         <motion.div
-          drag="x"
+          drag={canDrag ? "x" : false}
           dragConstraints={constraints}
-          dragElastic={0.12}
-          dragMomentum={true}
+          dragElastic={canDrag ? 0.12 : 0}
+          dragMomentum={canDrag}
           onPointerDown={() => {
             didDragRef.current = false;
           }}
@@ -170,8 +190,10 @@ export default function Departments() {
             bounceDamping: 28,
           }}
           style={{ x }}
-          whileTap={{ cursor: "grabbing" }}
-          className="flex gap-5 sm:gap-7 cursor-grab active:cursor-grabbing will-change-transform pl-5 sm:pl-6"
+          whileTap={canDrag ? { cursor: "grabbing" } : undefined}
+          className={`flex gap-4 sm:gap-5 will-change-transform pl-5 sm:pl-6 ${
+            canDrag ? "cursor-grab active:cursor-grabbing" : "cursor-default"
+          }`}
         >
           {CAROUSEL_DEPARTMENTS.map((dept) => {
             return (
@@ -186,15 +208,15 @@ export default function Departments() {
                     handleCardActivate(dept);
                   }
                 }}
-                className="w-[340px] sm:w-[440px] lg:w-[520px] shrink-0 flex flex-col rounded-2xl bg-surface border border-border hover:border-accent/50 shadow-card transition-all duration-300 hover:shadow-lg hover:-translate-y-1.5 group select-none cursor-pointer relative overflow-hidden focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+                className="w-[260px] sm:w-[300px] lg:w-[320px] shrink-0 flex flex-col rounded-xl bg-surface border border-border hover:border-accent/50 shadow-card transition-all duration-300 hover:shadow-md hover:-translate-y-1 group select-none cursor-pointer relative overflow-hidden focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
               >
-                {/* Wide group-photo band */}
-                <div className="relative w-full aspect-[16/10] sm:aspect-[3/2] pointer-events-none bg-card">
+                {/* Compact illustration / photo band */}
+                <div className="relative w-full aspect-[16/11] pointer-events-none bg-card">
                   <Image
                     src={dept.image}
                     alt={dept.name}
                     fill
-                    sizes="(max-width: 640px) 340px, (max-width: 1024px) 440px, 520px"
+                    sizes="(max-width: 640px) 260px, (max-width: 1024px) 300px, 320px"
                     className="object-cover object-center transition-transform duration-300 group-hover:scale-[1.03]"
                     priority={
                       dept.id === "ban-chu-nhiem" ||
@@ -202,17 +224,17 @@ export default function Departments() {
                       dept.id === "chuyen-mon"
                     }
                   />
-                  <div className="absolute inset-x-0 top-0 flex items-center justify-between p-3 sm:p-4">
-                    <span className="font-mono text-[11px] sm:text-xs font-semibold tracking-widest text-white/90 drop-shadow-sm">
+                  <div className="absolute inset-x-0 top-0 flex items-center justify-between p-2.5 sm:p-3">
+                    <span className="font-mono text-[10px] sm:text-[11px] font-semibold tracking-widest text-white/90 drop-shadow-sm">
                       [&nbsp; {dept.index} &nbsp;]
                     </span>
-                    <span className="inline-block w-2 h-2 rounded-full bg-white/70 group-hover:bg-accent transition-colors" />
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-white/70 group-hover:bg-accent transition-colors" />
                   </div>
                 </div>
 
-                <div className="flex flex-col flex-1 p-5 sm:p-6">
-                  <div className="flex items-start justify-between gap-2 mb-1.5">
-                    <h3 className="font-extrabold text-xl sm:text-2xl text-ink tracking-tight uppercase line-clamp-1 group-hover:text-accent transition-colors">
+                <div className="flex flex-col flex-1 p-3.5 sm:p-4">
+                  <div className="flex items-start justify-between gap-2 mb-1">
+                    <h3 className="font-extrabold text-base sm:text-lg text-ink tracking-tight uppercase line-clamp-1 group-hover:text-accent transition-colors">
                       {dept.name}
                     </h3>
                     <Link
@@ -220,32 +242,32 @@ export default function Departments() {
                       onClick={(e) => e.stopPropagation()}
                       onPointerDown={(e) => e.stopPropagation()}
                       onPointerUp={(e) => e.stopPropagation()}
-                      className="mt-1 p-1 rounded-lg text-ink-muted hover:text-accent hover:bg-card transition-colors focus-visible:outline-2 focus-visible:outline-accent shrink-0"
+                      className="mt-0.5 p-1 rounded-lg text-ink-muted hover:text-accent hover:bg-card transition-colors focus-visible:outline-2 focus-visible:outline-accent shrink-0"
                       title="Mở trang ban riêng"
                     >
-                      <ExternalLink className="w-4 h-4" />
+                      <ExternalLink className="w-3.5 h-3.5" />
                     </Link>
                   </div>
-                  <p className="text-sm sm:text-base font-medium text-ink-light italic mb-3 line-clamp-1">
+                  <p className="text-xs sm:text-sm font-medium text-ink-light italic mb-2 line-clamp-1">
                     {dept.tagline}
                   </p>
-                  <p className="text-base sm:text-[1.05rem] leading-relaxed text-ink-light line-clamp-3">
+                  <p className="text-sm leading-relaxed text-ink-light line-clamp-2">
                     {dept.description}
                   </p>
 
-                  <div className="pt-4 mt-auto border-t border-border/70 flex items-center">
-                    <div className="flex items-center gap-3 min-w-0">
+                  <div className="pt-3 mt-auto border-t border-border/70 flex items-center">
+                    <div className="flex items-center gap-2.5 min-w-0">
                       <div
-                        className="w-9 h-9 rounded-full text-white font-bold flex items-center justify-center text-sm shrink-0 shadow-2xs"
+                        className="w-7 h-7 rounded-full text-white font-bold flex items-center justify-center text-xs shrink-0 shadow-2xs"
                         style={{ backgroundColor: dept.accentColor }}
                       >
                         {dept.leader?.name.charAt(0)}
                       </div>
                       <div className="min-w-0">
-                        <p className="font-semibold text-ink text-sm sm:text-base leading-tight truncate">
+                        <p className="font-semibold text-ink text-xs sm:text-sm leading-tight truncate">
                           {dept.leader?.name}
                         </p>
-                        <p className="text-xs sm:text-sm text-ink-muted leading-tight truncate">
+                        <p className="text-[11px] sm:text-xs text-ink-muted leading-tight truncate">
                           {dept.leader?.role}
                         </p>
                       </div>

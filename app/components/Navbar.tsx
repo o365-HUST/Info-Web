@@ -86,7 +86,7 @@ export default function Navbar() {
           aria-label="Điều hướng chính"
         >
           {NAV_LINKS.map((link) => {
-            if (link.href === "#documents") {
+            if (link.href === "/resources") {
               return (
                 <div
                   key={link.href}
@@ -95,9 +95,12 @@ export default function Navbar() {
                   onMouseLeave={() => setHoverDoc(false)}
                 >
                   <Link
-                    href={resolveNavHref(link.href, isHome)}
-                    onClick={(e) => handleHashClick(e, link.href)}
-                    className="flex items-center gap-1 text-sm font-medium text-ink-light hover:text-ink transition-colors rounded-md py-1 px-1.5 focus-visible:outline-2 focus-visible:outline-accent"
+                    href="/resources"
+                    className={`flex items-center gap-1 text-sm font-medium transition-colors rounded-md py-1 px-1.5 focus-visible:outline-2 focus-visible:outline-accent ${
+                      pathname.startsWith("/resources")
+                        ? "text-ink"
+                        : "text-ink-light hover:text-ink"
+                    }`}
                   >
                     {link.label}
                     <ChevronDown
@@ -113,7 +116,7 @@ export default function Navbar() {
                         {DOCUMENT_CATEGORIES.map((cat) => (
                           <Link
                             key={cat.id}
-                            href={`/thu-vien-tai-lieu/${cat.id}`}
+                            href={`/resources/${cat.id}`}
                             className="p-3 hover:bg-card rounded-lg transition-colors flex flex-col gap-0.5"
                             onClick={() => setHoverDoc(false)}
                           >
@@ -124,7 +127,7 @@ export default function Navbar() {
                         ))}
                         <div className="h-px bg-border my-1 mx-2" />
                         <Link
-                          href="/thu-vien-tai-lieu"
+                          href="/resources"
                           className="p-3 hover:bg-card rounded-lg transition-colors flex items-center justify-center gap-1 text-sm font-semibold text-accent"
                           onClick={() => setHoverDoc(false)}
                         >
@@ -154,16 +157,6 @@ export default function Navbar() {
               </Link>
             );
           })}
-          <Link
-            href="/blog"
-            className={`text-sm font-medium transition-colors rounded-md py-1 px-1.5 focus-visible:outline-2 focus-visible:outline-accent ${
-              pathname.startsWith("/blog")
-                ? "text-ink"
-                : "text-ink-light hover:text-ink"
-            }`}
-          >
-            Blog
-          </Link>
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-3">

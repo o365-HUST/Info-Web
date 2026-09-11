@@ -27,7 +27,7 @@ export default function DocumentSection() {
             </p>
           </div>
           <Link
-            href="/thu-vien-tai-lieu"
+            href="/resources"
             className="shrink-0 inline-flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-700 transition-colors group"
           >
             Xem toàn bộ thư viện
@@ -39,7 +39,7 @@ export default function DocumentSection() {
           {DOCUMENT_CATEGORIES.map((cat) => (
             <Link
               key={cat.id}
-              href={`/thu-vien-tai-lieu/${cat.id}`}
+              href={`/resources/${cat.id}`}
               className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-200 transition-all group flex flex-col h-full"
             >
               <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white transition-all">
