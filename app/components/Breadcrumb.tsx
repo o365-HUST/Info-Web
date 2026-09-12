@@ -24,7 +24,7 @@ function buildCrumbs(pathname: string): Crumb[] {
   if (pathname.startsWith("/departments/")) {
     const id = pathname.split("/")[2] ?? "";
     const dept = getDepartmentByIdOrSlug(id);
-    crumbs.push({ label: "Cơ cấu ban", href: "/#departments" });
+    crumbs.push({ label: "Cơ cấu ban", href: "/departments" });
     crumbs.push({
       label: dept?.name ?? DEPARTMENTS.find((d) => d.id === id)?.name ?? "Ban",
     });
@@ -33,6 +33,11 @@ function buildCrumbs(pathname: string): Crumb[] {
 
   if (pathname.startsWith("/departments")) {
     crumbs.push({ label: "Cơ cấu ban" });
+    return crumbs;
+  }
+
+  if (pathname.startsWith("/events")) {
+    crumbs.push({ label: "Sự kiện" });
     return crumbs;
   }
 

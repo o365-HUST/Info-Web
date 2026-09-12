@@ -1,9 +1,9 @@
 import Hero from "./components/Hero";
 import AboutUs from "./components/AboutUs";
 import Achievements from "./components/Achievements";
-import Departments from "./components/Departments";
+import DepartmentsTeaser from "./components/DepartmentsTeaser";
+import EventsTeaser from "./components/EventsTeaser";
 import BlogPosts from "./components/BlogPosts";
-import EventsTimeline from "./components/EventsTimeline";
 import DocumentSection from "./components/DocumentSection";
 import Footer from "./components/Footer";
 
@@ -14,10 +14,10 @@ export default function Page() {
         <Hero />
         <AboutUs />
         <Achievements />
-        <Departments />
+        <DepartmentsTeaser />
+        <EventsTeaser />
         <DocumentSection />
         <BlogPosts />
-        <EventsTimeline />
       </main>
       <Footer />
     </>

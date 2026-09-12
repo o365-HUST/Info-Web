@@ -204,7 +204,7 @@ export default function EventsTimeline() {
 
   // Copy share link
   const handleCopyLink = (event: EventItem) => {
-    const url = typeof window !== "undefined" ? `${window.location.origin}/#events` : "";
+    const url = typeof window !== "undefined" ? `${window.location.origin}/events` : "";
     if (navigator.clipboard) {
       navigator.clipboard.writeText(`${event.title} - CLB o365 HUST: ${event.linkUrl || url}`);
       showToast("Đã chép link sự kiện để gửi nhóm lớp! 🚀");

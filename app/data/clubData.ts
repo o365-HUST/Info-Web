@@ -854,8 +854,8 @@ export const EVENTS: EventItem[] = [
 export const NAV_LINKS = [
   { label: "Giới thiệu", href: "#about" },
   { label: "Tài liệu", href: "/resources" },
-  { label: "Cơ cấu ban", href: "#departments" },
-  { label: "Sự kiện", href: "#events" },
+  { label: "Cơ cấu ban", href: "/departments" },
+  { label: "Sự kiện", href: "/events" },
   { label: "Blog", href: "/blog" },
 ] as const;
 

@@ -303,7 +303,7 @@ export default function DepartmentDetailPage({ params }: DepartmentPageProps) {
               <h3 className="text-lg font-bold text-ink">Các Ban Chuyên Trách Khác</h3>
             </div>
             <Link
-              href="/#departments"
+              href="/departments"
               className="text-xs font-semibold text-accent hover:underline flex items-center gap-1"
             >
               <span>Toàn bộ cơ cấu</span>
