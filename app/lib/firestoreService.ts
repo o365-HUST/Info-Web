@@ -513,22 +513,26 @@ export async function getResourcePage(
 export async function saveResourcePage(
   slug: string,
   page: ResourcePageData,
-): Promise<void> {
+): Promise<{ synced: boolean }> {
   const payload: ResourcePageData = {
     ...page,
     updatedAt: new Date().toISOString(),
   };
 
+  let synced = false;
+
   if (isFirebaseConfigured() && db) {
     try {
       await setDoc(doc(db, "resource_pages", slug), payload, { merge: true });
+      synced = true;
     } catch (err) {
       console.error("Firestore saveResourcePage failed:", err);
-      throw err;
     }
   }
 
   saveLocalResourcePage(slug, payload);
+
+  return { synced: !isFirebaseConfigured() || synced };
 }
 
 // ──────────────────────────────────────────

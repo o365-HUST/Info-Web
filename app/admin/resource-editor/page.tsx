@@ -4,8 +4,11 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Reorder } from "motion/react";
+import { onAuthStateChanged, type User } from "firebase/auth";
 import { DOCUMENT_CATEGORIES } from "@/app/data/clubData";
+import { auth, isFirebaseConfigured } from "@/app/lib/firebase";
 import {
+  checkIsAdmin,
   getResourcePage,
   saveResourcePage,
 } from "@/app/lib/firestoreService";
@@ -51,6 +54,7 @@ function ResourceEditorContent() {
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [saveError, setSaveError] = useState("");
+  const [saveWarning, setSaveWarning] = useState("");
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -60,6 +64,31 @@ function ResourceEditorContent() {
   >([]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!isFirebaseConfigured() || !auth) return;
+
+    const unsub = onAuthStateChanged(auth, async (currentUser: User | null) => {
+      if (!currentUser) {
+        setSaveWarning(
+          "Chưa đăng nhập Firebase. Nội dung chỉ lưu cục bộ trên trình duyệt cho đến khi bạn đăng nhập tại /admin.",
+        );
+        return;
+      }
+
+      const isAdmin = await checkIsAdmin(currentUser.uid);
+      if (!isAdmin) {
+        setSaveWarning(
+          `Tài khoản ${currentUser.email ?? currentUser.uid} chưa có quyền quản trị trong Firestore (collection admins).`,
+        );
+        return;
+      }
+
+      setSaveWarning("");
+    });
+
+    return () => unsub();
+  }, []);
 
   useEffect(() => {
     if (!slug || !category) return;
@@ -157,13 +186,23 @@ function ResourceEditorContent() {
 
     setIsSaving(true);
     setSaveError("");
+    setSaveWarning("");
 
     try {
-      await saveResourcePage(slug, {
+      const { synced } = await saveResourcePage(slug, {
         title: title.trim(),
         content: content.trim(),
         attachments,
       });
+
+      if (!synced) {
+        setSaveWarning(
+          "Đã lưu cục bộ nhưng chưa đồng bộ Firestore. Hãy đăng nhập tại /admin bằng tài khoản quản trị viên rồi lưu lại.",
+        );
+        setIsSaving(false);
+        return;
+      }
+
       setSaveSuccess(true);
       setTimeout(() => router.push("/admin"), 700);
     } catch (err) {
@@ -385,6 +424,12 @@ function ResourceEditorContent() {
                 </div>
               )}
             </div>
+
+            {saveWarning && (
+              <p className="text-xs text-amber-700 font-medium rounded-xl border border-amber-200 bg-amber-50 px-3 py-2">
+                {saveWarning}
+              </p>
+            )}
 
             {saveError && (
               <p className="text-xs text-red-600 font-medium">{saveError}</p>
