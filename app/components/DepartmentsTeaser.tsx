@@ -23,7 +23,7 @@ export default function DepartmentsTeaser() {
     <section
       id="departments-teaser"
       ref={ref}
-      className="py-16 sm:py-20 bg-[var(--bg)]"
+      className="py-16 sm:py-20 bg-[var(--surface)]"
     >
       <div className="max-w-[var(--max-width)] mx-auto px-5 sm:px-6">
         <motion.div

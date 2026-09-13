@@ -102,6 +102,13 @@ export default function Hero() {
           },
         }}
       >
+        <motion.p
+          variants={itemMotion}
+          className="font-display text-xs font-semibold tracking-[0.28em] uppercase text-accent mb-3 sm:mb-4"
+        >
+          CLB
+        </motion.p>
+
         <motion.h1
           variants={titleMotion}
           className="font-display font-extrabold tracking-tight leading-[0.95] text-ink mb-6 whitespace-nowrap text-[clamp(2.5rem,8vw,5.75rem)]"

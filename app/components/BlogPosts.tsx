@@ -29,7 +29,7 @@ export default function BlogPosts() {
   );
 
   return (
-    <section id="blog" ref={ref} className="py-20 lg:py-28 bg-[var(--bg)]">
+    <section id="blog" ref={ref} className="py-20 lg:py-28 bg-[var(--surface)]">
       <div className="max-w-[var(--max-width)] mx-auto px-5 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
