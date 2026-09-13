@@ -241,13 +241,11 @@ p, .text-pretty {
 /* ─── Text highlighter (identity phrases) ─── */
 .text-highlight-mark {
   position: absolute;
-  inset-inline: -0.08em;
-  bottom: 0.06em;
+  inset: -0.12em -0.1em;
   z-index: -1;
-  height: 0.38em;
   border-radius: var(--radius-sm);
   pointer-events: none;
-  background-color: color-mix(in oklab, var(--accent) 30%, transparent);
+  background-color: color-mix(in oklab, var(--accent) 28%, transparent);
   transform: scaleX(1);
   transform-origin: left center;
 }

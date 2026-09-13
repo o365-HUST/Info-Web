@@ -131,3 +131,27 @@ export interface MissionItem {
   image: string;
   imageAlt: string;
 }
+
+export type ResourceAttachmentType =
+  | "office"
+  | "pdf"
+  | "image"
+  | "video"
+  | "other";
+
+export interface ResourceAttachment {
+  id: string;
+  name: string;
+  url: string;
+  type: ResourceAttachmentType;
+  size?: number;
+  /** Firebase Storage object path — used for reliable deletes */
+  storagePath?: string;
+}
+
+export interface ResourcePageData {
+  title: string;
+  content: string;
+  attachments: ResourceAttachment[];
+  updatedAt?: string;
+}

@@ -6,55 +6,69 @@ import {
 } from "firebase/storage";
 import { storage, isFirebaseConfigured } from "./firebase";
 
-/**
- * Uploads an image file to Firebase Storage.
- * In demo mode (when Firebase is not configured), it falls back to a base64 Data URL.
- *
- * @param file The file to upload
- * @param folder Subfolder in storage bucket (default: "blog")
- * @param onProgress Callback receiving progress percentage (0 - 100)
- * @returns The public URL of the uploaded image
- */
-export async function uploadMediaAsset(
+const MAX_IMAGE_MB = 10;
+const MAX_ATTACHMENT_MB = 50;
+
+function cleanFileName(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9.-]/g, "");
+}
+
+/** Parse a Firebase Storage download URL back to an object path. */
+export function getStoragePathFromUrl(fileUrlOrPath: string): string | null {
+  if (!fileUrlOrPath) return null;
+  if (!fileUrlOrPath.includes("firebasestorage.googleapis.com")) {
+    return fileUrlOrPath.includes("/") ? fileUrlOrPath : null;
+  }
+
+  try {
+    const match = fileUrlOrPath.match(/\/o\/([^?]+)/);
+    if (!match?.[1]) return null;
+    return decodeURIComponent(match[1]);
+  } catch {
+    return null;
+  }
+}
+
+export function resourceAttachmentStoragePath(
+  slug: string,
+  fileName: string,
+): string {
+  return `resources/${slug}/attachments/${Date.now()}_${cleanFileName(fileName)}`;
+}
+
+export function resourceInlineStoragePath(
+  slug: string,
+  fileName: string,
+): string {
+  return `resources/${slug}/inline/${Date.now()}_${cleanFileName(fileName)}`;
+}
+
+async function uploadFileToPath(
   file: File,
-  folder: string = "blog",
-  onProgress?: (progressPercent: number) => void
-): Promise<string> {
-  // Validate file is an image
-  if (!file.type.startsWith("image/")) {
-    throw new Error("Chỉ hỗ trợ tải lên tệp hình ảnh (PNG, JPG, WEBP, GIF, v.v.).");
-  }
-
-  // Limit size to 10MB
-  const MAX_SIZE_MB = 10;
-  if (file.size > MAX_SIZE_MB * 1024 * 1024) {
-    throw new Error(`Kích thước ảnh không được vượt quá ${MAX_SIZE_MB}MB.`);
-  }
-
-  // Fallback to local Data URL in Demo mode
+  storagePath: string,
+  onProgress?: (progressPercent: number) => void,
+): Promise<{ url: string; storagePath: string }> {
   if (!isFirebaseConfigured() || !storage) {
-    console.info("Storage is not configured or in demo mode. Converting to Data URL fallback.");
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => {
         if (onProgress) onProgress(100);
-        resolve(reader.result as string);
+        resolve({
+          url: reader.result as string,
+          storagePath,
+        });
       };
-      reader.onerror = () => reject(new Error("Không thể đọc tệp hình ảnh."));
+      reader.onerror = () => reject(new Error("Không thể đọc tệp."));
       reader.readAsDataURL(file);
     });
   }
 
-  // Real Firebase Storage upload
-  const cleanFileName = file.name
-    .toLowerCase()
-    .replace(/\s+/g, "-")
-    .replace(/[^a-z0-9.-]/g, "");
-  const filePath = `${folder}/${Date.now()}_${cleanFileName}`;
-  const storageRef = ref(storage, filePath);
-
+  const storageRef = ref(storage, storagePath);
   const uploadTask = uploadBytesResumable(storageRef, file, {
-    contentType: file.type,
+    contentType: file.type || "application/octet-stream",
   });
 
   return new Promise((resolve, reject) => {
@@ -62,50 +76,117 @@ export async function uploadMediaAsset(
       "state_changed",
       (snapshot) => {
         const percent = Math.round(
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
         );
         if (onProgress) onProgress(percent);
       },
       (error) => {
         console.error("Firebase Storage upload error:", error);
-        reject(new Error("Lỗi khi tải ảnh lên Storage: " + (error.message || "Vui lòng thử lại.")));
+        reject(
+          new Error(
+            "Lỗi khi tải file lên Storage: " + (error.message || "Vui lòng thử lại."),
+          ),
+        );
       },
       async () => {
         try {
-          const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
+          const url = await getDownloadURL(uploadTask.snapshot.ref);
           if (onProgress) onProgress(100);
-          resolve(downloadUrl);
-        } catch (err: any) {
-          reject(new Error("Lỗi khi lấy đường dẫn tải ảnh: " + err.message));
+          resolve({ url, storagePath });
+        } catch (err) {
+          const message = err instanceof Error ? err.message : "Unknown error";
+          reject(new Error("Lỗi khi lấy đường dẫn tải file: " + message));
         }
-      }
+      },
     );
   });
 }
 
 /**
- * Safely deletes an asset from Firebase Storage given its public download URL or path.
- * Silently catches errors if the file does not exist.
+ * Uploads an image file to Firebase Storage.
+ * In demo mode (when Firebase is not configured), it falls back to a base64 Data URL.
  */
-export async function deleteMediaAsset(fileUrlOrPath: string): Promise<void> {
+export async function uploadMediaAsset(
+  file: File,
+  folder: string = "blog",
+  onProgress?: (progressPercent: number) => void,
+): Promise<string> {
+  if (!file.type.startsWith("image/")) {
+    throw new Error("Chỉ hỗ trợ tải lên tệp hình ảnh (PNG, JPG, WEBP, GIF, v.v.).");
+  }
+
+  if (file.size > MAX_IMAGE_MB * 1024 * 1024) {
+    throw new Error(`Kích thước ảnh không được vượt quá ${MAX_IMAGE_MB}MB.`);
+  }
+
+  const storagePath = `${folder}/${Date.now()}_${cleanFileName(file.name)}`;
+  const result = await uploadFileToPath(file, storagePath, onProgress);
+  return result.url;
+}
+
+/** Upload a resource page attachment (PDF, Office, video, image, etc.). */
+export async function uploadResourceAttachment(
+  file: File,
+  slug: string,
+  onProgress?: (progressPercent: number) => void,
+): Promise<{ url: string; storagePath: string }> {
+  if (file.size > MAX_ATTACHMENT_MB * 1024 * 1024) {
+    throw new Error(`Kích thước tệp không được vượt quá ${MAX_ATTACHMENT_MB}MB.`);
+  }
+
+  const storagePath = resourceAttachmentStoragePath(slug, file.name);
+  return uploadFileToPath(file, storagePath, onProgress);
+}
+
+/** Upload an inline image for a resource page body (TipTap). */
+export async function uploadResourceInlineImage(
+  file: File,
+  slug: string,
+  onProgress?: (progressPercent: number) => void,
+): Promise<string> {
+  if (!file.type.startsWith("image/")) {
+    throw new Error("Chỉ hỗ trợ tệp hình ảnh.");
+  }
+
+  if (file.size > MAX_IMAGE_MB * 1024 * 1024) {
+    throw new Error(`Kích thước ảnh không được vượt quá ${MAX_IMAGE_MB}MB.`);
+  }
+
+  const storagePath = resourceInlineStoragePath(slug, file.name);
+  const result = await uploadFileToPath(file, storagePath, onProgress);
+  return result.url;
+}
+
+/**
+ * Safely deletes an asset from Firebase Storage given its public download URL or path.
+ */
+export async function deleteMediaAsset(
+  fileUrlOrPath: string,
+  storagePath?: string,
+): Promise<void> {
   if (!isFirebaseConfigured() || !storage || !fileUrlOrPath) return;
 
-  // Only attempt deletion for Firebase Storage assets
+  const resolvedPath =
+    storagePath ?? getStoragePathFromUrl(fileUrlOrPath) ?? fileUrlOrPath;
+
+  const allowedPrefixes = [
+    "blog/",
+    "uploads/",
+    "documents/",
+    "resources/",
+  ];
+
   if (
     !fileUrlOrPath.includes("firebasestorage.googleapis.com") &&
-    !fileUrlOrPath.startsWith("blog/") &&
-    !fileUrlOrPath.startsWith("uploads/")
+    !allowedPrefixes.some((prefix) => resolvedPath.startsWith(prefix))
   ) {
     return;
   }
 
   try {
-    const fileRef = ref(storage, fileUrlOrPath);
-    await deleteObject(fileRef);
-    console.info("Cleaned up storage asset:", fileUrlOrPath);
+    await deleteObject(ref(storage, resolvedPath));
+    console.info("Cleaned up storage asset:", resolvedPath);
   } catch (err) {
-    // If already deleted or not found, silently ignore
     console.warn("Storage deletion warning (file may already be deleted):", err);
   }
 }
-

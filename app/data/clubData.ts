@@ -955,3 +955,5 @@ export const DOCUMENT_CATEGORIES = [
     updated: "2025",
   },
 ] as const;
+
+export const RESOURCE_PAGE_IDS = DOCUMENT_CATEGORIES.map((category) => category.id);

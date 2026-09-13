@@ -14,12 +14,18 @@ import {
 } from "firebase/firestore";
 import { db, isFirebaseConfigured } from "./firebase";
 import { deleteMediaAsset } from "./storageService";
-import type { BlogPost, EventItem, RecruitmentInfo } from "../types";
+import type {
+  BlogPost,
+  EventItem,
+  RecruitmentInfo,
+  ResourcePageData,
+} from "../types";
 import { BLOG_POSTS, EVENTS, RECRUITMENT_INFO } from "../data/clubData";
 
 const LOCAL_POSTS_KEY = "o365_cms_posts";
 const LOCAL_EVENTS_KEY = "o365_cms_events";
 const LOCAL_RECRUITMENT_KEY = "o365_cms_recruitment";
+const LOCAL_RESOURCE_PAGES_KEY = "o365_cms_resource_pages";
 
 export async function checkIsAdmin(uid: string): Promise<boolean> {
   if (!isFirebaseConfigured() || !db) {
@@ -461,6 +467,68 @@ export async function updateRecruitment(info: Partial<RecruitmentInfo>): Promise
   }
 
   saveLocalRecruitment(updated);
+}
+
+// ──────────────────────────────────────────
+// RESOURCE PAGES SERVICE
+// ──────────────────────────────────────────
+
+function getLocalResourcePages(): Record<string, ResourcePageData> {
+  if (typeof window === "undefined") return {};
+  try {
+    const raw = localStorage.getItem(LOCAL_RESOURCE_PAGES_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveLocalResourcePage(slug: string, page: ResourcePageData) {
+  if (typeof window === "undefined") return;
+  const pages = getLocalResourcePages();
+  pages[slug] = page;
+  localStorage.setItem(LOCAL_RESOURCE_PAGES_KEY, JSON.stringify(pages));
+  window.dispatchEvent(
+    new CustomEvent("cms-resource-pages-updated", { detail: { slug, page } }),
+  );
+}
+
+export async function getResourcePage(
+  slug: string,
+): Promise<ResourcePageData | null> {
+  if (isFirebaseConfigured() && db) {
+    try {
+      const snap = await getDoc(doc(db, "resource_pages", slug));
+      if (snap.exists()) {
+        return snap.data() as ResourcePageData;
+      }
+    } catch (err) {
+      console.warn("Firestore getResourcePage failed:", err);
+    }
+  }
+
+  return getLocalResourcePages()[slug] ?? null;
+}
+
+export async function saveResourcePage(
+  slug: string,
+  page: ResourcePageData,
+): Promise<void> {
+  const payload: ResourcePageData = {
+    ...page,
+    updatedAt: new Date().toISOString(),
+  };
+
+  if (isFirebaseConfigured() && db) {
+    try {
+      await setDoc(doc(db, "resource_pages", slug), payload, { merge: true });
+    } catch (err) {
+      console.error("Firestore saveResourcePage failed:", err);
+      throw err;
+    }
+  }
+
+  saveLocalResourcePage(slug, payload);
 }
 
 // ──────────────────────────────────────────

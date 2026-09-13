@@ -96,12 +96,15 @@ interface TipTapEditorProps {
   content: string;
   onChange: (htmlContent: string) => void;
   placeholder?: string;
+  /** Storage folder prefix, e.g. "blog" or "resources/my-slug/inline" */
+  uploadFolder?: string;
 }
 
 export default function TipTapEditor({
   content,
   onChange,
   placeholder = "Bắt đầu soạn thảo nội dung bài viết...",
+  uploadFolder = "blog",
 }: TipTapEditorProps) {
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -218,7 +221,7 @@ export default function TipTapEditor({
     setUploadProgress(0);
 
     try {
-      const downloadUrl = await uploadMediaAsset(file, "blog", (progress) => {
+      const downloadUrl = await uploadMediaAsset(file, uploadFolder, (progress) => {
         setUploadProgress(progress);
       });
 

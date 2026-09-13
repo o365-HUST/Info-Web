@@ -33,7 +33,6 @@ import {
 import type { BlogPost, EventItem, RecruitmentInfo } from "@/app/types";
 import PostEditorModal from "./components/PostEditorModal";
 import EventEditorModal from "./components/EventEditorModal";
-import DocumentEditorModal from "./components/DocumentEditorModal";
 import {
   FileText,
   Calendar,
@@ -82,8 +81,6 @@ export default function AdminPage() {
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
   const [eventModalOpen, setEventModalOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<EventItem | null>(null);
-  const [docModalOpen, setDocModalOpen] = useState(false);
-  const [editingDocSlug, setEditingDocSlug] = useState("");
 
   // Seeding state feedback
   const [isSeeding, setIsSeeding] = useState(false);
@@ -846,7 +843,8 @@ export default function AdminPage() {
               Thư Viện Tài Liệu
             </h3>
             <p className="text-xs text-ink-light mb-6">
-              Bạn có thể chỉnh sửa nội dung, tải lên file đính kèm, ảnh và video cho 4 chuyên mục tài liệu dưới đây. Nhấp vào "Chỉnh sửa nội dung" để mở trình soạn thảo CMS Tiptap.
+              Chỉnh sửa nội dung, tệp đính kèm và xem trước trực tiếp giống trình
+              soạn bài viết. Mỗi chuyên mục mở trong trang editor riêng.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -862,17 +860,22 @@ export default function AdminPage() {
                     {cat.description}
                   </p>
 
-                  <div className="pt-4 border-t border-border/60 flex justify-end">
-                    <button
-                      onClick={() => {
-                        setEditingDocSlug(cat.id);
-                        setDocModalOpen(true);
-                      }}
-                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-accent text-white text-xs font-semibold hover:bg-accent/90 transition-colors shadow-xs cursor-pointer"
+                  <div className="pt-4 border-t border-border/60 flex items-center justify-between gap-2">
+                    <Link
+                      href={`/resources/${cat.id}`}
+                      target="_blank"
+                      className="inline-flex items-center gap-1 px-2.5 py-2 rounded-xl text-xs font-semibold text-ink-muted hover:text-ink hover:bg-surface transition-colors"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      Xem trang
+                    </Link>
+                    <Link
+                      href={`/admin/resource-editor?slug=${cat.id}`}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-accent text-white text-xs font-semibold hover:bg-accent/90 transition-colors shadow-xs"
                     >
                       <Edit2 className="w-3.5 h-3.5" />
-                      <span>Chỉnh sửa nội dung</span>
-                    </button>
+                      <span>Chỉnh sửa trang</span>
+                    </Link>
                   </div>
                 </div>
               ))}
@@ -998,12 +1001,6 @@ export default function AdminPage() {
         event={editingEvent}
         onClose={() => setEventModalOpen(false)}
         onSave={handleSaveEvent}
-      />
-
-      <DocumentEditorModal
-        isOpen={docModalOpen}
-        onClose={() => setDocModalOpen(false)}
-        slug={editingDocSlug}
       />
     </div>
   );

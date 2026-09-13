@@ -132,7 +132,7 @@ export default function AboutUs() {
                 <h4 className="text-lg sm:text-xl font-bold text-ink mb-3 m-0">
                   {role.title}
                 </h4>
-                <figure className="photo-slot image-depth aspect-[4/3] mb-4 m-0">
+                <figure className="photo-slot image-depth aspect-[4/3] mb-4 m-0 overflow-hidden rounded-2xl border border-border shadow-card">
                   <Image
                     src={role.image}
                     alt={role.imageAlt}
