@@ -57,6 +57,7 @@ export const RECRUITMENT_INFO: RecruitmentInfo = {
   formUrl:
     "https://forms.cloud.microsoft/pages/responsepage.aspx?id=n7jxBugHT0a0COwbRXA_MSSvKm1-gMtKoJa8JBvvNn1UMVpTOVQ4OVJEMkpQODZTTUhHWlRXUDRTRy4u&origin=lprLink&route=shorturl",
   callToAction: "Đăng ký ngay",
+  visible: false,
 };
 
 export const STATS: StatItem[] = [
@@ -87,7 +88,7 @@ export const CORE_MISSIONS: MissionItem[] = [
       "Tư vấn và giải quyết các vấn đề liên quan đến tài khoản, mật khẩu sinh viên, cũng như các công cụ trong bộ Microsoft 365.",
     image: PHOTO_ASSETS.missionSupport,
     imageAlt:
-      "Ảnh mẫu: bàn tư vấn tài khoản Microsoft 365 cho sinh viên — thay bằng ảnh thật",
+      "Trạm hỗ trợ sinh viên: tư vấn tài khoản và Microsoft 365",
   },
   {
     title: "Đội kỹ thuật sự kiện",
@@ -95,7 +96,7 @@ export const CORE_MISSIONS: MissionItem[] = [
       "Đảm bảo kỹ thuật suôn sẻ cho các hội thảo, sự kiện lớn do Ban Công tác Sinh viên tổ chức.",
     image: PHOTO_ASSETS.missionEvent,
     imageAlt:
-      "Ảnh mẫu: đội kỹ thuật hậu đài hội trường — thay bằng ảnh thật",
+      "Đội kỹ thuật sự kiện CLB tại hội trường",
   },
   {
     title: "Hỗ trợ đào tạo",
@@ -103,7 +104,7 @@ export const CORE_MISSIONS: MissionItem[] = [
       "Là lực lượng nòng cốt hỗ trợ hầu hết các khóa học Kỹ năng mềm (KNM) cho sinh viên toàn trường.",
     image: PHOTO_ASSETS.missionTraining,
     imageAlt:
-      "Ảnh mẫu: lớp kỹ năng mềm / workshop máy tính — thay bằng ảnh thật",
+      "Hỗ trợ đào tạo kỹ năng mềm và Microsoft 365",
   },
   {
     title: "Kết nối doanh nghiệp",
@@ -111,7 +112,7 @@ export const CORE_MISSIONS: MissionItem[] = [
       "Hỗ trợ các buổi giao lưu, tham quan và kết nối với các doanh nghiệp đối tác của Đại học.",
     image: PHOTO_ASSETS.missionEnterprise,
     imageAlt:
-      "Ảnh mẫu: sinh viên giao lưu, tham quan doanh nghiệp đối tác — thay bằng ảnh thật",
+      "Sinh viên CLB giao lưu, kết nối doanh nghiệp đối tác",
   },
 ];
 
@@ -169,7 +170,7 @@ export const DEPARTMENTS: Department[] = [
     name: "Ban Chủ nhiệm",
     slugs: ["ban-chu-nhiem", "chu-nhiem", "leadership"],
     icon: "Crown",
-    image: "/assets/departments/dept-01-leadership.jpg",
+    image: "/assets/departments/LEADERSHIP/main.jpg",
     color: "#EEF2FF",
     accentColor: "#4F46E5",
     tagline: "Hoạch định phương hướng, điều hành nhiệm kỳ",
@@ -218,16 +219,16 @@ export const DEPARTMENTS: Department[] = [
       "Kỹ năng giải quyết khủng hoảng",
       "Lãnh đạo truyền cảm hứng",
     ],
-    bentoItems: [
+    gallery: [
       {
-        id: "lead-hero",
-        title: "Họp Định Hướng Chiến Lược Toàn CLB",
-        subtitle: "Không gian làm việc & thảo luận kế hoạch hành động Gen 3.0",
-        type: "photo",
-        image: "/assets/departments/dept-01-leadership.jpg",
-        colSpan: "col-span-1 md:col-span-2",
-        badge: "Chiến Lược",
+        src: "/assets/departments/LEADERSHIP/dept-structure.jpg",
+        alt: "Sơ đồ Ban điều hành CLB o365 HUST nhiệm kỳ Gen 2.0",
+        title: "Ban điều hành nhiệm kỳ",
+        caption: "Cơ cấu Chủ nhiệm, Phó chủ nhiệm và Ban điều hành theo từng ban.",
+        fit: "contain",
       },
+    ],
+    bentoItems: [
       {
         id: "lead-stat",
         title: "Quy Mô Kết Nối",
@@ -261,7 +262,7 @@ export const DEPARTMENTS: Department[] = [
     name: "Ban Chuyên môn",
     slugs: ["chuyen-mon", "ban-chuyen-mon", "academic"],
     icon: "BookOpen",
-    image: "/assets/departments/dept-02-academic.jpg",
+    image: "/assets/departments/ACADEMIC/main.JPG",
     color: "#EFF6FF",
     accentColor: "#0078D4",
     tagline: "Biến kiến thức công nghệ thành giá trị thực tiễn",
@@ -334,16 +335,30 @@ export const DEPARTMENTS: Department[] = [
           "Giải Nhì MOS World cấp Đại học 2024–2025; Sinh viên Xuất sắc & Giấy khen Giám đốc ĐHBK Hà Nội; Phó Ban Chuyên môn CLB o365 – HUST.",
       },
     ],
-    bentoItems: [
+    gallery: [
       {
-        id: "academic-hero",
-        title: "Phòng Huấn Luyện Đội Tuyển MOSWC",
-        subtitle: "Rèn luyện kỹ năng thực chiến cùng các cựu đại sứ đạt giải quốc gia",
-        type: "photo",
-        image: "/assets/departments/dept-02-academic.jpg",
-        colSpan: "col-span-1 md:col-span-2",
-        badge: "Học Thuật",
+        src: "/assets/departments/ACADEMIC/carousel-01.jpg",
+        alt: "Ấn phẩm hướng dẫn theo dõi tiến độ sinh hoạt công dân bằng PowerApps",
+        title: "Công cụ PowerApps",
+        caption: "Theo dõi tiến độ sinh hoạt công dân — sản phẩm hướng dẫn của ban.",
+        fit: "contain",
       },
+      {
+        src: "/assets/departments/ACADEMIC/carousel-02.jpg",
+        alt: "Ấn phẩm khóa học kỹ năng mềm Excel, PowerPoint, Word",
+        title: "Khóa học kỹ năng mềm",
+        caption: "Excel, PowerPoint, Word — điểm rèn luyện kỹ năng tin học.",
+        fit: "contain",
+      },
+      {
+        src: "/assets/departments/ACADEMIC/carousel-03.jpg",
+        alt: "Ấn phẩm xây dựng kế hoạch học tập",
+        title: "Kế hoạch học tập",
+        caption: "Tài liệu hướng dẫn sinh viên lập kế hoạch học tập từng kỳ.",
+        fit: "contain",
+      },
+    ],
+    bentoItems: [
       {
         id: "academic-quote",
         title: "Phương Châm Tri Thức",
@@ -377,7 +392,7 @@ export const DEPARTMENTS: Department[] = [
     name: "Ban Truyền thông",
     slugs: ["truyen-thong", "ban-truyen-thong", "media"],
     icon: "Megaphone",
-    image: "/assets/departments/dept-03-media.jpg",
+    image: "/assets/departments/MEDIA/main.JPG",
     color: "#FFFBEB",
     accentColor: "#F59E0B",
     tagline: "Gam màu vàng – lan tỏa bằng sáng tạo chân phương",
@@ -431,17 +446,30 @@ export const DEPARTMENTS: Department[] = [
       "Quản trị Fanpage & phân tích dữ liệu mạng xã hội",
       "Tư duy thẩm mỹ và xây dựng câu chuyện thị giác",
     ],
-    bentoItems: [
+    gallery: [
       {
-        id: "media-hero",
-        title: "Không Gian Sáng Tạo & Thiết Kế Ấn Phẩm",
-        subtitle:
-          "Nơi ra đời những bộ nhận diện sự kiện mang đậm dấu ấn sinh viên số Bách Khoa",
-        type: "photo",
-        image: "/assets/departments/dept-03-media.jpg",
-        colSpan: "col-span-1 md:col-span-2",
-        badge: "Truyền Thông",
+        src: "/assets/departments/MEDIA/carousel-01.jpg",
+        alt: "Key visual tuyển quân Recruitment 3.0",
+        title: "Tuyển quân 3.0",
+        caption: "Key visual chiến dịch tuyển thành viên thế hệ mới.",
+        fit: "contain",
       },
+      {
+        src: "/assets/departments/MEDIA/carousel-02.jpg",
+        alt: "Photobooth tốt nghiệp 2026 của Ban Truyền thông",
+        title: "Graduate 2026",
+        caption: "Photobooth lễ tốt nghiệp — #ĐHBKHN Một tình yêu. Một tương lai.",
+        fit: "contain",
+      },
+      {
+        src: "/assets/departments/MEDIA/carousel-03.jpg",
+        alt: "Ấn phẩm One Love One Future cùng sinh viên áo trẻ",
+        title: "One Love One Future",
+        caption: "Ấn phẩm 70 năm HUST — nắng Bách khoa hong vàng màu áo trẻ.",
+        fit: "contain",
+      },
+    ],
+    bentoItems: [
       {
         id: "media-quote",
         title: "DNA Truyền Thông",
@@ -523,16 +551,30 @@ export const DEPARTMENTS: Department[] = [
       "Tinh thần trách nhiệm và chủ động",
       "Điều phối nhân sự & hậu cần",
     ],
-    bentoItems: [
+    gallery: [
       {
-        id: "event-hero",
-        title: "Hội Trường — Nơi Bùng Nổ Cảm Xúc Sự Kiện",
-        subtitle: "Không khí sôi động khi hàng trăm sinh viên Bách Khoa tham gia chương trình",
-        type: "photo",
-        image: "/assets/departments/dept-04-events.jpg",
-        colSpan: "col-span-1 md:col-span-2",
-        badge: "Sự Kiện",
+        src: "/assets/departments/EVENTS/carousel-01.jpg",
+        alt: "Thành viên Ban Sự kiện chuẩn bị áo HUST cho chương trình",
+        title: "Hậu cần sự kiện",
+        caption: "Chuẩn bị áo, vật dụng và nhân sự trước giờ diễn ra chương trình.",
+        fit: "cover",
       },
+      {
+        src: "/assets/departments/EVENTS/carousel-02.jpg",
+        alt: "Khán phòng workshop của CLB o365 HUST",
+        title: "Workshop tại giảng đường",
+        caption: "Một buổi tập huấn — hàng ghế đầy sinh viên Bách khoa.",
+        fit: "cover",
+      },
+      {
+        src: "/assets/departments/EVENTS/carousel-03.jpg",
+        alt: "Trạm hỗ trợ tân sinh viên K70 dưới lều sọc đỏ trắng",
+        title: "Chào tân sinh viên K70",
+        caption: "Hiện trường hỗ trợ giấy tờ và tư vấn dưới lều sự kiện.",
+        fit: "cover",
+      },
+    ],
+    bentoItems: [
       {
         id: "event-quote",
         title: "Tinh Thần Sự Kiện",
@@ -557,7 +599,7 @@ export const DEPARTMENTS: Department[] = [
     name: "Ban Tài chính",
     slugs: ["tai-chinh-nhan-su", "ban-tai-chinh-nhan-su", "ban-nhan-su", "ban-tai-chinh", "hr"],
     icon: "Heart",
-    image: "/assets/departments/dept-05-hr.jpg",
+    image: "/assets/departments/HR/main.JPG",
     color: "#ECFDF5",
     accentColor: "#10B981",
     tagline: "Thầm lặng, chỉn chu — hậu cần & tài chính",
@@ -598,16 +640,16 @@ export const DEPARTMENTS: Department[] = [
       "Tổ chức văn hóa doanh nghiệp / tổ chức sinh viên",
       "Tự động hóa quản lý dữ liệu nhân sự bằng Excel & Forms",
     ],
-    bentoItems: [
+    gallery: [
       {
-        id: "hr-hero",
-        title: "Gia Đình o365 — Nơi Hội Tụ Tình Đồng Đội",
-        subtitle: "Những buổi bonding ấm cúng sau chuỗi ngày cày deadline bài tập lớn và dự án",
-        type: "photo",
-        image: "/assets/departments/dept-05-hr.jpg",
-        colSpan: "col-span-1 md:col-span-2",
-        badge: "Tài chính",
+        src: "/assets/departments/dept-05-hr.jpg",
+        alt: "Ban Tài chính tạo dáng cùng bảng hiệu Ban Tài chính — Nhân sự",
+        title: "Ban Tài chính — Nhân sự",
+        caption: "Đội ngũ thầm lặng cân đối ngân sách và ghi nhận từng thành viên.",
+        fit: "cover",
       },
+    ],
+    bentoItems: [
       {
         id: "hr-quote",
         title: "Triết Lý Ban",
@@ -868,13 +910,48 @@ export const NAV_LINKS = [
   { label: "Giới thiệu", href: "#about" },
   { label: "Tài liệu", href: "/resources" },
   { label: "Cơ cấu ban", href: "/departments" },
-  { label: "Sự kiện", href: "/events" },
   { label: "Blog", href: "/blog" },
 ] as const;
 
 export const DOCUMENT_CATEGORIES = [
-  { id: "huong-dan-tai-office-365", title: "Hướng dẫn tải Office 365", description: "Cài đặt và kích hoạt bộ công cụ Office 365 bản quyền sinh viên ĐHBK", icon: "DownloadCloud" },
-  { id: "huong-dan-su-dung-microsoft-teams", title: "Hướng dẫn sử dụng Microsoft Teams", description: "Sử dụng Teams trong học tập và làm việc nhóm hiệu quả", icon: "MessageSquare" },
-  { id: "xay-dung-ke-hoach-hoc-tap", title: "Xây dựng kế hoạch học tập", description: "Phương pháp và biểu mẫu quản lý thời gian, học tập khoa học", icon: "CalendarDays" },
-  { id: "khoa-hoc-ky-nang-tin-hoc-van-phong", title: "Khóa học kỹ năng tin học văn phòng", description: "Tài liệu đào tạo MOS Word, Excel, PowerPoint", icon: "BookOpen" },
+  {
+    id: "huong-dan-tai-office-365",
+    title: "Hướng dẫn tải Office 365",
+    description: "Cài đặt và kích hoạt bộ công cụ Office 365 bản quyền sinh viên ĐHBK",
+    icon: "DownloadCloud",
+    tag: "Microsoft 365",
+    format: "Hướng dẫn",
+    topics: ["Cài đặt", "Kích hoạt", "Tài khoản sinh viên"],
+    updated: "2025",
+  },
+  {
+    id: "huong-dan-su-dung-microsoft-teams",
+    title: "Hướng dẫn sử dụng Microsoft Teams",
+    description: "Sử dụng Teams trong học tập và làm việc nhóm hiệu quả",
+    icon: "MessageSquare",
+    tag: "Microsoft 365",
+    format: "Hướng dẫn",
+    topics: ["Teams", "Lớp học trực tuyến", "Làm việc nhóm"],
+    updated: "2025",
+  },
+  {
+    id: "xay-dung-ke-hoach-hoc-tap",
+    title: "Xây dựng kế hoạch học tập",
+    description: "Phương pháp và biểu mẫu quản lý thời gian, học tập khoa học",
+    icon: "CalendarDays",
+    tag: "Kỹ năng học tập",
+    format: "Biểu mẫu",
+    topics: ["Quản lý thời gian", "Kế hoạch kỳ", "Excel & Forms"],
+    updated: "2024",
+  },
+  {
+    id: "khoa-hoc-ky-nang-tin-hoc-van-phong",
+    title: "Khóa học kỹ năng tin học văn phòng",
+    description: "Tài liệu đào tạo MOS Word, Excel, PowerPoint",
+    icon: "BookOpen",
+    tag: "MOS / Tin học VP",
+    format: "Khóa học",
+    topics: ["Word", "Excel", "PowerPoint", "MOSWC"],
+    updated: "2025",
+  },
 ] as const;

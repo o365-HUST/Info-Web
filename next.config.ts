@@ -13,6 +13,11 @@ const nextConfig: NextConfig = {
         destination: "/resources/:slug",
         permanent: true,
       },
+      {
+        source: "/events",
+        destination: "/",
+        permanent: false,
+      },
     ];
   },
   images: {

@@ -893,6 +893,26 @@ export default function AdminPage() {
             </p>
 
             <form onSubmit={handleSaveRecruitment} className="space-y-4 text-sm">
+              <label className="flex items-start gap-3 p-3.5 rounded-xl border border-border bg-card/40 cursor-pointer hover:bg-card transition-colors">
+                <input
+                  type="checkbox"
+                  checked={recruitment.visible}
+                  onChange={(e) =>
+                    setRecruitment({ ...recruitment, visible: e.target.checked })
+                  }
+                  className="mt-0.5 w-4 h-4 rounded text-accent focus:ring-accent cursor-pointer"
+                />
+                <span>
+                  <span className="block text-sm font-semibold text-ink">
+                    Hiển thị tuyển thành viên
+                  </span>
+                  <span className="block text-xs text-ink-light mt-1">
+                    Bật để hiện nút trên navbar, hero và mục tuyển quân ở từng
+                    trang ban.
+                  </span>
+                </span>
+              </label>
+
               <div>
                 <label className="block text-xs font-semibold text-ink uppercase tracking-wider mb-1.5">
                   Tên Chiến Dịch Tuyển Quân

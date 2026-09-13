@@ -3,7 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronRight } from "lucide-react";
-import { DEPARTMENTS, getDepartmentByIdOrSlug } from "@/app/data/clubData";
+import {
+  DEPARTMENTS,
+  DOCUMENT_CATEGORIES,
+  getDepartmentByIdOrSlug,
+} from "@/app/data/clubData";
 
 type Crumb = { label: string; href?: string };
 
@@ -41,8 +45,18 @@ function buildCrumbs(pathname: string): Crumb[] {
     return crumbs;
   }
 
+  if (pathname.startsWith("/resources/")) {
+    const slug = pathname.split("/")[2] ?? "";
+    const category = DOCUMENT_CATEGORIES.find((c) => c.id === slug);
+    crumbs.push({ label: "Thư viện tài liệu", href: "/resources" });
+    if (category) {
+      crumbs.push({ label: category.title });
+    }
+    return crumbs;
+  }
+
   if (pathname.startsWith("/resources")) {
-    crumbs.push({ label: "Tài liệu" });
+    crumbs.push({ label: "Thư viện tài liệu" });
     return crumbs;
   }
 

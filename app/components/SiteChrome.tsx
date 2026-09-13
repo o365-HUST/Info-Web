@@ -16,9 +16,15 @@ export default function SiteChrome({ children }: { children: React.ReactNode }) 
 
   return (
     <>
-      <div className="fixed top-0 inset-x-0 z-50">
-        <Navbar />
-        {showBreadcrumb ? <Breadcrumb /> : null}
+      <div className="fixed top-0 inset-x-0 z-50 isolate">
+        <div className="relative z-20">
+          <Navbar />
+        </div>
+        {showBreadcrumb ? (
+          <div className="relative z-10">
+            <Breadcrumb />
+          </div>
+        ) : null}
       </div>
       {!isHome && (
         <div

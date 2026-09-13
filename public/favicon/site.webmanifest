@@ -1,0 +1,19 @@
+{
+  "name": "CLB o365 - HUST",
+  "short_name": "o365 HUST",
+  "icons": [
+    {
+      "src": "/favicon/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#1a6ae8",
+  "background_color": "#f4f6f9",
+  "display": "standalone"
+}

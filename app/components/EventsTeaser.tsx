@@ -1,62 +1,28 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import Image from "next/image";
 import { motion } from "motion/react";
-import { ArrowRight, Pause, Play } from "lucide-react";
+import { Pause, Play } from "lucide-react";
 import SimpleMarquee from "@/app/components/fancy/SimpleMarquee";
 
-const SHOWCASE_IMAGES = [
-  {
-    src: "/assets/hero/hero-allclub.jpg",
-    alt: "Cộng đồng CLB o365 HUST",
-  },
-  {
-    src: "/assets/about/about-event.jpg",
-    alt: "Kỹ thuật sự kiện CLB o365",
-  },
-  {
-    src: "/assets/departments/sukien-01.JPG",
-    alt: "Hoạt động ban sự kiện o365",
-  },
-  {
-    src: "/assets/about/about-support.jpg",
-    alt: "Trạm hỗ trợ Office 365",
-  },
-  {
-    src: "/assets/departments/department-all.jpg",
-    alt: "Các ban chuyên môn CLB",
-  },
-  {
-    src: "/assets/achievements/advisors-moswc.webp",
-    alt: "Cố vấn MOSWC của CLB",
-  },
-] as const;
+const SHOWCASE_IMAGES = Array.from({ length: 20 }, (_, i) => {
+  const n = String(i + 1).padStart(2, "0");
+  return {
+    src: `/assets/marquee/marquee-${n}.jpg`,
+    alt: `Khoảnh khắc CLB o365 HUST ${n}`,
+  };
+});
 
-const firstRow = [
-  SHOWCASE_IMAGES[0],
-  SHOWCASE_IMAGES[1],
-  SHOWCASE_IMAGES[2],
-  SHOWCASE_IMAGES[3],
-];
-const secondRow = [
-  SHOWCASE_IMAGES[2],
-  SHOWCASE_IMAGES[3],
-  SHOWCASE_IMAGES[4],
-  SHOWCASE_IMAGES[5],
-];
-const thirdRow = [
-  SHOWCASE_IMAGES[4],
-  SHOWCASE_IMAGES[5],
-  SHOWCASE_IMAGES[0],
-  SHOWCASE_IMAGES[1],
-];
+const third = Math.floor(SHOWCASE_IMAGES.length / 3);
+const firstRow = SHOWCASE_IMAGES.slice(0, third);
+const secondRow = SHOWCASE_IMAGES.slice(third, third * 2);
+const thirdRow = SHOWCASE_IMAGES.slice(third * 2);
 
 const MARQUEE_SHARED = {
   className: "w-full",
   baseVelocity: 8,
-  repeat: 4,
+  repeat: 3,
   draggable: false,
   scrollSpringConfig: { damping: 50, stiffness: 400 },
   slowDownFactor: 0.1,
@@ -87,7 +53,7 @@ function ShowcaseFrame({
       alt={alt}
       width={192}
       height={128}
-      loading="eager"
+      loading="lazy"
       className="h-20 w-32 sm:h-24 sm:w-40 md:h-32 md:w-48 object-cover rounded-lg outline outline-1 outline-[var(--image-outline)] outline-offset-[-1px]"
       unoptimized={src.endsWith(".JPG") || src.endsWith(".jpg")}
     />
@@ -128,17 +94,10 @@ export default function EventsTeaser() {
             >
               Sự kiện nổi bật
             </h2>
-            <p className="text-sm sm:text-base text-ink-light leading-relaxed text-pretty mb-5">
+            <p className="text-sm sm:text-base text-ink-light leading-relaxed text-pretty">
               Workshop, MOSWC, trạm hỗ trợ và những chương trình đã đi cùng hành
               trình Đại sứ số học đường.
             </p>
-            <Link
-              href="/events"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-[15px] font-semibold text-accent-fg bg-accent hover:bg-accent-hover active:scale-[0.96] transition-[background-color,scale] duration-150 focus-visible:outline-2 focus-visible:outline-accent shadow-card"
-            >
-              <span>Xem lịch sự kiện</span>
-              <ArrowRight className="w-4 h-4" aria-hidden="true" />
-            </Link>
           </motion.div>
 
           {motionOk && (

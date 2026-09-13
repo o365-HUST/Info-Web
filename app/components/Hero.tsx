@@ -4,10 +4,10 @@ import Image from "next/image";
 import { motion, useReducedMotion } from "motion/react";
 import { ArrowRight } from "lucide-react";
 import {
-  RECRUITMENT_INFO,
   HERO_TAGLINE,
   HERO_ROLE_LINE,
 } from "@/app/data/clubData";
+import { useRecruitment } from "@/app/hooks/useRecruitment";
 import { PHOTO_ASSETS } from "@/app/data/photoAssets";
 import HighlightedText from "@/app/components/HighlightedText";
 
@@ -68,6 +68,7 @@ function RoleHeading() {
 
 export default function Hero() {
   const reduceMotion = useReducedMotion();
+  const recruitment = useRecruitment();
   const instant = reduceMotion === true;
   const titleMotion = titleVariants(instant);
   const itemMotion = itemVariants(instant);
@@ -124,8 +125,9 @@ export default function Hero() {
           variants={itemMotion}
           className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3"
         >
+          {recruitment.visible && (
           <a
-            href={RECRUITMENT_INFO.formUrl}
+            href={recruitment.formUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="group inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg text-[15px] font-semibold text-accent-fg bg-accent hover:bg-accent-hover active:scale-[0.96] transition-[background-color,scale] duration-150 focus-visible:outline-2 focus-visible:outline-accent shadow-card"
@@ -137,6 +139,7 @@ export default function Hero() {
               aria-hidden="true"
             />
           </a>
+          )}
           <a
             href="#about"
             onClick={(e) => {

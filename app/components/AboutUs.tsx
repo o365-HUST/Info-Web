@@ -82,7 +82,7 @@ export default function AboutUs() {
             <figure className="photo-slot image-depth aspect-[4/5] sm:aspect-[3/4]">
               <Image
                 src={PHOTO_ASSETS.aboutSupport}
-                alt="Không gian hỗ trợ sinh viên Office 365 (ảnh mẫu — thay bằng ảnh thật)"
+                alt="Trạm hỗ trợ sinh viên Office 365 tại HUST"
                 fill
                 sizes="(max-width: 1024px) 45vw, 280px"
                 className="object-cover"
@@ -95,7 +95,7 @@ export default function AboutUs() {
             <figure className="photo-slot image-depth aspect-[4/5] sm:aspect-[3/4] mt-4 sm:mt-6">
               <Image
                 src={PHOTO_ASSETS.aboutEvent}
-                alt="Kỹ thuật sự kiện và hoạt động CLB (ảnh mẫu — thay bằng ảnh thật)"
+                alt="Đội ngũ kỹ thuật sự kiện CLB o365 tại hội trường"
                 fill
                 sizes="(max-width: 1024px) 45vw, 280px"
                 className="object-cover"
@@ -146,24 +146,6 @@ export default function AboutUs() {
                   {role.detail}
                 </p>
               </motion.li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="mb-16 sm:mb-20">
-          <h3 className="font-display text-xl sm:text-2xl font-bold text-ink tracking-tight mb-6">
-            Mục tiêu phát triển
-          </h3>
-          <ul className="m-0 p-0 list-none space-y-4 max-w-3xl">
-            {DEVELOPMENT_GOALS.map((goal, i) => (
-              <li
-                key={goal}
-                className="flex gap-4 text-base sm:text-lg text-ink-light leading-relaxed border-l-2 border-accent/40 pl-4"              >
-                <span className="text-accent font-semibold shrink-0 tabular-nums">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <span>{goal}</span>
-              </li>
             ))}
           </ul>
         </div>

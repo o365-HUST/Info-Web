@@ -11,13 +11,13 @@ export const PHOTO_ASSETS = {
   /** About: event tech / C2 / workshop */
   aboutEvent: "/assets/about/about-event.jpg",
   /** Core missions: student account / M365 support desk */
-  missionSupport: "/assets/about/mission-support.jpg",
+  missionSupport: "/assets/core-missions/hotrosinhvien-02.jpg",
   /** Core missions: auditorium / event tech crew */
-  missionEvent: "/assets/about/mission-event.jpg",
+  missionEvent: "/assets/core-missions/kythuatsukien-01.jpg",
   /** Core missions: classroom workshop / KNM training */
-  missionTraining: "/assets/about/mission-training.jpg",
+  missionTraining: "/assets/core-missions/hotrodaotao-03.jpg",
   /** Core missions: company visit / industry networking */
-  missionEnterprise: "/assets/about/mission-enterprise.jpg",
+  missionEnterprise: "/assets/core-missions/ketnoidoanhnghiep-04.jpg",
   /** Achievements: MOSWC advisors banner collage */
   advisorsBanner: "/assets/achievements/advisors-moswc.webp",
 } as const;

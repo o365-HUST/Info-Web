@@ -22,6 +22,8 @@ export interface RecruitmentInfo {
   deadlineDisplay: string;
   formUrl: string;
   callToAction: string;
+  /** Show recruitment CTAs on navbar, hero, and department pages */
+  visible: boolean;
 }
 
 export interface DepartmentBentoItem {
@@ -38,6 +40,14 @@ export interface DepartmentBentoItem {
   skills?: string[];
   statValue?: string;
   statLabel?: string;
+}
+
+export interface DepartmentGallerySlide {
+  src: string;
+  alt: string;
+  title: string;
+  caption?: string;
+  fit?: "cover" | "contain";
 }
 
 export interface Department {
@@ -60,6 +70,8 @@ export interface Department {
   skillsLearned?: string[];
   /** Thành tích / dấu ấn thành viên tiêu biểu */
   memberHighlights?: Array<{ name: string; detail: string }>;
+  /** Activity photos for the Điểm nhấn gallery (not the hero team shot) */
+  gallery?: DepartmentGallerySlide[];
   bentoItems?: DepartmentBentoItem[];
 }
 

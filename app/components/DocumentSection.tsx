@@ -17,10 +17,9 @@ export default function DocumentSection() {
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-100/80 text-blue-700 text-sm font-semibold mb-4 border border-blue-200">
               <Folder className="w-4 h-4" />
-              <span>Thư viện tài liệu</span>
             </div>
             <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight mb-4">
-              Nền tảng kiến thức số Bách Khoa
+              Thư viện tài liệu
             </h2>
             <p className="text-lg text-slate-600">
               Tổng hợp các hướng dẫn cài đặt, tài liệu ôn thi MOS và cẩm nang kỹ năng phần mềm độc quyền từ CLB o365 - HUST.

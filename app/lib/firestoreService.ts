@@ -89,7 +89,7 @@ function getLocalRecruitment(): RecruitmentInfo {
   if (typeof window === "undefined") return RECRUITMENT_INFO;
   try {
     const raw = localStorage.getItem(LOCAL_RECRUITMENT_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw) return normalizeRecruitment(JSON.parse(raw));
     localStorage.setItem(LOCAL_RECRUITMENT_KEY, JSON.stringify(RECRUITMENT_INFO));
     return RECRUITMENT_INFO;
   } catch {
@@ -424,12 +424,22 @@ export async function incrementEventReaction(
 // RECRUITMENT & SETTINGS SERVICE
 // ──────────────────────────────────────────
 
+export function normalizeRecruitment(
+  data: Partial<RecruitmentInfo> | undefined,
+): RecruitmentInfo {
+  return {
+    ...RECRUITMENT_INFO,
+    ...(data ?? {}),
+    visible: data?.visible ?? false,
+  };
+}
+
 export async function getRecruitment(): Promise<RecruitmentInfo> {
   if (isFirebaseConfigured() && db) {
     try {
       const snap = await getDoc(doc(db, "settings", "recruitment"));
       if (snap.exists()) {
-        return snap.data() as RecruitmentInfo;
+        return normalizeRecruitment(snap.data() as Partial<RecruitmentInfo>);
       }
     } catch (err) {
       console.warn("Firestore getRecruitment failed:", err);
@@ -439,17 +449,17 @@ export async function getRecruitment(): Promise<RecruitmentInfo> {
 }
 
 export async function updateRecruitment(info: Partial<RecruitmentInfo>): Promise<void> {
+  const current = getLocalRecruitment();
+  const updated = normalizeRecruitment({ ...current, ...info });
+
   if (isFirebaseConfigured() && db) {
     try {
-      await setDoc(doc(db, "settings", "recruitment"), info, { merge: true });
-      return;
+      await setDoc(doc(db, "settings", "recruitment"), updated, { merge: true });
     } catch (err) {
       console.error("Firestore updateRecruitment failed:", err);
     }
   }
 
-  const current = getLocalRecruitment();
-  const updated = { ...current, ...info };
   saveLocalRecruitment(updated);
 }
 

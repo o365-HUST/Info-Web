@@ -6,9 +6,9 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   NAV_LINKS,
-  RECRUITMENT_INFO,
   DOCUMENT_CATEGORIES,
 } from "@/app/data/clubData";
+import { useRecruitment } from "@/app/hooks/useRecruitment";
 import { Menu, X, ArrowRight, ChevronDown } from "lucide-react";
 import ThemeToggle from "@/app/components/ThemeToggle";
 
@@ -21,6 +21,7 @@ function resolveNavHref(href: string, isHome: boolean) {
 
 export default function Navbar() {
   const pathname = usePathname();
+  const recruitment = useRecruitment();
   const isHome = pathname === "/";
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -111,7 +112,7 @@ export default function Navbar() {
                   </Link>
 
                   {hoverDoc && (
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-0 w-[320px] bg-surface rounded-xl shadow-lg border border-border p-2 z-50">
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-0 w-[320px] bg-surface rounded-xl shadow-lg border border-border p-2 z-[100]">
                       <div className="flex flex-col">
                         {DOCUMENT_CATEGORIES.map((cat) => (
                           <Link
@@ -164,8 +165,9 @@ export default function Navbar() {
             <ThemeToggle />
           </div>
 
+          {recruitment.visible && (
           <a
-            href={RECRUITMENT_INFO.formUrl}
+            href={recruitment.formUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-2 rounded-lg text-sm font-semibold text-accent-fg bg-accent hover:bg-accent-hover transition-all shadow-card hover:shadow-md active:scale-[0.96] cursor-pointer focus-visible:outline-2 focus-visible:outline-accent"
@@ -175,6 +177,7 @@ export default function Navbar() {
             <span className="sm:hidden">Tham gia</span>
             <ArrowRight className="w-4 h-4" />
           </a>
+          )}
 
           <div className="lg:hidden">
             <ThemeToggle />

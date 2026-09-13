@@ -31,6 +31,23 @@ export const metadata: Metadata = {
       "Câu lạc bộ Đại sứ số học đường ĐHBK Hà Nội. Kết nối đam mê công nghệ, bồi dưỡng kỹ năng tin học văn phòng chuẩn quốc tế.",
     images: ["/logo-transparent.png"],
   },
+  icons: {
+    icon: [
+      { url: "/favicon/favicon.ico" },
+      {
+        url: "/favicon/favicon-16x16.png",
+        sizes: "16x16",
+        type: "image/png",
+      },
+      {
+        url: "/favicon/favicon-32x32.png",
+        sizes: "32x32",
+        type: "image/png",
+      },
+    ],
+    apple: "/favicon/apple-touch-icon.png",
+  },
+  manifest: "/favicon/site.webmanifest",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

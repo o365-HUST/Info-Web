@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "motion/react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
+import { PHOTO_ASSETS } from "@/app/data/photoAssets";
 
 export interface GallerySlide {
   src: string;
@@ -20,14 +21,14 @@ export const GALLERY_SLIDES: GallerySlide[] = [
     badge: "01 • Campus & cộng đồng",
   },
   {
-    src: "/assets/about/about-support.svg",
-    alt: "Trạm hỗ trợ Office 365 (ảnh sẽ cập nhật)",
+    src: PHOTO_ASSETS.aboutSupport,
+    alt: "Trạm hỗ trợ sinh viên Office 365 tại HUST",
     title: "Trạm hỗ trợ sinh viên",
     badge: "02 • Microsoft 365",
   },
   {
-    src: "/assets/about/about-event.svg",
-    alt: "Kỹ thuật sự kiện CLB (ảnh sẽ cập nhật)",
+    src: PHOTO_ASSETS.aboutEvent,
+    alt: "Đội ngũ kỹ thuật sự kiện CLB o365 tại hội trường",
     title: "Sự kiện & kỹ thuật",
     badge: "03 • Hội trường & workshop",
   },

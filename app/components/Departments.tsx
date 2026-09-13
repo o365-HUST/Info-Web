@@ -1,12 +1,10 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { motion, AnimatePresence, useMotionValue } from "motion/react";
+import { motion, useMotionValue } from "motion/react";
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { DEPARTMENTS } from "@/app/data/clubData";
-import type { Department } from "@/app/types";
-import { ArrowRight, ExternalLink, X } from "lucide-react";
 
 /** Ban Chủ nhiệm sits in the middle of the operating bans. */
 const OPERATING_DEPARTMENTS = DEPARTMENTS.filter((d) => d.id !== "ban-chu-nhiem");
@@ -21,6 +19,7 @@ const CAROUSEL_DEPARTMENTS = LEADERSHIP_DEPT
   : OPERATING_DEPARTMENTS;
 
 export default function Departments() {
+  const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
   const [constraints, setConstraints] = useState<{ left: number; right: number }>({
     left: -800,
@@ -28,10 +27,18 @@ export default function Departments() {
   });
   const x = useMotionValue(0);
 
-  const [previewDept, setPreviewDept] = useState<Department | null>(null);
-
-  /** True only after a real pan — blocks click-to-preview. */
+  /** True only after a real pan — blocks navigation to the department page. */
   const didDragRef = useRef(false);
+  const pressRef = useRef<{ x: number; y: number; id: string | null } | null>(
+    null,
+  );
+
+  const DRAG_THRESHOLD_PX = 12;
+
+  const tryOpenDepartment = (id: string | null | undefined) => {
+    if (!id || didDragRef.current) return;
+    router.push(`/departments/${id}`);
+  };
 
   const [canDrag, setCanDrag] = useState(true);
 
@@ -88,58 +95,30 @@ export default function Departments() {
     };
   }, [x]);
 
-  const handleCardActivate = (dept: Department) => {
-    if (didDragRef.current) return;
-    setPreviewDept(dept);
-  };
-
-  // Close modal on Escape key
-  useEffect(() => {
-    if (!previewDept) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setPreviewDept(null);
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [previewDept]);
-
   return (
     <section
       id="departments"
       className="relative py-16 sm:py-24 overflow-hidden select-none"
       style={{ background: "var(--bg)" }}
     >
-      {/* Subtle background dot pattern */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-[0.03]"
-        style={{
-          backgroundImage:
-            "radial-gradient(var(--ink) 0.75px, transparent 0.75px)",
-          backgroundSize: "20px 20px",
-        }}
-      />
-
       <div className="relative max-w-[var(--max-width)] mx-auto px-5 sm:px-6">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 border-b border-border/70">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 border-b border-border">
           <div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-ink tracking-tight">
               Bộ Máy Hoạt Động o365
             </h2>
             <p className="mt-1 text-xs sm:text-sm text-ink-light max-w-xl text-pretty">
-              Khám phá {CAROUSEL_DEPARTMENTS.length} ban chuyên trách kiến tạo sân chơi công nghệ và kỹ năng số cho sinh viên Bách Khoa. Bấm vào từng ban để xem nhanh hoặc mở trang chi tiết.
+              {CAROUSEL_DEPARTMENTS.length} ban chuyên trách kiến tạo sân chơi
+              công nghệ và kỹ năng số cho sinh viên Bách Khoa.
             </p>
           </div>
-
         </div>
       </div>
 
-      {/* Free-Dragging Carousel Track with Cinematic Edge Fades */}
       <div
         ref={containerRef}
         className="relative w-full overflow-hidden mt-5 sm:mt-6 py-5 sm:py-6"
       >
-        {/* Edge fades only while the track overflows (drag mode) */}
         {canDrag && (
           <>
             <div
@@ -161,27 +140,51 @@ export default function Departments() {
           </>
         )}
 
-        {/* Draggable track — initially centered on Ban Chủ nhiệm */}
         <motion.div
           drag={canDrag ? "x" : false}
           dragConstraints={constraints}
           dragElastic={canDrag ? 0.12 : 0}
           dragMomentum={canDrag}
-          onPointerDown={() => {
+          onPointerDown={(event) => {
             didDragRef.current = false;
+            const card = (event.target as HTMLElement).closest("[data-dept-id]");
+            const id = card?.getAttribute("data-dept-id") ?? null;
+            pressRef.current = {
+              x: event.clientX,
+              y: event.clientY,
+              id,
+            };
+          }}
+          onPointerUp={(event) => {
+            if (event.button !== 0) return;
+            const press = pressRef.current;
+            pressRef.current = null;
+            if (!press?.id || didDragRef.current) return;
+
+            const moved = Math.hypot(
+              event.clientX - press.x,
+              event.clientY - press.y,
+            );
+            if (moved > DRAG_THRESHOLD_PX) return;
+
+            tryOpenDepartment(press.id);
+          }}
+          onPointerCancel={() => {
+            pressRef.current = null;
           }}
           onDragStart={() => {
             didDragRef.current = false;
           }}
           onDrag={(_, info) => {
-            if (Math.abs(info.offset.x) > 12) {
+            if (Math.abs(info.offset.x) > DRAG_THRESHOLD_PX) {
               didDragRef.current = true;
             }
           }}
           onDragEnd={(_, info) => {
-            if (Math.abs(info.offset.x) > 12) {
+            if (Math.abs(info.offset.x) > DRAG_THRESHOLD_PX) {
               didDragRef.current = true;
             }
+            pressRef.current = null;
           }}
           dragTransition={{
             power: 0.22,
@@ -195,193 +198,75 @@ export default function Departments() {
             canDrag ? "cursor-grab active:cursor-grabbing" : "cursor-default"
           }`}
         >
-          {CAROUSEL_DEPARTMENTS.map((dept) => {
-            return (
-              <div
-                key={dept.id}
-                role="button"
-                tabIndex={0}
-                onPointerUp={() => handleCardActivate(dept)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    handleCardActivate(dept);
-                  }
-                }}
-                className="w-[260px] sm:w-[300px] lg:w-[320px] shrink-0 flex flex-col rounded-xl bg-surface border border-border hover:border-accent/50 shadow-card transition-all duration-300 hover:shadow-md hover:-translate-y-1 group select-none cursor-pointer relative overflow-hidden focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
-              >
-                {/* Compact illustration / photo band */}
-                <div className="relative w-full aspect-[16/11] pointer-events-none bg-card">
-                  <Image
-                    src={dept.image}
-                    alt={dept.name}
-                    fill
-                    sizes="(max-width: 640px) 260px, (max-width: 1024px) 300px, 320px"
-                    className="object-cover object-center transition-transform duration-300 group-hover:scale-[1.03]"
-                    priority={
-                      dept.id === "ban-chu-nhiem" ||
-                      dept.id === "truyen-thong" ||
-                      dept.id === "chuyen-mon"
-                    }
-                  />
-                  <div className="absolute inset-x-0 top-0 flex items-center justify-between p-2.5 sm:p-3">
-                    <span className="font-mono text-[10px] sm:text-[11px] font-semibold tracking-widest text-white/90 drop-shadow-sm">
-                      [&nbsp; {dept.index} &nbsp;]
-                    </span>
-                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-white/70 group-hover:bg-accent transition-colors" />
-                  </div>
-                </div>
-
-                <div className="flex flex-col flex-1 p-3.5 sm:p-4">
-                  <div className="flex items-start justify-between gap-2 mb-1">
-                    <h3 className="font-extrabold text-base sm:text-lg text-ink tracking-tight uppercase line-clamp-1 group-hover:text-accent transition-colors">
-                      {dept.name}
-                    </h3>
-                    <Link
-                      href={`/departments/${dept.id}`}
-                      onClick={(e) => e.stopPropagation()}
-                      onPointerDown={(e) => e.stopPropagation()}
-                      onPointerUp={(e) => e.stopPropagation()}
-                      className="mt-0.5 p-1 rounded-lg text-ink-muted hover:text-accent hover:bg-card transition-colors focus-visible:outline-2 focus-visible:outline-accent shrink-0"
-                      title="Mở trang ban riêng"
-                    >
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </Link>
-                  </div>
-                  <p className="text-xs sm:text-sm font-medium text-ink-light italic mb-2 line-clamp-1">
-                    {dept.tagline}
-                  </p>
-                  <p className="text-sm leading-relaxed text-ink-light line-clamp-2">
-                    {dept.description}
-                  </p>
-
-                  <div className="pt-3 mt-auto border-t border-border/70 flex items-center">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div
-                        className="w-7 h-7 rounded-full text-white font-bold flex items-center justify-center text-xs shrink-0 shadow-2xs"
-                        style={{ backgroundColor: dept.accentColor }}
-                      >
-                        {dept.leader?.name.charAt(0)}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="font-semibold text-ink text-xs sm:text-sm leading-tight truncate">
-                          {dept.leader?.name}
-                        </p>
-                        <p className="text-[11px] sm:text-xs text-ink-muted leading-tight truncate">
-                          {dept.leader?.role}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </motion.div>
-      </div>
-
-      {/* ─── QUICK-PREVIEW MODAL ─── */}
-      <AnimatePresence>
-        {previewDept && (
-          <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-overlay backdrop-blur-xs"
-            onClick={() => setPreviewDept(null)}
-          >
-            <motion.div
-              role="dialog"
-              aria-modal="true"
-              aria-label={`Xem nhanh ${previewDept.name}`}
-              initial={{ opacity: 0, scale: 0.96, y: 12 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.96, y: 12 }}
-              transition={{ duration: 0.2 }}
-              onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-md max-h-[90vh] flex flex-col rounded-2xl bg-surface border border-border shadow-lg overflow-hidden"
+          {CAROUSEL_DEPARTMENTS.map((dept) => (
+            <div
+              key={dept.id}
+              data-dept-id={dept.id}
+              role="link"
+              tabIndex={0}
+              aria-label={dept.name}
+              onAuxClick={(event) => {
+                if (didDragRef.current || event.button !== 1) return;
+                event.preventDefault();
+                window.open(
+                  `/departments/${dept.id}`,
+                  "_blank",
+                  "noopener,noreferrer",
+                );
+              }}
+              onKeyDown={(event) => {
+                if (event.key !== "Enter" && event.key !== " ") return;
+                event.preventDefault();
+                router.push(`/departments/${dept.id}`);
+              }}
+              className="w-[260px] sm:w-[300px] lg:w-[320px] shrink-0 flex flex-col rounded-xl bg-surface border border-border hover:border-accent/50 shadow-card transition-all duration-300 hover:shadow-md hover:-translate-y-1 group select-none relative overflow-hidden focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
             >
-              <div className="relative w-full aspect-[16/9] bg-card shrink-0">
+              <div className="relative w-full aspect-[16/11] pointer-events-none bg-card">
                 <Image
-                  src={previewDept.image}
-                  alt=""
+                  src={dept.image}
+                  alt={dept.name}
                   fill
-                  sizes="(max-width: 448px) 100vw, 448px"
-                  className="object-cover"
+                  sizes="(max-width: 640px) 260px, (max-width: 1024px) 300px, 320px"
+                  className="object-cover object-center transition-transform duration-300 group-hover:scale-[1.03]"
+                  priority={
+                    dept.id === "ban-chu-nhiem" ||
+                    dept.id === "truyen-thong" ||
+                    dept.id === "chuyen-mon"
+                  }
                 />
-                <button
-                  type="button"
-                  onClick={() => setPreviewDept(null)}
-                  className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-surface/90 border border-border text-ink flex items-center justify-center cursor-pointer transition-colors hover:bg-card focus-visible:outline-2 focus-visible:outline-accent active:scale-[0.96]"
-                  aria-label="Đóng"
-                >
-                  <X className="w-4 h-4" />
-                </button>
+                <div className="absolute inset-x-0 top-0 flex items-center p-2.5 sm:p-3">
+                  <span className="font-mono text-[10px] sm:text-[11px] font-semibold tracking-widest text-white/90 drop-shadow-sm">
+                    {dept.index}
+                  </span>
+                </div>
               </div>
 
-              <div className="p-5 sm:p-6 flex flex-col gap-4 overflow-y-auto">
-                <header>
-                  <p className="text-[11px] font-semibold tracking-[0.2em] uppercase text-accent mb-2 m-0">
-                    Ban {previewDept.index}
-                  </p>
-                  <h3 className="font-display text-xl sm:text-2xl font-extrabold text-ink tracking-tight m-0 mb-1">
-                    {previewDept.name}
-                  </h3>
-                  <p className="text-sm text-ink-muted italic m-0">
-                    {previewDept.tagline}
-                  </p>
-                </header>
-
-                <p className="text-sm sm:text-base text-ink-light leading-relaxed m-0">
-                  {previewDept.description}
+              <div className="flex flex-col flex-1 p-3.5 sm:p-4">
+                <h3 className="font-extrabold text-base sm:text-lg text-ink tracking-tight uppercase line-clamp-1 group-hover:text-accent transition-colors mb-1">
+                  {dept.name}
+                </h3>
+                <p className="text-xs sm:text-sm font-medium text-ink-light italic mb-2 line-clamp-1">
+                  {dept.tagline}
+                </p>
+                <p className="text-sm leading-relaxed text-ink-light line-clamp-2">
+                  {dept.description}
                 </p>
 
-                {previewDept.keyActivities &&
-                  previewDept.keyActivities.length > 0 && (
-                    <ul className="m-0 p-0 list-none space-y-2">
-                      {previewDept.keyActivities.slice(0, 3).map((item) => (
-                        <li
-                          key={item.title}
-                          className="flex gap-2.5 text-sm text-ink leading-snug"
-                        >
-                          <span
-                            className="mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0"
-                            aria-hidden
-                          />
-                          <span>{item.title}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-
-                {previewDept.leader && (
-                  <div className="flex items-center gap-3 pt-1">
-                    <div className="w-9 h-9 rounded-full bg-accent text-accent-fg flex items-center justify-center font-bold text-sm shrink-0">
-                      {previewDept.leader.name.charAt(0)}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="font-semibold text-sm text-ink truncate m-0">
-                        {previewDept.leader.name}
-                      </p>
-                      <p className="text-xs text-ink-muted truncate m-0">
-                        {previewDept.leader.role}
-                      </p>
-                    </div>
+                {dept.leader && (
+                  <div className="pt-3 mt-auto border-t border-border/70">
+                    <p className="font-semibold text-ink text-xs sm:text-sm leading-tight truncate m-0">
+                      {dept.leader.name}
+                    </p>
+                    <p className="text-[11px] sm:text-xs text-ink-muted leading-tight truncate m-0">
+                      {dept.leader.role}
+                    </p>
                   </div>
                 )}
               </div>
-
-              <div className="p-4 sm:p-5 border-t border-border bg-surface shrink-0">
-                <Link
-                  href={`/departments/${previewDept.id}`}
-                  onClick={() => setPreviewDept(null)}
-                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-accent text-accent-fg text-sm font-semibold hover:bg-accent-hover transition-[background-color,scale] active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-accent"
-                >
-                  <span>Xem trang ban</span>
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+            </div>
+          ))}
+        </motion.div>
+      </div>
     </section>
   );
 }
