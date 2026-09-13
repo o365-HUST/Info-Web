@@ -8,6 +8,7 @@ import type {
   Advisor,
   MissionItem,
 } from "../types";
+import { PHOTO_ASSETS } from "./photoAssets";
 
 export const CLUB_INFO: ClubInfo = {
   name: "CLB o365 - HUST",
@@ -84,21 +85,33 @@ export const CORE_MISSIONS: MissionItem[] = [
     title: "Hỗ trợ sinh viên",
     detail:
       "Tư vấn và giải quyết các vấn đề liên quan đến tài khoản, mật khẩu sinh viên, cũng như các công cụ trong bộ Microsoft 365.",
+    image: PHOTO_ASSETS.missionSupport,
+    imageAlt:
+      "Ảnh mẫu: bàn tư vấn tài khoản Microsoft 365 cho sinh viên — thay bằng ảnh thật",
   },
   {
     title: "Đội kỹ thuật sự kiện",
     detail:
       "Đảm bảo kỹ thuật suôn sẻ cho các hội thảo, sự kiện lớn do Ban Công tác Sinh viên tổ chức.",
+    image: PHOTO_ASSETS.missionEvent,
+    imageAlt:
+      "Ảnh mẫu: đội kỹ thuật hậu đài hội trường — thay bằng ảnh thật",
   },
   {
     title: "Hỗ trợ đào tạo",
     detail:
       "Là lực lượng nòng cốt hỗ trợ hầu hết các khóa học Kỹ năng mềm (KNM) cho sinh viên toàn trường.",
+    image: PHOTO_ASSETS.missionTraining,
+    imageAlt:
+      "Ảnh mẫu: lớp kỹ năng mềm / workshop máy tính — thay bằng ảnh thật",
   },
   {
     title: "Kết nối doanh nghiệp",
     detail:
       "Hỗ trợ các buổi giao lưu, tham quan và kết nối với các doanh nghiệp đối tác của Đại học.",
+    image: PHOTO_ASSETS.missionEnterprise,
+    imageAlt:
+      "Ảnh mẫu: sinh viên giao lưu, tham quan doanh nghiệp đối tác — thay bằng ảnh thật",
   },
 ];
 

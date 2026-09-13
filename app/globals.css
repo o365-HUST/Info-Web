@@ -238,6 +238,34 @@ p, .text-pretty {
   background: var(--ink-muted);
 }
 
+/* ─── Text highlighter (identity phrases) ─── */
+.text-highlight-mark {
+  position: absolute;
+  inset-inline: -0.08em;
+  bottom: 0.06em;
+  z-index: -1;
+  height: 0.38em;
+  border-radius: var(--radius-sm);
+  pointer-events: none;
+  background-color: color-mix(in oklab, var(--accent) 30%, transparent);
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .text-highlight-mark {
+    transform: scaleX(0);
+    transition-property: transform;
+    transition-duration: 500ms;
+    transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+    transition-delay: var(--highlight-delay, 0s);
+  }
+
+  .text-highlight-mark.is-drawn {
+    transform: scaleX(1);
+  }
+}
+
 /* ─── Reduced Motion ─── */
 @media (prefers-reduced-motion: reduce) {
   *,

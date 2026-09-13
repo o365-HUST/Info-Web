@@ -116,4 +116,6 @@ export interface Advisor {
 export interface MissionItem {
   title: string;
   detail: string;
+  image: string;
+  imageAlt: string;
 }

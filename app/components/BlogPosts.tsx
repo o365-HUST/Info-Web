@@ -67,16 +67,15 @@ export default function BlogPosts() {
                 href={`/blog/${post.id}`}
                 className="group block rounded-2xl border border-border bg-surface overflow-hidden transition-all duration-200 hover:shadow-card hover:border-accent/40 active:scale-[0.98] h-full flex flex-col focus-visible:outline-2 focus-visible:outline-accent"
               >
-                <div className="aspect-[4/3] relative overflow-hidden bg-card">
+                <div className="aspect-[16/9] relative overflow-hidden bg-card shrink-0">
                   <Image
                     src={post.thumbnail}
                     alt={post.title}
                     fill
                     priority={i === 0}
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="object-cover motion-safe:transition-transform motion-safe:duration-500 motion-safe:group-hover:scale-105"
                     sizes="(max-width: 768px) 100vw, 33vw"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-bg/80 via-transparent to-transparent opacity-70" />
                 </div>
 
                 <div className="p-4 flex-1 flex flex-col">

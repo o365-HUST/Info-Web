@@ -10,6 +10,14 @@ export const PHOTO_ASSETS = {
   aboutSupport: "/assets/about/about-support.jpg",
   /** About: event tech / C2 / workshop */
   aboutEvent: "/assets/about/about-event.jpg",
+  /** Core missions: student account / M365 support desk */
+  missionSupport: "/assets/about/mission-support.jpg",
+  /** Core missions: auditorium / event tech crew */
+  missionEvent: "/assets/about/mission-event.jpg",
+  /** Core missions: classroom workshop / KNM training */
+  missionTraining: "/assets/about/mission-training.jpg",
+  /** Core missions: company visit / industry networking */
+  missionEnterprise: "/assets/about/mission-enterprise.jpg",
   /** Achievements: MOSWC advisors banner collage */
   advisorsBanner: "/assets/achievements/advisors-moswc.webp",
 } as const;

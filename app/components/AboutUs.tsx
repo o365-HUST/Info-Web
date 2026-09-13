@@ -9,6 +9,22 @@ import {
   DEVELOPMENT_GOALS,
   CLUB_INFO,
 } from "@/app/data/clubData";
+import HighlightedText from "@/app/components/HighlightedText";
+
+const ROLE_FOCUS = "Đại sứ số học đường";
+
+function PositionCopy() {
+  const focusIndex = ABOUT_COPY.position.indexOf(ROLE_FOCUS);
+  if (focusIndex === -1) return ABOUT_COPY.position;
+
+  return (
+    <>
+      {ABOUT_COPY.position.slice(0, focusIndex)}
+      <HighlightedText delay={0.15}>{ROLE_FOCUS}</HighlightedText>
+      {ABOUT_COPY.position.slice(focusIndex + ROLE_FOCUS.length)}
+    </>
+  );
+}
 
 export default function AboutUs() {
   return (
@@ -48,7 +64,7 @@ export default function AboutUs() {
               className="space-y-5 flex flex-col"
             >
               <p className="text-base sm:text-lg text-ink-light leading-relaxed m-0">
-                {ABOUT_COPY.position}
+                <PositionCopy />
               </p>
               <p className="text-base sm:text-lg text-ink-light leading-relaxed m-0">
                 {ABOUT_COPY.future}
@@ -113,9 +129,19 @@ export default function AboutUs() {
                 <p className="text-xs font-semibold tracking-[0.2em] uppercase text-accent mb-2 m-0">
                   {String(i + 1).padStart(2, "0")}
                 </p>
-                <h4 className="text-lg sm:text-xl font-bold text-ink mb-2 m-0">
+                <h4 className="text-lg sm:text-xl font-bold text-ink mb-3 m-0">
                   {role.title}
                 </h4>
+                <figure className="photo-slot image-depth aspect-[4/3] mb-4 m-0">
+                  <Image
+                    src={role.image}
+                    alt={role.imageAlt}
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 520px"
+                    className="object-cover"
+                    unoptimized={role.image.endsWith(".svg")}
+                  />
+                </figure>
                 <p className="text-base text-ink-light leading-relaxed m-0">
                   {role.detail}
                 </p>

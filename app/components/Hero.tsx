@@ -9,9 +9,11 @@ import {
   HERO_ROLE_LINE,
 } from "@/app/data/clubData";
 import { PHOTO_ASSETS } from "@/app/data/photoAssets";
+import HighlightedText from "@/app/components/HighlightedText";
 
 const EASE = [0.2, 0, 0, 1] as const;
 const ROLE_KEEP = "Đại học";
+const ROLE_FOCUS = "Đại sứ số học đường";
 
 function titleVariants(instant: boolean) {
   return {
@@ -36,13 +38,30 @@ function itemVariants(instant: boolean) {
 
 function RoleHeading() {
   const keepIndex = HERO_ROLE_LINE.indexOf(ROLE_KEEP);
+  const focusIndex = HERO_ROLE_LINE.indexOf(ROLE_FOCUS);
+
   if (keepIndex === -1) return HERO_ROLE_LINE;
+
+  const keep = <span className="whitespace-nowrap">{ROLE_KEEP}</span>;
+  const afterKeep = HERO_ROLE_LINE.slice(keepIndex + ROLE_KEEP.length);
+
+  if (focusIndex === -1) {
+    return (
+      <>
+        {HERO_ROLE_LINE.slice(0, keepIndex)}
+        {keep}
+        {afterKeep}
+      </>
+    );
+  }
 
   return (
     <>
-      {HERO_ROLE_LINE.slice(0, keepIndex)}
-      <span className="whitespace-nowrap">{ROLE_KEEP}</span>
-      {HERO_ROLE_LINE.slice(keepIndex + ROLE_KEEP.length)}
+      {HERO_ROLE_LINE.slice(0, focusIndex)}
+      <HighlightedText delay={0.35}>{ROLE_FOCUS}</HighlightedText>
+      {HERO_ROLE_LINE.slice(focusIndex + ROLE_FOCUS.length, keepIndex)}
+      {keep}
+      {afterKeep}
     </>
   );
 }
