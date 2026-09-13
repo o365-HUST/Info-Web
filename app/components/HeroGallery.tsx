@@ -14,7 +14,7 @@ export interface GallerySlide {
 
 export const GALLERY_SLIDES: GallerySlide[] = [
   {
-    src: "/assets/hero/hero-campus.svg",
+    src: "/assets/hero/hero-allclub.jpg",
     alt: "Không gian hoạt động CLB o365 HUST (ảnh sẽ cập nhật)",
     title: "Không gian học tập & kết nối",
     badge: "01 • Campus & cộng đồng",

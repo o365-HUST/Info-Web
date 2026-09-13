@@ -66,7 +66,7 @@ export default function AboutUs() {
             <figure className="photo-slot image-depth aspect-[4/5] sm:aspect-[3/4]">
               <Image
                 src={PHOTO_ASSETS.aboutSupport}
-                alt="Không gian hỗ trợ sinh viên Office 365 (ảnh placeholder)"
+                alt="Không gian hỗ trợ sinh viên Office 365 (ảnh mẫu — thay bằng ảnh thật)"
                 fill
                 sizes="(max-width: 1024px) 45vw, 280px"
                 className="object-cover"
@@ -79,7 +79,7 @@ export default function AboutUs() {
             <figure className="photo-slot image-depth aspect-[4/5] sm:aspect-[3/4] mt-4 sm:mt-6">
               <Image
                 src={PHOTO_ASSETS.aboutEvent}
-                alt="Kỹ thuật sự kiện và hoạt động CLB (ảnh placeholder)"
+                alt="Kỹ thuật sự kiện và hoạt động CLB (ảnh mẫu — thay bằng ảnh thật)"
                 fill
                 sizes="(max-width: 1024px) 45vw, 280px"
                 className="object-cover"

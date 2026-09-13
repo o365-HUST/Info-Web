@@ -15,25 +15,25 @@ export interface GallerySlide {
 
 export const GALLERY_SLIDES: GallerySlide[] = [
   {
-    src: "/assets/hero/hero-campus.svg",
-    alt: "Không gian hoạt động CLB o365 HUST (ảnh sẽ cập nhật)",
+    src: "/assets/hero/hero-allclub.jpg",
+    alt: "Không gian campus và cộng đồng sinh viên (ảnh mẫu AI — thay bằng ảnh thật)",
     title: "Không gian học tập & kết nối",
     badge: "01 • Campus & cộng đồng",
-    desc: "Ảnh thật đang được thu thập — trạm hỗ trợ, workshop và sự kiện CLB.",
+    desc: "Chụp lại: plaza / sân trường, không khí hoạt động CLB — khung rộng 16:9.",
   },
   {
-    src: "/assets/about/about-support.svg",
-    alt: "Trạm hỗ trợ Office 365 (ảnh sẽ cập nhật)",
+    src: "/assets/about/about-support.jpg",
+    alt: "Trạm hỗ trợ Office 365 (ảnh mẫu AI — thay bằng ảnh thật)",
     title: "Trạm hỗ trợ sinh viên",
     badge: "02 • Microsoft 365",
-    desc: "Tư vấn tài khoản và công cụ số cho sinh viên toàn trường.",
+    desc: "Chụp lại: bàn tư vấn, laptop, thành viên đang hỗ trợ — khung 4:3.",
   },
   {
-    src: "/assets/about/about-event.svg",
-    alt: "Kỹ thuật sự kiện CLB (ảnh sẽ cập nhật)",
+    src: "/assets/about/about-event.jpg",
+    alt: "Kỹ thuật sự kiện CLB (ảnh mẫu AI — thay bằng ảnh thật)",
     title: "Sự kiện & kỹ thuật",
     badge: "03 • Hội trường & workshop",
-    desc: "Đồng hành kỹ thuật các sự kiện lớn và hoạt động đào tạo.",
+    desc: "Chụp lại: hội trường / workshop, bàn kỹ thuật, màn chiếu — khung 4:3.",
   },
 ];
 
