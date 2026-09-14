@@ -104,7 +104,7 @@ function ResourceEditorContent() {
         setTitle(data?.title || category?.title || "");
         setContent(
           data?.content ||
-            `<p>Đang cập nhật nội dung cho chuyên mục <strong>${category?.title || ""}</strong>.</p>`,
+            `<p>Đang cập nhật nội dung cho mục <strong>${category?.title || ""}</strong>.</p>`,
         );
         setAttachments(data?.attachments || []);
       } finally {
