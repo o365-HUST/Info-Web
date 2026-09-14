@@ -27,9 +27,10 @@ const DRAG_THRESHOLD_PX = 12;
 interface DepartmentCardProps {
   dept: Department;
   onActivate?: (id: string) => void;
+  priority?: boolean;
 }
 
-function DepartmentCard({ dept, onActivate }: DepartmentCardProps) {
+function DepartmentCard({ dept, onActivate, priority = false }: DepartmentCardProps) {
   const router = useRouter();
 
   return (
@@ -63,11 +64,7 @@ function DepartmentCard({ dept, onActivate }: DepartmentCardProps) {
           draggable={false}
           sizes="(max-width: 640px) 260px, (max-width: 1024px) 300px, 320px"
           className="object-cover object-center transition-transform duration-300 group-hover:scale-[1.03] pointer-events-none"
-          priority={
-            dept.id === "ban-chu-nhiem" ||
-            dept.id === "truyen-thong" ||
-            dept.id === "chuyen-mon"
-          }
+          priority={priority}
         />
         <div className="absolute inset-x-0 top-0 flex items-center p-2.5 sm:p-3">
           <span className="font-mono text-[10px] sm:text-[11px] font-semibold tracking-widest text-white/90 drop-shadow-sm">
@@ -408,14 +405,23 @@ export default function Departments() {
               canDrag ? "cursor-grab active:cursor-grabbing" : "cursor-default"
             }`}
           >
-            {CAROUSEL_DEPARTMENTS.map((dept) => (
+            {CAROUSEL_DEPARTMENTS.map((dept, index) => {
+              const centerIndex = Math.floor(CAROUSEL_DEPARTMENTS.length / 2);
+              const isInitiallyVisible = Math.abs(index - centerIndex) <= 1;
+
+              return (
               <div
                 key={dept.id}
                 className="w-[260px] sm:w-[300px] lg:w-[320px] shrink-0"
               >
-                <DepartmentCard dept={dept} onActivate={handleCardActivate} />
+                <DepartmentCard
+                  dept={dept}
+                  onActivate={handleCardActivate}
+                  priority={isInitiallyVisible}
+                />
               </div>
-            ))}
+              );
+            })}
           </motion.div>
         </div>
       )}
