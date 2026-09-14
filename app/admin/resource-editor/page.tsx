@@ -94,17 +94,17 @@ function ResourceEditorContent() {
     if (!slug || !category) return;
 
     let mounted = true;
-
+    let categoryTitle = category?.title;
     async function loadPage() {
       setIsLoading(true);
       try {
         const data = await getResourcePage(slug);
         if (!mounted) return;
 
-        setTitle(data?.title || category?.title || "");
+        setTitle(data?.title || categoryTitle || "");
         setContent(
           data?.content ||
-            `<p>Đang cập nhật nội dung cho mục <strong>${category?.title || ""}</strong>.</p>`,
+            `<p>Đang cập nhật nội dung cho mục <strong>${categoryTitle || ""}</strong>.</p>`,
         );
         setAttachments(data?.attachments || []);
       } finally {

@@ -28,6 +28,8 @@ export default function DocumentDetailPage({ params }: PageProps) {
   useEffect(() => {
     if (!category) return;
 
+    // Failsafe to avoid typescript error
+    const categoryTitle = category.title;
     let mounted = true;
 
     async function fetchDocument() {
@@ -41,7 +43,7 @@ export default function DocumentDetailPage({ params }: PageProps) {
           setContent(data.content);
         } else {
           setContent(
-            `<p>Đang cập nhật nội dung cho chuyên mục <strong>${category.title}</strong>.</p>`,
+            `<p>Đang cập nhật nội dung cho chuyên mục <strong>${categoryTitle}</strong>.</p>`,
           );
         }
         if (data?.attachments) setAttachments(data.attachments);
