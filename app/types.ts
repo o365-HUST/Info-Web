@@ -86,6 +86,7 @@ export interface BlogPost {
   content?: string;
   published?: boolean;
   author?: string;
+  authorDescription?: string;
 }
 
 export type EventStatus = "ongoing" | "upcoming" | "past";

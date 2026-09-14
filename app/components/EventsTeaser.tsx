@@ -95,7 +95,7 @@ export default function EventsTeaser() {
               Sự kiện nổi bật
             </h2>
             <p className="text-sm sm:text-base text-ink-light leading-relaxed text-pretty">
-              Workshop, MOSWC, trạm hỗ trợ và những chương trình đã đi cùng hành
+              Các sự kiện hỗ trợ, tập huấn, MOSWC và những chương trình đã đi cùng hành
               trình Đại sứ số học đường.
             </p>
           </motion.div>

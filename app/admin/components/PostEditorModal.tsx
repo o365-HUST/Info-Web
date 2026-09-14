@@ -32,6 +32,9 @@ export default function PostEditorModal({
   const [tag, setTag] = useState("Devlog");
   const [date, setDate] = useState("");
   const [author, setAuthor] = useState("CLB o365 - HUST");
+  const [authorDescription, setAuthorDescription] = useState(
+    "Đại sứ số Học đường ĐHBK Hà Nội",
+  );
   const [thumbnail, setThumbnail] = useState("");
   const [excerpt, setExcerpt] = useState("");
   const [content, setContent] = useState("");
@@ -89,6 +92,9 @@ export default function PostEditorModal({
       setTag(post.tag || "Devlog");
       setDate(post.date);
       setAuthor(post.author || "CLB o365 - HUST");
+      setAuthorDescription(
+        post.authorDescription || "Đại sứ số Học đường ĐHBK Hà Nội",
+      );
       setThumbnail(post.thumbnail || "");
       setExcerpt(post.excerpt);
       setContent(post.content || post.excerpt);
@@ -104,6 +110,7 @@ export default function PostEditorModal({
       setTag("Devlog");
       setDate(formattedDate);
       setAuthor("CLB o365 - HUST");
+      setAuthorDescription("Đại sứ số Học đường ĐHBK Hà Nội");
       setThumbnail("/assets/blog/blog-devlog.jpg");
       setExcerpt("");
       setContent("");
@@ -146,7 +153,9 @@ export default function PostEditorModal({
           title: title.trim(),
           tag,
           date,
-          author,
+          author: author.trim() || "CLB o365 - HUST",
+          authorDescription:
+            authorDescription.trim() || "Đại sứ số Học đường ĐHBK Hà Nội",
           thumbnail: finalThumbnail,
           excerpt: excerpt.trim(),
           content: content.trim() || excerpt.trim(),
@@ -237,6 +246,34 @@ export default function PostEditorModal({
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
                 placeholder="DD/MM/YYYY"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-surface text-ink text-sm focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-ink uppercase tracking-wider mb-1.5">
+                Tác giả
+              </label>
+              <input
+                type="text"
+                value={author}
+                onChange={(e) => setAuthor(e.target.value)}
+                placeholder="VD: CLB o365 - HUST"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-surface text-ink text-sm focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-ink uppercase tracking-wider mb-1.5">
+                Mô tả tác giả
+              </label>
+              <input
+                type="text"
+                value={authorDescription}
+                onChange={(e) => setAuthorDescription(e.target.value)}
+                placeholder="VD: Đại sứ số Học đường ĐHBK Hà Nội"
                 className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-surface text-ink text-sm focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent"
               />
             </div>

@@ -104,9 +104,9 @@ export default function Hero() {
       >
         <motion.p
           variants={itemMotion}
-          className="font-display text-xs font-semibold tracking-[0.28em] uppercase text-accent mb-3 sm:mb-4"
+          className="font-display text-[24px] font-semibold tracking-[0.28em] uppercase text-accent mb-3 sm:mb-4"
         >
-          CLB
+          Câu Lạc Bộ
         </motion.p>
 
         <motion.h1

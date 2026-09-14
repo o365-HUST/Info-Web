@@ -101,10 +101,10 @@ function ResourceEditorContent() {
         const data = await getResourcePage(slug);
         if (!mounted) return;
 
-        setTitle(data?.title || category.title);
+        setTitle(data?.title || category?.title || "");
         setContent(
           data?.content ||
-            `<p>Đang cập nhật nội dung cho chuyên mục <strong>${category.title}</strong>.</p>`,
+            `<p>Đang cập nhật nội dung cho chuyên mục <strong>${category?.title || ""}</strong>.</p>`,
         );
         setAttachments(data?.attachments || []);
       } finally {
@@ -458,7 +458,7 @@ function ResourceEditorContent() {
               <div className="flex items-center gap-2">
                 <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
                 <span className="text-xs font-extrabold text-ink uppercase tracking-wider">
-                  Live Preview / Xem trước website
+                  Xem trước trang tài liệu
                 </span>
               </div>
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-card border border-border text-xs font-semibold text-ink-light">

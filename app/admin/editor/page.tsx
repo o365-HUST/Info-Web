@@ -301,6 +301,7 @@ function PostEditorContent() {
     ).padStart(2, "0")}/${today.getFullYear()}`;
   });
   const [author, setAuthor] = useState("CLB o365 - HUST");
+  const [authorDescription, setAuthorDescription] = useState("Đại sứ số Học đường ĐHBK Hà Nội");
   const [thumbnail, setThumbnail] = useState("");
   const [excerpt, setExcerpt] = useState("");
   const [content, setContent] = useState("");
@@ -329,6 +330,9 @@ function PostEditorContent() {
           setTag(found.tag || "Devlog");
           setDate(found.date);
           setAuthor(found.author || "CLB o365 - HUST");
+          setAuthorDescription(
+            found.authorDescription || "Đại sứ số Học đường ĐHBK Hà Nội",
+          );
           setThumbnail(found.thumbnail || "");
           setExcerpt(found.excerpt);
           setContent(found.content || found.excerpt);
@@ -415,6 +419,8 @@ function PostEditorContent() {
         tag,
         date: date.trim() || "01/01/2026",
         author: author.trim() || "CLB o365 - HUST",
+        authorDescription:
+          authorDescription.trim() || "Đại sứ số Học đường ĐHBK Hà Nội",
         thumbnail: finalThumbnail,
         excerpt: excerpt.trim(),
         content: content.trim() || excerpt.trim(),
@@ -576,25 +582,43 @@ function PostEditorContent() {
                 Post to / Đăng lên
               </h3>
 
-              <div className="flex items-center justify-between p-3 rounded-xl bg-card border border-border mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent/30 to-accent/10 border border-border flex items-center justify-center font-bold text-ink text-sm shadow-2xs">
-                    o365
-                  </div>
-                  <div>
-                    <div className="text-sm font-bold text-ink">
-                      CLB o365 - HUST
-                    </div>
-                    <div className="text-[11px] text-ink-muted flex items-center gap-1">
-                      <Globe className="w-3 h-3 text-accent" />
-                      <span>Đại sứ Chuyển đổi số ĐHBK Hà Nội</span>
-                    </div>
-                  </div>
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-card border border-border mb-4">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent/30 to-accent/10 border border-border flex items-center justify-center font-bold text-ink text-sm shadow-2xs shrink-0">
+                  {author ? author.charAt(0).toUpperCase() : "O"}
                 </div>
+                <div className="min-w-0 flex-1">
+                  <label
+                    htmlFor="post-author"
+                    className="block font-semibold text-ink uppercase tracking-wider text-[11px] mb-1"
+                  >
+                    Tác giả
+                  </label>
+                  <input
+                    id="post-author"
+                    type="text"
+                    value={author}
+                    onChange={(e) => setAuthor(e.target.value)}
+                    placeholder="VD: CLB o365 - HUST"
+                    className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent font-semibold"
+                  />
+                </div>
+              </div>
 
-                <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-md bg-surface text-ink border border-border">
-                  Offical
-                </span>
+              <div className="mb-4">
+                <label
+                  htmlFor="post-author-description"
+                  className="block font-semibold text-ink uppercase tracking-wider text-[11px] mb-1.5"
+                >
+                  Mô tả tác giả
+                </label>
+                <input
+                  id="post-author-description"
+                  type="text"
+                  value={authorDescription}
+                  onChange={(e) => setAuthorDescription(e.target.value)}
+                  placeholder="VD: Đại sứ số Học đường ĐHBK Hà Nội"
+                  className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent"
+                />
               </div>
 
               {/* Tag & Date Controls */}
@@ -879,7 +903,7 @@ function PostEditorContent() {
               <div className="flex items-center gap-2">
                 <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
                 <span className="text-xs font-extrabold text-ink uppercase tracking-wider">
-                  Live Preview / Xem trước website
+                  Xem trước bài viết
                 </span>
               </div>
 
@@ -965,8 +989,8 @@ function PostEditorContent() {
                           {author || "CLB o365 - HUST"}
                         </div>
                         <div className="text-[11px] text-ink-muted">
-                          Đại sứ Chuyển đổi số ĐHBK Hà Nội
-                        </div>
+                          {authorDescription || "Đại sứ số Học đường ĐHBK Hà Nội"}
+                        </div>  
                       </div>
                     </div>
 
