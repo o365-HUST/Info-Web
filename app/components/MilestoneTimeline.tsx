@@ -34,6 +34,8 @@ import {
   noteSize,
   noteTapeTilt,
   noteTilt,
+  PHOTO_FRAME_IMAGE_CLASS,
+  PHOTO_FRAME_PADDING_CLASS,
   pixelToRelative,
   relativeToPixel,
   resolveDefaultLayout,
@@ -406,13 +408,16 @@ function Note({
             <MaskingTape color={theme.tape} rotate={tapeTilt} />
 
             <div
-              className="relative overflow-hidden rounded-sm border-2 border-white/90 bg-white p-2 pb-2.5 dark:border-[#e8e4dc]/20 dark:bg-[#f5f2eb]"
+              className={`relative overflow-hidden rounded-sm border-2 border-white/90 dark:border-[#e8e4dc]/20 ${PHOTO_FRAME_PADDING_CLASS}`}
               style={{
+                backgroundColor: theme.inner,
                 backgroundImage: PAPER_GRAIN,
                 boxShadow: isDragging ? theme.shadowHover : theme.shadow,
               }}
             >
-              <div className="relative aspect-[4/5] overflow-hidden bg-neutral-100 outline outline-1 outline-black/8">
+              <div
+                className={`${PHOTO_FRAME_IMAGE_CLASS} overflow-hidden bg-neutral-100 outline outline-1 outline-black/8`}
+              >
                 {cover ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img

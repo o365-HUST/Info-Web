@@ -82,6 +82,11 @@ function DepartmentCard({ dept, onActivate, priority = false }: DepartmentCardPr
         </p>
         <p className="text-sm leading-relaxed text-ink-light line-clamp-2">
           {dept.description}
+          {dept.id === "chuyen-mon" && (
+            <span className="block mt-1 text-ink-muted not-italic">
+              Gồm Kĩ năng mềm &amp; Kĩ thuật
+            </span>
+          )}
         </p>
 
         {dept.leader && (

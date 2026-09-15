@@ -281,28 +281,71 @@ export const DEPARTMENTS: Department[] = [
     },
     keyActivities: [
       {
-        title: "Nội dung Microsoft 365 & tin học văn phòng",
-        desc: "Xây dựng nội dung Word, Excel, PowerPoint, Teams, OneDrive, Forms, Outlook và các công cụ liên quan.",
+        title: "Kiểm duyệt & hỗ trợ chuyên môn CLB",
+        desc: "Kiểm tra, xử lý kết quả các hoạt động chuyên môn do CLB quản lý — minh chứng, nội dung và kết quả học tập.",
       },
       {
-        title: "Công cụ số & tài liệu hướng dẫn",
-        desc: "Nghiên cứu, triển khai công cụ hỗ trợ học tập; cập nhật tài liệu và video hướng dẫn Microsoft 365.",
+        title: "Hỗ trợ Trung tâm Chuyển đổi số Đại học",
+        desc: "Là đơn vị nòng cốt hỗ trợ các hoạt động chuyên môn của Trung tâm Chuyển đổi số trong phạm vi CLB phụ trách.",
       },
       {
-        title: "Đào tạo kỹ năng & hỗ trợ sinh viên",
-        desc: "Tổ chức khóa KNM tin học văn phòng và kỹ năng số; giải đáp vấn đề chuyên môn Office 365.",
-      },
-      {
-        title: "MOSWC & kiểm duyệt chuyên môn",
-        desc: "Hỗ trợ tổ chức, ôn luyện MOSWC (kể cả cấp ĐHBK Hà Nội); kiểm duyệt nội dung, minh chứng và kết quả hoạt động chuyên môn.",
+        title: "Biến kiến thức thành giá trị thực tiễn",
+        desc: "Phối hợp hai mảng Kĩ năng mềm và Kĩ thuật — dạy công cụ sinh viên cần, build công cụ CLB và trường dùng được.",
       },
     ],
     skillsLearned: [
-      "Microsoft Word, Excel, PowerPoint chuẩn MOS",
-      "Teams, OneDrive, Forms, Outlook trong học tập & công việc",
-      "Xây dựng tài liệu và video hướng dẫn",
-      "Công cụ lập kế hoạch học tập & quản lý chi tiêu",
-      "Hỗ trợ ôn luyện và định hướng thí sinh MOSWC",
+      "Phối hợp đào tạo và triển khai công cụ số trong môi trường CLB",
+      "Viết tài liệu, hướng dẫn và hỗ trợ sinh viên trên chương trình thật",
+    ],
+    subUnits: [
+      {
+        id: "knm",
+        index: "01",
+        name: "Kĩ năng mềm",
+        tagline: "Dạy và hỗ trợ sinh viên dùng Microsoft 365",
+        mission:
+          "Nghiên cứu và triển khai Microsoft 365 trong công việc và cuộc sống; xây dựng lớp KNM tin học; hỗ trợ MOSWC và Trung tâm Chuyển đổi số.",
+        tools: [
+          "Word",
+          "Excel",
+          "PowerPoint",
+          "Teams",
+          "OneDrive",
+          "Forms",
+          "Outlook",
+          "MOSWC",
+        ],
+        trainingFocus: [
+          "Xây dựng và quản lý các lớp KNM tin học văn phòng và kỹ năng số",
+          "Soạn nội dung Word, Excel, PowerPoint, Teams và giải đáp Q&A Office 365",
+          "Hỗ trợ tổ chức, ôn luyện và định hướng thí sinh MOSWC (kể cả cấp ĐHBK Hà Nội)",
+        ],
+        fitHint:
+          "Bạn thích dạy, viết tài liệu, thi MOS hoặc tham gia workshop — mảng KNM phù hợp với bạn.",
+        accent: "warm",
+      },
+      {
+        id: "ky-thuat",
+        index: "02",
+        name: "Kĩ thuật",
+        tagline: "Xây công cụ và hỗ trợ kỹ thuật chuyển đổi số",
+        mission:
+          "Hỗ trợ kỹ thuật trong các hoạt động chuyển đổi số; tìm hiểu và phát triển ứng dụng phục vụ CLB và Đại học.",
+        tools: [
+          "Power Apps",
+          "Power Automate",
+          "SharePoint",
+          "Microsoft 365",
+        ],
+        trainingFocus: [
+          "Prototype và triển khai ứng dụng hỗ trợ hoạt động nội bộ CLB",
+          "Tự động hóa quy trình và tích hợp công cụ số cho ban và sự kiện",
+          "Hỗ trợ kỹ thuật cho các chương trình chuyển đổi số của trường",
+        ],
+        fitHint:
+          "Bạn thích build app, tự động hóa, debug và ship sản phẩm thật — mảng Kĩ thuật dành cho bạn.",
+        accent: "cool",
+      },
     ],
     memberHighlights: [
       {
@@ -343,6 +386,7 @@ export const DEPARTMENTS: Department[] = [
         title: "Công cụ PowerApps",
         caption: "Theo dõi tiến độ sinh hoạt công dân — sản phẩm hướng dẫn của ban.",
         fit: "contain",
+        subUnitId: "ky-thuat",
       },
       {
         src: "/assets/departments/ACADEMIC/carousel-02.jpg",
@@ -350,6 +394,7 @@ export const DEPARTMENTS: Department[] = [
         title: "Khóa học kỹ năng mềm",
         caption: "Excel, PowerPoint, Word — điểm rèn luyện kỹ năng tin học.",
         fit: "contain",
+        subUnitId: "knm",
       },
       {
         src: "/assets/departments/ACADEMIC/carousel-03.jpg",
@@ -357,6 +402,7 @@ export const DEPARTMENTS: Department[] = [
         title: "Kế hoạch học tập",
         caption: "Tài liệu hướng dẫn sinh viên lập kế hoạch học tập từng kỳ.",
         fit: "contain",
+        subUnitId: "knm",
       },
     ],
     bentoItems: [
@@ -368,22 +414,6 @@ export const DEPARTMENTS: Department[] = [
           "Biến kiến thức công nghệ thành những giá trị thực tiễn cho học tập và công việc.",
         quoteAuthor: "Ban Chuyên môn o365",
         colSpan: "col-span-1",
-      },
-      {
-        id: "academic-skills",
-        title: "Hệ Sinh Thái Công Cụ",
-        type: "skills",
-        skills: [
-          "Word",
-          "Excel",
-          "PowerPoint",
-          "Teams",
-          "OneDrive",
-          "Forms",
-          "Outlook",
-          "MOSWC",
-        ],
-        colSpan: "col-span-1 md:col-span-2",
       },
     ],
   },

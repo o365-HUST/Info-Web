@@ -48,7 +48,7 @@ export default function DepartmentBentoGrid({ items }: DepartmentBentoGridProps)
         </dl>
       )}
 
-      {quotes.map((item) => (
+      {/* {quotes.map((item) => (
         <blockquote
           key={item.id}
           className="m-0 mb-12 border-l-2 border-accent/50 pl-4 max-w-2xl"
@@ -62,7 +62,7 @@ export default function DepartmentBentoGrid({ items }: DepartmentBentoGridProps)
             </footer>
           )}
         </blockquote>
-      ))}
+      ))} */}
 
       {skillSets.map((item) => (
         <div key={item.id} className="mb-4 max-w-2xl">

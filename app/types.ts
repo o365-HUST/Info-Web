@@ -48,6 +48,24 @@ export interface DepartmentGallerySlide {
   title: string;
   caption?: string;
   fit?: "cover" | "contain";
+  /** Links slide to a sub-unit when department has dual mảng */
+  subUnitId?: DepartmentSubUnitId;
+}
+
+export type DepartmentSubUnitId = "knm" | "ky-thuat";
+
+export interface DepartmentSubUnit {
+  id: DepartmentSubUnitId;
+  index: "01" | "02";
+  name: string;
+  tagline: string;
+  mission: string;
+  tools: string[];
+  /** Up to 3 bullets */
+  trainingFocus: string[];
+  /** Recruit self-selection hint */
+  fitHint: string;
+  accent?: "warm" | "cool";
 }
 
 export interface Department {
@@ -73,6 +91,8 @@ export interface Department {
   /** Activity photos for the Điểm nhấn gallery (not the hero team shot) */
   gallery?: DepartmentGallerySlide[];
   bentoItems?: DepartmentBentoItem[];
+  /** Internal mảng (e.g. KNM + Kĩ thuật within Ban Chuyên môn) */
+  subUnits?: DepartmentSubUnit[];
 }
 
 export interface BlogPost {

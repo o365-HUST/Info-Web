@@ -5,6 +5,9 @@ export const NOTE_W = 240;
 export const NOTE_H = 240;
 export const PHOTO_W = 188;
 export const PHOTO_H = 248;
+/** Polaroid image opening shared by board notes and photo modal */
+export const PHOTO_FRAME_IMAGE_CLASS = "aspect-[4/5] w-full shrink-0";
+export const PHOTO_FRAME_PADDING_CLASS = "p-2 pb-2.5";
 export const SLOT_W = NOTE_W;
 export const ROW_H = PHOTO_H + 16;
 export const GAP_X = 40;

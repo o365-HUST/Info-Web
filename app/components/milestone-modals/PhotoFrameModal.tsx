@@ -1,17 +1,17 @@
 "use client";
 
-import { useState, type CSSProperties } from "react";
+import { useState, type CSSProperties, type KeyboardEvent, type MouseEvent } from "react";
 import { motion } from "motion/react";
-import { RotateCw, X } from "lucide-react";
+import { X } from "lucide-react";
 import MarkdownRenderer from "@/app/components/MarkdownRenderer";
 import type { BlogPost, Milestone } from "@/app/types";
+import {
+  PHOTO_FRAME_IMAGE_CLASS,
+  PHOTO_FRAME_PADDING_CLASS,
+} from "@/app/lib/milestoneBoard";
 import RelatedPostLink from "./RelatedPostLink";
 import { MODAL_THEMES, PAPER_GRAIN } from "./modalTheme";
 import { modalDateLabel, modalTitle } from "./milestoneModalUtils";
-
-/** Fixed frame height so front and back match during flip. */
-const FRAME_HEIGHT_PX = 468;
-const PHOTO_HEIGHT_PX = 280;
 
 interface PhotoFrameModalProps {
   milestone: Milestone;
@@ -34,7 +34,7 @@ export default function PhotoFrameModal({
   const cover = milestone.images?.[0];
   const [showBack, setShowBack] = useState(false);
 
-  const toggleSide = () => setShowBack((v) => !v);
+  const toggleSide = () => setShowBack((value) => !value);
 
   const frameStyle = {
     backgroundColor: theme.inner,
@@ -84,9 +84,12 @@ export default function PhotoFrameModal({
           }}
         >
           <div
-            className={`relative w-full ${reducedMotion ? "" : "transition-transform duration-500 [transform-style:preserve-3d]"}`}
+            className={`relative grid w-full [grid-template-areas:'stack'] ${
+              reducedMotion
+                ? ""
+                : "transition-transform duration-500 [transform-style:preserve-3d]"
+            }`}
             style={{
-              height: FRAME_HEIGHT_PX,
               transform: reducedMotion
                 ? undefined
                 : showBack
@@ -100,9 +103,9 @@ export default function PhotoFrameModal({
                 <FrameBack
                   milestone={milestone}
                   postsById={postsById}
+                  theme={theme}
                   frameStyle={frameStyle}
-                  onToggle={toggleSide}
-                  showBack={showBack}
+                  onFlip={toggleSide}
                 />
               ) : (
                 <FrameFront
@@ -111,14 +114,13 @@ export default function PhotoFrameModal({
                   cover={cover}
                   theme={theme}
                   frameStyle={frameStyle}
-                  onToggle={toggleSide}
-                  showBack={showBack}
+                  onFlip={toggleSide}
                 />
               )
             ) : (
               <>
                 <div
-                  className="absolute inset-0 [backface-visibility:hidden]"
+                  className="[grid-area:stack] [backface-visibility:hidden]"
                   aria-hidden={showBack}
                 >
                   <FrameFront
@@ -127,21 +129,20 @@ export default function PhotoFrameModal({
                     cover={cover}
                     theme={theme}
                     frameStyle={frameStyle}
-                    onToggle={toggleSide}
-                    showBack={showBack}
+                    onFlip={toggleSide}
                   />
                 </div>
                 <div
-                  className="absolute inset-0 [backface-visibility:hidden]"
+                  className="[grid-area:stack] [backface-visibility:hidden]"
                   style={{ transform: "rotateY(180deg)" }}
                   aria-hidden={!showBack}
                 >
                   <FrameBack
                     milestone={milestone}
                     postsById={postsById}
+                    theme={theme}
                     frameStyle={frameStyle}
-                    onToggle={toggleSide}
-                    showBack={showBack}
+                    onFlip={toggleSide}
                   />
                 </div>
               </>
@@ -163,22 +164,20 @@ function FrameFront({
   cover,
   theme,
   frameStyle,
-  onToggle,
-  showBack,
+  onFlip,
 }: {
   title: string;
   dateLabel: string;
   cover?: string;
   theme: (typeof MODAL_THEMES)["photo"];
   frameStyle: CSSProperties;
-  onToggle: () => void;
-  showBack: boolean;
+  onFlip: () => void;
 }) {
   return (
     <FramePanel frameStyle={frameStyle}>
-      <div
-        className="w-full shrink-0 overflow-hidden bg-neutral-100 outline outline-1 outline-black/8"
-        style={{ height: PHOTO_HEIGHT_PX }}
+      <FlipPhotoZone
+        onFlip={onFlip}
+        label={cover ? `Lật khung ảnh: ${title}` : "Lật khung ảnh"}
       >
         {cover ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -186,14 +185,16 @@ function FrameFront({
             src={cover}
             alt={title}
             className="h-full w-full object-cover"
+            draggable={false}
           />
         ) : (
           <div className="flex h-full items-center justify-center text-sm text-neutral-400">
             Chưa có ảnh
           </div>
         )}
-      </div>
-      <div className="flex shrink-0 flex-col items-center px-1 pt-3 pb-1">
+      </FlipPhotoZone>
+
+      <div className="flex shrink-0 flex-col items-center px-1 pt-2 pb-0.5">
         <p
           className={`text-center font-display text-sm font-bold leading-snug ${theme.ink}`}
         >
@@ -205,7 +206,6 @@ function FrameFront({
           {dateLabel}
         </p>
       </div>
-      <FlipButton onToggle={onToggle} showBack={showBack} label="Lật khung" />
     </FramePanel>
   );
 }
@@ -213,61 +213,85 @@ function FrameFront({
 function FrameBack({
   milestone,
   postsById,
+  theme,
   frameStyle,
-  onToggle,
-  showBack,
+  onFlip,
 }: {
   milestone: Milestone;
   postsById: Record<string, BlogPost>;
+  theme: (typeof MODAL_THEMES)["photo"];
   frameStyle: CSSProperties;
-  onToggle: () => void;
-  showBack: boolean;
+  onFlip: () => void;
 }) {
   return (
-    <FramePanel
-      frameStyle={{
-        ...frameStyle,
-        backgroundColor: "#c9a87c",
-        boxShadow:
-          "inset 0 0 0 1px rgba(255,255,255,0.12), 4px 10px 24px rgba(0,0,0,0.18)",
-      }}
-    >
-      <p className="mb-2 shrink-0 text-[10px] font-semibold uppercase tracking-wider text-[#5c4030]">
-        Mặt sau khung
-      </p>
+    <FramePanel frameStyle={frameStyle}>
+      <FlipPhotoZone onFlip={onFlip} label="Xem mặt trước khung ảnh">
+        <div className="flex h-full min-h-0 flex-col overflow-y-auto px-2 py-2 text-left">
+          {milestone.description ? (
+            <div className={`prose-o365 text-sm ${theme.ink}`}>
+              <MarkdownRenderer content={milestone.description} />
+            </div>
+          ) : (
+            <p className={`text-sm italic ${theme.inkMuted}`}>
+              Chưa có ghi chú ở mặt sau khung.
+            </p>
+          )}
 
-      <div
-        className="min-h-0 flex-1 overflow-y-auto pr-0.5"
-        style={{ maxHeight: PHOTO_HEIGHT_PX + 52 }}
-      >
-        {milestone.description ? (
-          <div className="prose-o365 text-sm text-[#431407]">
-            <MarkdownRenderer content={milestone.description} />
-          </div>
-        ) : (
-          <p className="text-sm italic text-[#7c2d12]/80">
-            Chưa có ghi chú ở mặt sau khung.
-          </p>
-        )}
+          {milestone.relatedPostId && (
+            <div className="mt-3 border-t border-black/10 pt-3">
+              <RelatedPostLink
+                postId={milestone.relatedPostId}
+                postsById={postsById}
+              />
+            </div>
+          )}
+        </div>
+      </FlipPhotoZone>
 
-        {milestone.relatedPostId && (
-          <div className="mt-3 border-t border-[#7c2d12]/15 pt-3">
-            <RelatedPostLink
-              postId={milestone.relatedPostId}
-              postsById={postsById}
-              className="border-[#7c2d12]/15 bg-[#fffaf5]/80 hover:border-[#c2410c]/30"
-            />
-          </div>
-        )}
+      <div className="flex shrink-0 flex-col items-center px-1 pt-2 pb-0.5">
+        <p
+          className={`text-center font-display text-sm font-bold leading-snug ${theme.ink}`}
+        >
+          Mặt sau khung
+        </p>
+        <p className={`mt-0.5 text-center text-[11px] ${theme.inkMuted}`}>
+          Chạm ảnh để lật
+        </p>
       </div>
-
-      <FlipButton
-        onToggle={onToggle}
-        showBack={showBack}
-        label="Xem ảnh"
-        variant="back"
-      />
     </FramePanel>
+  );
+}
+
+function FlipPhotoZone({
+  children,
+  onFlip,
+  label,
+}: {
+  children: React.ReactNode;
+  onFlip: () => void;
+  label: string;
+}) {
+  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+    if ((event.target as HTMLElement).closest("a")) return;
+    onFlip();
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+    onFlip();
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      aria-label={label}
+      className={`${PHOTO_FRAME_IMAGE_CLASS} relative cursor-pointer overflow-hidden bg-neutral-100 outline outline-1 outline-black/8 transition-[filter] hover:brightness-[0.97] focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2`}
+    >
+      {children}
+    </button>
   );
 }
 
@@ -280,38 +304,10 @@ function FramePanel({
 }) {
   return (
     <div
-      className="flex h-full w-full flex-col overflow-hidden rounded-sm border-2 border-white/95 p-3 dark:border-[#e8e4dc]/25"
+      className={`flex w-full flex-col overflow-hidden rounded-sm border-2 border-white/90 dark:border-[#e8e4dc]/20 ${PHOTO_FRAME_PADDING_CLASS}`}
       style={frameStyle}
     >
       {children}
     </div>
-  );
-}
-
-function FlipButton({
-  onToggle,
-  showBack,
-  label,
-  variant = "front",
-}: {
-  onToggle: () => void;
-  showBack: boolean;
-  label: string;
-  variant?: "front" | "back";
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onToggle}
-      aria-pressed={showBack}
-      className={`mt-auto flex w-full shrink-0 items-center justify-center gap-1.5 rounded-md border py-2 text-xs font-semibold transition-colors ${
-        variant === "back"
-          ? "border-[#5c4030]/20 bg-[#5c4030]/10 text-[#431407] hover:bg-[#5c4030]/15"
-          : "border-black/10 bg-black/5 text-[#431407] hover:bg-black/10"
-      }`}
-    >
-      <RotateCw className="h-3.5 w-3.5" />
-      {label}
-    </button>
   );
 }

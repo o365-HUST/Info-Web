@@ -10,11 +10,13 @@ const INTERVAL_MS = 5000;
 interface DepartmentGalleryProps {
   slides: DepartmentGallerySlide[];
   departmentName: string;
+  subUnitLabels?: Record<string, string>;
 }
 
 export default function DepartmentGallery({
   slides,
   departmentName,
+  subUnitLabels,
 }: DepartmentGalleryProps) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(true);
@@ -42,6 +44,10 @@ export default function DepartmentGallery({
   if (slides.length === 0) return null;
 
   const slide = slides[index];
+  const subUnitLabel =
+    slide.subUnitId && subUnitLabels?.[slide.subUnitId]
+      ? subUnitLabels[slide.subUnitId]
+      : null;
 
   return (
     <div className="w-full mb-12">
@@ -122,6 +128,11 @@ export default function DepartmentGallery({
 
         <figcaption className="mt-4 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
           <div className="min-w-0">
+            {subUnitLabel && (
+              <p className="text-[11px] font-semibold tracking-[0.2em] uppercase text-accent m-0 mb-1">
+                {subUnitLabel}
+              </p>
+            )}
             <p className="text-base sm:text-lg font-bold text-ink m-0">
               {slide.title}
             </p>

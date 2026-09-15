@@ -15,6 +15,18 @@ import HighlightedText from "@/app/components/HighlightedText";
 
 const ROLE_FOCUS = "Đại sứ số học đường";
 
+function AboutTitle() {
+  const [club, school] = CLUB_INFO.officialTitle.split(" - ", 2);
+  if (!school) return CLUB_INFO.officialTitle;
+
+  return (
+    <>
+      {club} -{" "}
+      <span className="whitespace-nowrap">{school}</span>
+    </>
+  );
+}
+
 function PositionCopy() {
   const focusIndex = ABOUT_COPY.position.indexOf(ROLE_FOCUS);
   if (focusIndex === -1) return ABOUT_COPY.position;
@@ -55,7 +67,7 @@ export default function AboutUs() {
               transition={{ duration: 0.45, delay: 0.05, ease: [0.2, 0, 0, 1] }}
               className="font-display text-3xl sm:text-4xl lg:text-[2.75rem] font-extrabold text-ink tracking-tight leading-[1.15] mb-4"
             >
-              {CLUB_INFO.officialTitle}
+              {AboutTitle()}
             </motion.h2>
 
             <motion.div
@@ -74,9 +86,9 @@ export default function AboutUs() {
 
               <Link
                 href="/story"
-                className="inline-flex items-center gap-1.5 self-start px-5 py-2 rounded-lg border border-border bg-card/60 hover:bg-card text-ink text-sm font-semibold transition-all shadow-xs hover:shadow-sm active:scale-[0.96] focus-visible:outline-2 focus-visible:outline-accent"
+                className="inline-flex mt-8 items-center gap-1.5 self-start px-5 py-2 rounded-lg border border-border bg-card/60 hover:bg-card text-ink text-sm font-semibold transition-all shadow-xs hover:shadow-sm active:scale-[0.96] focus-visible:outline-2 focus-visible:outline-accent"
               >
-                <span>Xem hành trình</span>
+                <span className=" whitespace-nowrap">Xem hành trình</span>
                 <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </Link>
             </motion.div>
@@ -87,7 +99,7 @@ export default function AboutUs() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-40px" }}
             transition={{ duration: 0.45, delay: 0.08, ease: [0.2, 0, 0, 1] }}
-            className="lg:col-span-6 grid grid-cols-2 gap-3 sm:gap-4 lg:pt-24"
+            className="lg:col-span-6 grid grid-cols-2 gap-3 sm:gap-4 lg:pt-42"
           >
             <figure className="photo-slot image-depth aspect-[4/5] sm:aspect-[3/4]">
               <Image
