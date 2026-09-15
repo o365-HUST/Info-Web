@@ -108,6 +108,36 @@ export interface EventItem {
   reactions?: Record<string, number>;
 }
 
+export type MilestoneType = "moc" | "thanh_tich" | "alumni" | "photo";
+
+export interface Milestone {
+  id: string;
+  /** Unknown/missing values should be treated as "moc" when rendering. */
+  type: MilestoneType;
+  /** Chapter grouping (e.g. 2024). */
+  year: number;
+  /** Human display label, e.g. "08/2023", "09-12/2024", "Giữa 05/2025". */
+  dateLabel?: string;
+  /** Sortable key, e.g. "2023-08", "2025-05-mid", "2026-01". */
+  sortKey?: string;
+  title: string;
+  description?: string;
+  images?: string[];
+  alumniName?: string;
+  alumniRole?: string;
+  alumniAvatar?: string;
+  alumniQuote?: string;
+  alumniLink?: string;
+  /** Blog post id; expand CTA links to /blog/{relatedPostId}. */
+  relatedPostId?: string;
+  /** Include this note in the chronological thread (default true). */
+  threaded?: boolean;
+  /** Admin-defined corkboard X as fraction of canvas width (0–1). */
+  boardRelX?: number;
+  /** Admin-defined corkboard Y as fraction of canvas height (0–1). */
+  boardRelY?: number;
+}
+
 export interface StatItem {
   value: number;
   suffix: string;

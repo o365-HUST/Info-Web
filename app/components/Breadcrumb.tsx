@@ -45,6 +45,11 @@ function buildCrumbs(pathname: string): Crumb[] {
     return crumbs;
   }
 
+  if (pathname.startsWith("/story")) {
+    crumbs.push({ label: "Lịch sử" });
+    return crumbs;
+  }
+
   if (pathname.startsWith("/resources/")) {
     const slug = pathname.split("/")[2] ?? "";
     const category = DOCUMENT_CATEGORIES.find((c) => c.id === slug);

@@ -1,7 +1,9 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "motion/react";
+import { ArrowRight } from "lucide-react";
 import { PHOTO_ASSETS } from "@/app/data/photoAssets";
 import {
   ABOUT_COPY,
@@ -69,6 +71,14 @@ export default function AboutUs() {
               <p className="text-base sm:text-lg text-ink-light leading-relaxed m-0">
                 {ABOUT_COPY.future}
               </p>
+
+              <Link
+                href="/story"
+                className="inline-flex items-center gap-1.5 self-start px-5 py-2 rounded-lg border border-border bg-card/60 hover:bg-card text-ink text-sm font-semibold transition-all shadow-xs hover:shadow-sm active:scale-[0.96] focus-visible:outline-2 focus-visible:outline-accent"
+              >
+                <span>Xem hành trình</span>
+                <ArrowRight className="w-4 h-4" aria-hidden="true" />
+              </Link>
             </motion.div>
           </div>
 

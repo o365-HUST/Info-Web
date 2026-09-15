@@ -326,13 +326,17 @@ export default function Departments() {
 
       {viewMode === "grid" ? (
         <div className="max-w-[var(--max-width)] mx-auto px-5 sm:px-6 mt-5 sm:mt-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+          <div className="flex flex-wrap justify-center gap-4 sm:gap-5">
             {CAROUSEL_DEPARTMENTS.map((dept) => (
-              <DepartmentCard
+              <div
                 key={dept.id}
-                dept={dept}
-                onActivate={(id) => router.push(`/departments/${id}`)}
-              />
+                className="w-full min-w-0 sm:w-[calc((100%-1.25rem)/2)] lg:w-[calc((100%-2.5rem)/3)]"
+              >
+                <DepartmentCard
+                  dept={dept}
+                  onActivate={(id) => router.push(`/departments/${id}`)}
+                />
+              </div>
             ))}
           </div>
         </div>

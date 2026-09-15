@@ -171,6 +171,7 @@ export async function deleteMediaAsset(
 
   const allowedPrefixes = [
     "blog/",
+    "milestones/",
     "uploads/",
     "documents/",
     "resources/",

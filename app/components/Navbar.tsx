@@ -217,13 +217,6 @@ export default function Navbar() {
                 {link.label}
               </Link>
             ))}
-            <Link
-              href="/blog"
-              onClick={() => setMobileOpen(false)}
-              className="px-4 py-2.5 rounded-lg text-sm font-semibold text-ink-light hover:text-ink hover:bg-surface transition-colors"
-            >
-              Blog
-            </Link>
           </nav>
         </div>
       )}

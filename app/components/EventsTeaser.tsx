@@ -21,7 +21,7 @@ const thirdRow = SHOWCASE_IMAGES.slice(third * 2);
 
 const MARQUEE_SHARED = {
   className: "w-full",
-  baseVelocity: 8,
+  baseVelocity: 6,
   repeat: 3,
   draggable: false,
   scrollSpringConfig: { damping: 50, stiffness: 400 },
