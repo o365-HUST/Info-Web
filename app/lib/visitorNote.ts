@@ -1,3 +1,9 @@
+import {
+  pixelToRelative,
+  relativeToPixel,
+  type BoardPos,
+} from "@/app/lib/milestoneBoard";
+
 export const VISITOR_NOTE_KEY = "o365_story_visitor_note_v1";
 export const VISITOR_NOTE_ID = "visitor-note";
 
@@ -9,6 +15,10 @@ export type VisitorNote = {
   message?: string;
   dateLabel: string;
   createdAt: string;
+  /** Relative X on the extended story board (0–1). */
+  relX?: number;
+  /** Relative Y on the extended story board (0–1). */
+  relY?: number;
 };
 
 export function formatVisitorDateLabel(date = new Date()): string {
@@ -43,6 +53,14 @@ export function loadVisitorNote(): VisitorNote | null {
         : undefined,
       dateLabel: parsed.dateLabel || formatVisitorDateLabel(),
       createdAt: parsed.createdAt || new Date().toISOString(),
+      relX:
+        typeof parsed.relX === "number" && Number.isFinite(parsed.relX)
+          ? Math.max(0, Math.min(1, parsed.relX))
+          : undefined,
+      relY:
+        typeof parsed.relY === "number" && Number.isFinite(parsed.relY)
+          ? Math.max(0, Math.min(1, parsed.relY))
+          : undefined,
     };
   } catch {
     return null;
@@ -74,5 +92,17 @@ export function createVisitorNote(
     message: message ? sanitizeVisitorMessage(message) : undefined,
     dateLabel: formatVisitorDateLabel(),
     createdAt: new Date().toISOString(),
+  };
+}
+
+export function visitorNoteWithPosition(
+  note: VisitorNote,
+  pos: BoardPos,
+  canvasW: number,
+  canvasH: number,
+): VisitorNote {
+  return {
+    ...note,
+    ...pixelToRelative(pos.x, pos.y, canvasW, canvasH),
   };
 }

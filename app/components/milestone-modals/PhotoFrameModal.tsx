@@ -249,11 +249,6 @@ function FrameBack({
       </FlipPhotoZone>
 
       <div className="flex shrink-0 flex-col items-center px-1 pt-2 pb-0.5">
-        <p
-          className={`text-center font-display text-sm font-bold leading-snug ${theme.ink}`}
-        >
-          Mặt sau khung
-        </p>
         <p className={`mt-0.5 text-center text-[11px] ${theme.inkMuted}`}>
           Chạm ảnh để lật
         </p>

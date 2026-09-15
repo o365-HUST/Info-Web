@@ -1,11 +1,15 @@
 "use client";
 
-import { motion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
+import { motion, useMotionValue } from "motion/react";
 import { NOTE_W, noteTapeTilt } from "@/app/lib/milestoneBoard";
+import type { BoardPos } from "@/app/lib/milestoneBoard";
 import { VISITOR_NOTE_ID, type VisitorNote } from "@/app/lib/visitorNote";
 
 const PAPER_GRAIN =
   "repeating-linear-gradient(0deg, rgba(0,0,0,0.018) 0 1px, transparent 1px 4px), repeating-linear-gradient(90deg, rgba(0,0,0,0.012) 0 1px, transparent 1px 5px)";
+
+const NOTE_TRANSFORM_ORIGIN = "50% 12px";
 
 const MOC_THEME = {
   outer: "#fde68a",
@@ -13,6 +17,8 @@ const MOC_THEME = {
   lineColor: "rgba(180,83,9,0.12)",
   shadow:
     "1px 2px 0 rgba(0,0,0,0.04), 3px 6px 12px rgba(0,0,0,0.1), 6px 14px 24px rgba(180,130,40,0.12)",
+  shadowHover:
+    "2px 4px 0 rgba(0,0,0,0.05), 6px 12px 20px rgba(0,0,0,0.14), 10px 22px 32px rgba(180,130,40,0.16)",
   ink: "text-[#713f12]",
   inkMuted: "text-[#92400e]",
   tape: "bg-[#fde68a]/90",
@@ -20,11 +26,15 @@ const MOC_THEME = {
 
 interface VisitorNoteCardProps {
   note: VisitorNote;
-  x: number;
-  y: number;
+  layout: BoardPos;
+  savedPos?: BoardPos;
+  dragEnabled: boolean;
   reducedMotion: boolean;
+  constraintsRef: React.RefObject<HTMLDivElement | null>;
   registerPin: (id: string, el: HTMLSpanElement | null) => void;
   onOpen: (el: HTMLElement) => void;
+  onCommitPos: (pos: BoardPos) => void;
+  onMove: () => void;
 }
 
 function MaskingTape({
@@ -45,40 +55,87 @@ function MaskingTape({
 
 export default function VisitorNoteCard({
   note,
-  x,
-  y,
+  layout,
+  savedPos,
+  dragEnabled,
   reducedMotion,
+  constraintsRef,
   registerPin,
   onOpen,
+  onCommitPos,
+  onMove,
 }: VisitorNoteCardProps) {
   const theme = MOC_THEME;
   const tilt = reducedMotion ? 0 : -2.5;
   const tapeTilt = noteTapeTilt(VISITOR_NOTE_ID);
 
+  const base = savedPos ?? layout;
+  const x = useMotionValue(base.x);
+  const y = useMotionValue(base.y);
+  const [isDragging, setIsDragging] = useState(false);
+  const wasDragged = useRef(false);
+
+  useEffect(() => {
+    const next = savedPos ?? layout;
+    x.set(next.x);
+    y.set(next.y);
+  }, [savedPos, layout.x, layout.y, x, y]);
+
+  const dragProps = {
+    drag: dragEnabled as true | false,
+    dragConstraints: constraintsRef,
+    dragMomentum: false,
+    dragElastic: 0.08,
+    onDragStart: () => {
+      setIsDragging(true);
+      wasDragged.current = true;
+    },
+    onDrag: onMove,
+    onDragEnd: () => {
+      setIsDragging(false);
+      onCommitPos({ x: x.get(), y: y.get() });
+      onMove();
+      setTimeout(() => {
+        wasDragged.current = false;
+      }, 0);
+    },
+  };
+
   return (
     <motion.li
       id={VISITOR_NOTE_ID}
-      className="absolute list-none"
+      className={`absolute list-none ${
+        dragEnabled ? "cursor-grab active:cursor-grabbing" : ""
+      } ${isDragging ? "z-50" : "z-10"}`}
       style={{
-        left: x,
-        top: y,
+        x,
+        y,
         width: NOTE_W,
-        rotate: tilt,
-        transformOrigin: "50% 12px",
+        rotate: isDragging || reducedMotion ? 0 : tilt,
+        transformOrigin: NOTE_TRANSFORM_ORIGIN,
       }}
-      initial={reducedMotion ? false : { opacity: 0, y: -20, scale: 0.9 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
+      initial={reducedMotion ? false : { opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
       transition={
         reducedMotion
           ? { duration: 0.12 }
           : { type: "spring", damping: 28, stiffness: 320 }
       }
+      {...dragProps}
     >
       <button
         type="button"
-        onClick={(e) => onOpen(e.currentTarget)}
+        onPointerDown={() => {
+          wasDragged.current = false;
+        }}
+        onClick={(e) => {
+          if (wasDragged.current) return;
+          onOpen(e.currentTarget);
+        }}
         aria-label={`Ghi chú của bạn: ${note.headline}. Nhấn để xem hoặc chỉnh sửa.`}
-        className="group relative block w-full text-left focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+        className={`group relative block w-full text-left focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 ${
+          isDragging ? "scale-[1.02]" : ""
+        }`}
       >
         <span
           ref={(el) => registerPin(VISITOR_NOTE_ID, el)}
@@ -94,7 +151,7 @@ export default function VisitorNoteCard({
           style={{
             backgroundColor: theme.outer,
             backgroundImage: PAPER_GRAIN,
-            boxShadow: theme.shadow,
+            boxShadow: isDragging ? theme.shadowHover : theme.shadow,
           }}
         >
           <div
@@ -133,7 +190,7 @@ export default function VisitorNoteCard({
         <span
           className={`mt-1.5 block text-center text-[10px] font-semibold opacity-0 transition-opacity group-hover:opacity-100 ${theme.inkMuted}`}
         >
-          Xem / sửa →
+          {dragEnabled ? "Kéo hoặc xem / sửa →" : "Xem / sửa →"}
         </span>
       </button>
     </motion.li>

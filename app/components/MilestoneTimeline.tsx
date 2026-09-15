@@ -50,6 +50,7 @@ import {
   removeVisitorNote,
   saveVisitorNote,
   VISITOR_NOTE_ID,
+  visitorNoteWithPosition,
   type VisitorNote,
 } from "@/app/lib/visitorNote";
 import VisitorNoteCard from "@/app/components/story/VisitorNoteCard";
@@ -976,8 +977,28 @@ export default function MilestoneTimeline() {
   const canvasW = canvasSize.w || boardMinWidth || BOARD_REF_WIDTH;
   /** Official-note coord frame — matches admin board; excludes visitor strip. */
   const positionCanvasH = boardContentHeight;
-  const visitorSlot = visitorNoteSlot(boardContentHeight, canvasW);
   const visitorCtaSlot = visitorNoteCtaSlot(boardContentHeight, canvasW);
+
+  const visitorDefaultLayout = useMemo(
+    () => visitorNoteSlot(boardContentHeight, canvasW),
+    [boardContentHeight, canvasW],
+  );
+
+  const visitorSavedPos = useMemo(() => {
+    if (!visitorNote) return undefined;
+    if (
+      typeof visitorNote.relX !== "number" ||
+      typeof visitorNote.relY !== "number"
+    ) {
+      return undefined;
+    }
+    return relativeToPixel(
+      visitorNote.relX,
+      visitorNote.relY,
+      canvasW,
+      boardMinHeight,
+    );
+  }, [visitorNote, canvasW, boardMinHeight]);
 
   const serpentineMap = useMemo(() => {
     const serpentine = buildSerpentineLayout(ordered, layoutCols);
@@ -1296,6 +1317,22 @@ export default function MilestoneTimeline() {
     setComposerOpen(true);
   }, []);
 
+  const handleVisitorCommitPos = useCallback(
+    (pos: Pos) => {
+      if (!visitorNote) return;
+      const next = visitorNoteWithPosition(
+        visitorNote,
+        pos,
+        canvasW,
+        boardMinHeight,
+      );
+      saveVisitorNote(next);
+      setVisitorNote(next);
+      scheduleMeasureRef.current?.();
+    },
+    [visitorNote, canvasW, boardMinHeight],
+  );
+
   const handleVisitorSave = useCallback((note: VisitorNote) => {
     saveVisitorNote(note);
     setVisitorNote(note);
@@ -1497,11 +1534,15 @@ export default function MilestoneTimeline() {
               {visitorNoteHydrated && boardReady && visitorNote && (
                 <VisitorNoteCard
                   note={visitorNote}
-                  x={visitorSlot.x}
-                  y={visitorSlot.y}
+                  layout={visitorDefaultLayout}
+                  savedPos={visitorSavedPos}
+                  dragEnabled={isDesktop && boardReady && fullyRevealed}
                   reducedMotion={reducedMotion}
+                  constraintsRef={boardRef}
                   registerPin={registerPin}
                   onOpen={handleVisitorCardOpen}
+                  onCommitPos={handleVisitorCommitPos}
+                  onMove={scheduleMeasure}
                 />
               )}
 
