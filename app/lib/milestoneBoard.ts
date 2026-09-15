@@ -17,6 +17,9 @@ export const DESKTOP_COLS = 3;
 /** Canonical reference width used when migrating legacy pixel positions. */
 export const BOARD_REF_WIDTH = BOARD_PAD * 2 + DESKTOP_COLS * 292;
 
+/** Extra cork strip below official milestones for the visitor note (one per browser). */
+export const VISITOR_BOARD_EXTENSION = 300;
+
 export type BoardPos = { x: number; y: number };
 export type BoardRelPos = { relX: number; relY: number };
 
@@ -120,6 +123,14 @@ export function getBoardCanvasSize(
     width: BOARD_REF_WIDTH,
     height: boardHeightFor(noteCount, cols),
   };
+}
+
+/**
+ * Canonical canvas height for boardRelX/boardRelY (admin + story official notes).
+ * The visitor strip is appended below this frame and must not affect rel coords.
+ */
+export function positionCanvasHeight(noteCount: number, cols: number): number {
+  return boardHeightFor(noteCount, cols);
 }
 
 export function pixelToRelative(
@@ -252,3 +263,35 @@ export const TYPE_CHIP: Record<MilestoneType, string> = {
   alumni: "bg-[#e9f7ef] text-[#1a4530] border-[#b5dfc8]",
   photo: "bg-[#faf9f6] text-[#2b241f] border-[#ddd8cf]",
 };
+
+export function visitorBoardHeight(baseHeight: number, extended: boolean): number {
+  return baseHeight + (extended ? VISITOR_BOARD_EXTENSION : 0);
+}
+
+function visitorNoteCenterX(boardWidth: number): number {
+  return Math.max(BOARD_PAD, Math.round((boardWidth - NOTE_W) / 2));
+}
+
+/** Bottom-edge affordance before the board grows downward. */
+export function visitorNoteCtaSlot(
+  baseBoardHeight: number,
+  boardWidth: number = BOARD_REF_WIDTH,
+): BoardPos {
+  return {
+    x: visitorNoteCenterX(boardWidth),
+    y: Math.max(BOARD_PAD, baseBoardHeight - NOTE_H - BOARD_PAD),
+  };
+}
+
+/** Fixed slot on the extended cork strip below official milestones. */
+export function visitorNoteSlot(
+  baseBoardHeight: number,
+  boardWidth: number = BOARD_REF_WIDTH,
+): BoardPos {
+  return {
+    x: visitorNoteCenterX(boardWidth),
+    y:
+      baseBoardHeight +
+      Math.max(BOARD_PAD, Math.round((VISITOR_BOARD_EXTENSION - NOTE_H) / 2)),
+  };
+}

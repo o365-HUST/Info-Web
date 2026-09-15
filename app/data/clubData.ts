@@ -69,7 +69,7 @@ export const STATS: StatItem[] = [
 
 /** Hero support line — CONTENTv1 STAT CARD */
 export const HERO_TAGLINE =
-  "Một cộng đồng dành cho sinh viên Bách Khoa cùng học hỏi, thực hành và phát triển kỹ năng tin học văn phòng. Tại o365 HUST, chúng mình cùng nhau khám phá công nghệ, chia sẻ kiến thức và tạo nên những giá trị thiết thực.";
+  "Một cộng đồng dành cho sinh viên Bách khoa cùng học hỏi, thực hành và phát triển kỹ năng tin học văn phòng. Tại o365-HUST, chúng mình cùng nhau khám phá công nghệ, chia sẻ kiến thức và tạo nên những giá trị thiết thực.";
 
 export const HERO_ROLE_LINE = "Đại sứ số học đường Đại học Bách khoa Hà Nội";
 
@@ -160,7 +160,7 @@ export const ADVISORS: Advisor[] = [
 ];
 
 export const FOOTER_TAGLINE =
-  "CLB o365 HUST - Đại sứ số học đường Đại học Bách khoa Hà Nội";
+  "CLB o365-HUST - Đại sứ số học đường Đại học Bách khoa Hà Nội";
 
 export const PRIMARY_ADDRESS = "Phòng 105 - D4";
 
@@ -184,7 +184,7 @@ export const DEPARTMENTS: Department[] = [
     stats: [
       { label: "Nhiệm kỳ", value: "2025–2026", desc: "Kiện toàn 07/01/2026" },
       { label: "Ban trực thuộc", value: "04 Ban", desc: "Chuyên môn, Sự kiện, Truyền thông, Tài chính" },
-      { label: "Đối tác trường & doanh nghiệp", value: "10+", desc: "Hợp tác chiến lược" },
+      { label: "Đối tác trường & doanh nghiệp", value: "3+", desc: "Hợp tác chiến lược" },
     ],
     leader: {
       name: "Dương Đức Tùng",
@@ -223,7 +223,7 @@ export const DEPARTMENTS: Department[] = [
     gallery: [
       {
         src: "/assets/departments/LEADERSHIP/dept-structure.jpg",
-        alt: "Sơ đồ Ban điều hành CLB o365 HUST nhiệm kỳ Gen 2.0",
+        alt: "Ban điều hành CLB o365-HUST nhiệm kỳ Gen 2.0",
         title: "Ban điều hành nhiệm kỳ",
         caption: "Cơ cấu Chủ nhiệm, Phó chủ nhiệm và Ban điều hành theo từng ban.",
         fit: "contain",
@@ -244,7 +244,7 @@ export const DEPARTMENTS: Department[] = [
         id: "lead-quote",
         title: "Tuyên Ngôn Hành Động",
         type: "quote",
-        description: "Dẫn dắt bằng sự thấu hiểu, đồng hành bằng sự tận tâm, chuyển đổi số bắt đầu từ con người.",
+        description: "",
         quoteAuthor: "Ban Chủ nhiệm o365 - HUST",
         colSpan: "col-span-1",
       },
@@ -320,8 +320,7 @@ export const DEPARTMENTS: Department[] = [
           "Soạn nội dung Word, Excel, PowerPoint, Teams và giải đáp Q&A Office 365",
           "Hỗ trợ tổ chức, ôn luyện và định hướng thí sinh MOSWC (kể cả cấp ĐHBK Hà Nội)",
         ],
-        fitHint:
-          "Bạn thích dạy, viết tài liệu, thi MOS hoặc tham gia workshop — mảng KNM phù hợp với bạn.",
+
         accent: "warm",
       },
       {
@@ -342,8 +341,6 @@ export const DEPARTMENTS: Department[] = [
           "Tự động hóa quy trình và tích hợp công cụ số cho ban và sự kiện",
           "Hỗ trợ kỹ thuật cho các chương trình chuyển đổi số của trường",
         ],
-        fitHint:
-          "Bạn thích build app, tự động hóa, debug và ship sản phẩm thật — mảng Kĩ thuật dành cho bạn.",
         accent: "cool",
       },
     ],
@@ -436,7 +433,7 @@ export const DEPARTMENTS: Department[] = [
     stats: [
       {
         label: "Lượt theo dõi Fanpage",
-        value: "41.000+",
+        value: "42.000+",
         desc: "Kênh truyền thông chính thức",
       },
       {
@@ -592,7 +589,7 @@ export const DEPARTMENTS: Department[] = [
       },
       {
         src: "/assets/departments/EVENTS/carousel-02.jpg",
-        alt: "Khán phòng workshop của CLB o365 HUST",
+        alt: "Khán phòng workshop của CLB o365-HUST",
         title: "Workshop tại giảng đường",
         caption: "Một buổi tập huấn — hàng ghế đầy sinh viên Bách khoa.",
         fit: "cover",
@@ -896,7 +893,7 @@ export const EVENTS: EventItem[] = [
     title: "Chương trình Giao lưu Quốc tế: Học tập số tại Đài Loan",
     linkLabel: "Xem bài viết tổng kết",
     linkUrl: "/blog/taiwan-exchange-2026",
-    description: "Đại diện o365 HUST tham gia trao đổi văn hóa và mô hình CLB công nghệ tại các trường đại học hàng đầu Đài Loan.",
+    description: "Đại diện o365-HUST tham gia trao đổi văn hóa và mô hình CLB công nghệ tại các trường đại học hàng đầu Đài Loan.",
     location: "Taipei, Taiwan",
     status: "past",
     category: "Hợp tác Quốc tế",

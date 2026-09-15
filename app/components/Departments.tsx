@@ -288,7 +288,7 @@ export default function Departments() {
             </h2>
             <p className="mt-1 text-xs sm:text-sm text-ink-light max-w-xl text-pretty">
               {CAROUSEL_DEPARTMENTS.length} ban chuyên trách kiến tạo sân chơi
-              công nghệ và kỹ năng số cho sinh viên Bách Khoa.
+              công nghệ và kỹ năng số cho sinh viên Bách khoa.
             </p>
           </div>
 

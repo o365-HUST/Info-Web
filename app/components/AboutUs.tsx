@@ -134,7 +134,7 @@ export default function AboutUs() {
           <h3 className="font-display text-xl sm:text-2xl font-bold text-ink tracking-tight mb-8">
             Nhiệm vụ cốt lõi
           </h3>
-          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-8 list-none m-0 p-0">
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-5 list-none m-0 p-0">
             {CORE_MISSIONS.map((role, i) => (
               <motion.li
                 key={role.title}
@@ -146,25 +146,25 @@ export default function AboutUs() {
                   delay: i * 0.05,
                   ease: [0.2, 0, 0, 1],
                 }}
-                className="border-t border-border pt-4"
+                className="flex flex-col border-t border-border pt-4 lg:pt-5"
               >
                 <p className="text-xs font-semibold tracking-[0.2em] uppercase text-accent mb-2 m-0">
                   {String(i + 1).padStart(2, "0")}
                 </p>
-                <h4 className="text-lg sm:text-xl font-bold text-ink mb-3 m-0">
+                <h4 className="text-base sm:text-lg font-bold text-ink mb-3 m-0 text-balance">
                   {role.title}
                 </h4>
-                <figure className="photo-slot image-depth aspect-[4/3] mb-4 m-0 overflow-hidden rounded-2xl border border-border shadow-card">
+                <figure className="photo-slot image-depth aspect-[4/3] mb-3 sm:mb-4 m-0 overflow-hidden rounded-xl border border-border shadow-card">
                   <Image
                     src={role.image}
                     alt={role.imageAlt}
                     fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 520px"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 260px"
                     className="object-cover"
                     unoptimized={role.image.endsWith(".svg")}
                   />
                 </figure>
-                <p className="text-base text-ink-light leading-relaxed m-0">
+                <p className="text-sm sm:text-[15px] text-ink-light leading-relaxed m-0 mt-auto">
                   {role.detail}
                 </p>
               </motion.li>

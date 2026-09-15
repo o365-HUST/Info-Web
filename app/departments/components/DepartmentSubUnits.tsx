@@ -60,11 +60,6 @@ function SubUnitCard({ unit }: { unit: DepartmentSubUnit }) {
             ))}
           </ul>
         </div>
-
-        <p className="text-sm text-ink leading-relaxed m-0 mt-auto pt-1 border-t border-border/70">
-          <span className="font-semibold text-ink">Bạn hợp nếu: </span>
-          {unit.fitHint}
-        </p>
       </div>
     </article>
   );

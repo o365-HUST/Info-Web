@@ -26,7 +26,6 @@ import {
   BOARD_REF_WIDTH,
   DESKTOP_COLS,
   TYPE_LABELS,
-  boardHeightFor,
   buildSerpentineLayout,
   isThreaded,
   normalizeMilestoneType,
@@ -40,8 +39,22 @@ import {
   relativeToPixel,
   resolveDefaultLayout,
   sortKeyOf,
+  positionCanvasHeight,
+  visitorBoardHeight,
+  visitorNoteCtaSlot,
+  visitorNoteSlot,
   type BoardRelPos,
 } from "@/app/lib/milestoneBoard";
+import {
+  loadVisitorNote,
+  removeVisitorNote,
+  saveVisitorNote,
+  VISITOR_NOTE_ID,
+  type VisitorNote,
+} from "@/app/lib/visitorNote";
+import VisitorNoteCard from "@/app/components/story/VisitorNoteCard";
+import VisitorNoteComposer from "@/app/components/story/VisitorNoteComposer";
+import VisitorNotePatch from "@/app/components/story/VisitorNotePatch";
 
 const POS_KEY = "o365_story_note_pos_v4";
 const SESSION_REVEAL_KEY = "o365_story_revealed";
@@ -871,11 +884,15 @@ export default function MilestoneTimeline() {
   const [threadDrawnPinCount, setThreadDrawnPinCount] = useState(0);
   const [debugReveal, setDebugReveal] = useState(false);
   const [revealEpoch, setRevealEpoch] = useState(0);
+  const [visitorNote, setVisitorNote] = useState<VisitorNote | null>(null);
+  const [composerOpen, setComposerOpen] = useState(false);
+  const [visitorNoteHydrated, setVisitorNoteHydrated] = useState(false);
 
   const boardRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLUListElement>(null);
   const pinRefs = useRef<Map<string, HTMLSpanElement>>(new Map());
   const openerRef = useRef<HTMLElement | null>(null);
+  const visitorOpenerRef = useRef<HTMLElement | null>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const loaderMountTime = useRef(Date.now());
   const maxRevealedRef = useRef(-1);
@@ -919,6 +936,8 @@ export default function MilestoneTimeline() {
     setDebugReveal(
       new URLSearchParams(window.location.search).has("debugReveal"),
     );
+    setVisitorNote(loadVisitorNote());
+    setVisitorNoteHydrated(true);
   }, []);
 
   useEffect(() => {
@@ -947,9 +966,18 @@ export default function MilestoneTimeline() {
   );
 
   const layoutCols = isDesktop ? DESKTOP_COLS : 1;
-  const boardMinHeight = boardHeightFor(ordered.length, layoutCols);
-  const canvasW = canvasSize.w || BOARD_REF_WIDTH;
-  const canvasH = canvasSize.h || boardMinHeight;
+  const boardContentHeight = positionCanvasHeight(
+    ordered.length,
+    layoutCols,
+  );
+  const visitorZoneExtended = Boolean(visitorNote || composerOpen);
+  const boardMinHeight = visitorBoardHeight(boardContentHeight, visitorZoneExtended);
+  const boardMinWidth = isDesktop ? BOARD_REF_WIDTH : undefined;
+  const canvasW = canvasSize.w || boardMinWidth || BOARD_REF_WIDTH;
+  /** Official-note coord frame — matches admin board; excludes visitor strip. */
+  const positionCanvasH = boardContentHeight;
+  const visitorSlot = visitorNoteSlot(boardContentHeight, canvasW);
+  const visitorCtaSlot = visitorNoteCtaSlot(boardContentHeight, canvasW);
 
   const serpentineMap = useMemo(() => {
     const serpentine = buildSerpentineLayout(ordered, layoutCols);
@@ -966,18 +994,18 @@ export default function MilestoneTimeline() {
       ordered,
       DESKTOP_COLS,
       canvasW,
-      canvasH,
+      positionCanvasH,
     );
-  }, [isDesktop, ordered, canvasW, canvasH, serpentineMap]);
+  }, [isDesktop, ordered, canvasW, positionCanvasH, serpentineMap]);
 
   const pixelOverrides = useMemo(() => {
     if (!isDesktop) return {} as Record<string, Pos>;
     const out: Record<string, Pos> = {};
     for (const [id, rel] of Object.entries(relativeOverrides)) {
-      out[id] = relativeToPixel(rel.relX, rel.relY, canvasW, canvasH);
+      out[id] = relativeToPixel(rel.relX, rel.relY, canvasW, positionCanvasH);
     }
     return out;
-  }, [isDesktop, relativeOverrides, canvasW, canvasH]);
+  }, [isDesktop, relativeOverrides, canvasW, positionCanvasH]);
 
   const selected = useMemo(
     () => ordered.find((m) => m.id === selectedId) ?? null,
@@ -1110,13 +1138,15 @@ export default function MilestoneTimeline() {
     for (let i = 0; i <= maxRevealed && i < ordered.length; i++) {
       if (isThreaded(ordered[i])) count++;
     }
+    if (visitorNote && fullyRevealed) count++;
     return count;
-  }, [ordered, maxRevealed]);
+  }, [ordered, maxRevealed, visitorNote, fullyRevealed]);
 
   const registerPin = useCallback(
     (id: string, el: HTMLSpanElement | null) => {
       if (el) pinRefs.current.set(id, el);
       else pinRefs.current.delete(id);
+      if (id === VISITOR_NOTE_ID) scheduleMeasureRef.current?.();
     },
     [],
   );
@@ -1146,6 +1176,16 @@ export default function MilestoneTimeline() {
         y: r.top - b.top + r.height / 2,
       });
     });
+    if (visitorNote && fullyRevealed) {
+      const visitorPin = pinRefs.current.get(VISITOR_NOTE_ID);
+      if (visitorPin) {
+        const r = visitorPin.getBoundingClientRect();
+        pts.push({
+          x: r.left - b.left + r.width / 2,
+          y: r.top - b.top + r.height / 2,
+        });
+      }
+    }
     setThread((prev) => {
       if (pts.length < expectedThreadPinCount && pts.length < prev.length) {
         return prev;
@@ -1155,7 +1195,14 @@ export default function MilestoneTimeline() {
     setBoardSize({ w: board.clientWidth, h: board.clientHeight });
     measureCanvas();
     setHasMeasured(true);
-  }, [ordered, measureCanvas, fullyRevealed, maxRevealed, expectedThreadPinCount]);
+  }, [
+    ordered,
+    measureCanvas,
+    fullyRevealed,
+    maxRevealed,
+    expectedThreadPinCount,
+    visitorNote,
+  ]);
 
   const rafRef = useRef(0);
   const scheduleMeasure = useCallback(() => {
@@ -1202,7 +1249,12 @@ export default function MilestoneTimeline() {
 
   const commitPos = useCallback(
     (id: string, pos: Pos) => {
-      const { relX, relY } = pixelToRelative(pos.x, pos.y, canvasW, canvasH);
+      const { relX, relY } = pixelToRelative(
+        pos.x,
+        pos.y,
+        canvasW,
+        positionCanvasH,
+      );
       setRelativeOverrides((prev) => {
         const next = { ...prev, [id]: { relX, relY } };
         try {
@@ -1213,7 +1265,7 @@ export default function MilestoneTimeline() {
         return next;
       });
     },
-    [canvasW, canvasH],
+    [canvasW, positionCanvasH],
   );
 
   const resetPositions = useCallback(() => {
@@ -1234,6 +1286,38 @@ export default function MilestoneTimeline() {
     setSelectedId(id);
   };
   const handleClose = () => setSelectedId(null);
+
+  const handleVisitorPatchClick = useCallback(() => {
+    setComposerOpen(true);
+  }, []);
+
+  const handleVisitorCardOpen = useCallback((el: HTMLElement) => {
+    visitorOpenerRef.current = el;
+    setComposerOpen(true);
+  }, []);
+
+  const handleVisitorSave = useCallback((note: VisitorNote) => {
+    saveVisitorNote(note);
+    setVisitorNote(note);
+    setComposerOpen(false);
+    scheduleMeasureRef.current?.();
+  }, []);
+
+  const handleVisitorRemove = useCallback(() => {
+    removeVisitorNote();
+    setVisitorNote(null);
+    setComposerOpen(false);
+    scheduleMeasureRef.current?.();
+  }, []);
+
+  const handleComposerClose = useCallback(() => {
+    setComposerOpen(false);
+    visitorOpenerRef.current?.focus?.();
+  }, []);
+
+  useEffect(() => {
+    scheduleMeasureRef.current?.();
+  }, [visitorZoneExtended, visitorNote, composerOpen]);
 
   useEffect(() => {
     if (selectedId) {
@@ -1273,7 +1357,8 @@ export default function MilestoneTimeline() {
               tiết
               {isDesktop
                 ? ", hoặc kéo thả tự do trên bảng để sắp xếp theo ý bạn."
-                : "."}
+                : "."}{" "}
+              Bạn cũng có thể ghim một ghi chú của riêng mình trên bảng.
             </p>
           </div>
 
@@ -1306,7 +1391,16 @@ export default function MilestoneTimeline() {
             </p>
           </div>
         ) : (
-          <div className="story-board-frame">
+          <motion.div
+            className="story-board-frame"
+            animate={{ minHeight: boardMinHeight }}
+            transition={
+              reducedMotion
+                ? { duration: 0.12 }
+                : { duration: 0.45, ease: [0.22, 1, 0.36, 1] }
+            }
+            style={{ minHeight: boardMinHeight }}
+          >
             <div
               ref={boardRef}
               className="story-board-surface relative p-4 sm:p-6"
@@ -1314,7 +1408,10 @@ export default function MilestoneTimeline() {
               aria-live="polite"
               style={{
                 minHeight: boardMinHeight,
-                minWidth: isDesktop ? BOARD_REF_WIDTH : undefined,
+                minWidth: boardMinWidth,
+                transition: reducedMotion
+                  ? undefined
+                  : "min-height 0.45s cubic-bezier(0.22, 1, 0.36, 1)",
               }}
             >
             {!boardReady && (
@@ -1396,9 +1493,34 @@ export default function MilestoneTimeline() {
                   onEnterView={handleNoteEnterView}
                 />
               ))}
+
+              {visitorNoteHydrated && boardReady && visitorNote && (
+                <VisitorNoteCard
+                  note={visitorNote}
+                  x={visitorSlot.x}
+                  y={visitorSlot.y}
+                  reducedMotion={reducedMotion}
+                  registerPin={registerPin}
+                  onOpen={handleVisitorCardOpen}
+                />
+              )}
+
+              {visitorNoteHydrated &&
+                boardReady &&
+                fullyRevealed &&
+                !visitorNote &&
+                !composerOpen && (
+                  <VisitorNotePatch
+                    x={visitorCtaSlot.x}
+                    y={visitorCtaSlot.y}
+                    pulse={fullyRevealed}
+                    reducedMotion={reducedMotion}
+                    onClick={handleVisitorPatchClick}
+                  />
+                )}
             </ul>
           </div>
-          </div>
+          </motion.div>
         )}
       </div>
 
@@ -1413,6 +1535,15 @@ export default function MilestoneTimeline() {
           />
         )}
       </AnimatePresence>
+
+      <VisitorNoteComposer
+        open={composerOpen}
+        initial={visitorNote}
+        reducedMotion={reducedMotion}
+        onSave={handleVisitorSave}
+        onRemove={handleVisitorRemove}
+        onClose={handleComposerClose}
+      />
     </section>
   );
 }

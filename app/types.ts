@@ -63,8 +63,6 @@ export interface DepartmentSubUnit {
   tools: string[];
   /** Up to 3 bullets */
   trainingFocus: string[];
-  /** Recruit self-selection hint */
-  fitHint: string;
   accent?: "warm" | "cool";
 }
 
