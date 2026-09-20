@@ -11,37 +11,22 @@ import {
   onSnapshot,
   query,
   serverTimestamp,
-  increment,
 } from "firebase/firestore";
 import { db, isFirebaseConfigured } from "./firebase";
 import { deleteMediaAsset } from "./storageService";
 import type {
   BlogPost,
-  EventItem,
-  Milestone,
   RecruitmentInfo,
   ResourcePageData,
 } from "../types";
 import {
   BLOG_POSTS,
-  EVENTS,
-  MILESTONES,
   RECRUITMENT_INFO,
 } from "../data/clubData";
 
 const LOCAL_POSTS_KEY = "o365_cms_posts";
-const LOCAL_EVENTS_KEY = "o365_cms_events";
-const LOCAL_MILESTONES_KEY = "o365_cms_milestones";
 const LOCAL_RECRUITMENT_KEY = "o365_cms_recruitment";
 const LOCAL_RESOURCE_PAGES_KEY = "o365_cms_resource_pages";
-
-/** Sort milestones chronologically by sortKey (fallback to year), then title. */
-function sortMilestones(items: Milestone[]): Milestone[] {
-  const key = (m: Milestone) => m.sortKey || String(m.year).padStart(4, "0");
-  return [...items].sort(
-    (a, b) => key(a).localeCompare(key(b)) || a.title.localeCompare(b.title),
-  );
-}
 
 /** Firestore rejects `undefined`; on updates, clear optional fields with deleteField(). */
 function sanitizeForFirestore(
@@ -96,56 +81,6 @@ function saveLocalPosts(posts: BlogPost[]) {
   if (typeof window === "undefined") return;
   localStorage.setItem(LOCAL_POSTS_KEY, JSON.stringify(posts));
   window.dispatchEvent(new CustomEvent("cms-posts-updated", { detail: posts }));
-}
-
-function getLocalEvents(): EventItem[] {
-  if (typeof window === "undefined") return EVENTS;
-  try {
-    const raw = localStorage.getItem(LOCAL_EVENTS_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        // Upgrade legacy cache if missing status
-        const hasStatus = parsed.some((e: EventItem) => e.status);
-        if (hasStatus) return parsed;
-      }
-    }
-    localStorage.setItem(LOCAL_EVENTS_KEY, JSON.stringify(EVENTS));
-    return EVENTS;
-  } catch {
-    return EVENTS;
-  }
-}
-
-function saveLocalEvents(events: EventItem[]) {
-  if (typeof window === "undefined") return;
-  localStorage.setItem(LOCAL_EVENTS_KEY, JSON.stringify(events));
-  window.dispatchEvent(new CustomEvent("cms-events-updated", { detail: events }));
-}
-
-function getLocalMilestones(): Milestone[] {
-  if (typeof window === "undefined") return sortMilestones(MILESTONES);
-  try {
-    const raw = localStorage.getItem(LOCAL_MILESTONES_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        return sortMilestones(parsed);
-      }
-    }
-    localStorage.setItem(LOCAL_MILESTONES_KEY, JSON.stringify(MILESTONES));
-    return sortMilestones(MILESTONES);
-  } catch {
-    return sortMilestones(MILESTONES);
-  }
-}
-
-function saveLocalMilestones(milestones: Milestone[]) {
-  if (typeof window === "undefined") return;
-  localStorage.setItem(LOCAL_MILESTONES_KEY, JSON.stringify(milestones));
-  window.dispatchEvent(
-    new CustomEvent("cms-milestones-updated", { detail: sortMilestones(milestones) }),
-  );
 }
 
 function getLocalRecruitment(): RecruitmentInfo {
@@ -246,7 +181,7 @@ export function subscribePosts(callback: (posts: BlogPost[]) => void): () => voi
         }
       );
     } catch (e) {
-      console.warn("Firestore subscription failed, using local events:", e);
+      console.warn("Firestore subscription failed, using local posts:", e);
     }
   }
 
@@ -330,303 +265,6 @@ export async function deletePost(id: string): Promise<void> {
   // Local fallback
   const posts = getLocalPosts();
   saveLocalPosts(posts.filter((p) => p.id !== id));
-}
-
-// ──────────────────────────────────────────
-// EVENTS SERVICE
-// ──────────────────────────────────────────
-
-export async function getEvents(): Promise<EventItem[]> {
-  if (isFirebaseConfigured() && db) {
-    try {
-      const q = query(collection(db, "events"));
-      const snapshot = await getDocs(q);
-      if (!snapshot.empty) {
-        return snapshot.docs.map((d) => ({
-          id: d.id,
-          ...d.data(),
-        })) as EventItem[];
-      }
-    } catch (err) {
-      console.warn("Firestore getEvents error, falling back:", err);
-    }
-  }
-  return getLocalEvents();
-}
-
-export function subscribeEvents(callback: (events: EventItem[]) => void): () => void {
-  if (isFirebaseConfigured() && db) {
-    try {
-      const q = query(collection(db, "events"));
-      return onSnapshot(
-        q,
-        (snapshot) => {
-          if (!snapshot.empty) {
-            const events = snapshot.docs.map((d) => ({
-              id: d.id,
-              ...d.data(),
-            })) as EventItem[];
-            callback(events);
-          } else {
-            callback(getLocalEvents());
-          }
-        },
-        (error) => {
-          console.warn("Firestore subscribeEvents listener error:", error);
-          callback(getLocalEvents());
-        }
-      );
-    } catch (e) {
-      console.warn("Firestore events subscription failed:", e);
-    }
-  }
-
-  // Local fallback
-  callback(getLocalEvents());
-  const handler = (e: Event) => {
-    const custom = e as CustomEvent<EventItem[]>;
-    callback(custom.detail || getLocalEvents());
-  };
-  if (typeof window !== "undefined") {
-    window.addEventListener("cms-events-updated", handler);
-  }
-  return () => {
-    if (typeof window !== "undefined") {
-      window.removeEventListener("cms-events-updated", handler);
-    }
-  };
-}
-
-export async function createEvent(eventData: Omit<EventItem, "id">): Promise<string> {
-  const newId = `event-${Date.now()}`;
-  if (isFirebaseConfigured() && db) {
-    try {
-      const docRef = await addDoc(collection(db, "events"), {
-        ...eventData,
-        createdAt: serverTimestamp(),
-      });
-      return docRef.id;
-    } catch (err) {
-      console.error("Firestore createEvent failed:", err);
-    }
-  }
-
-  const events = getLocalEvents();
-  const newEvent: EventItem = { id: newId, ...eventData };
-  saveLocalEvents([...events, newEvent]);
-  return newId;
-}
-
-export async function updateEvent(id: string, eventData: Partial<EventItem>): Promise<void> {
-  if (isFirebaseConfigured() && db) {
-    try {
-      const docRef = doc(db, "events", id);
-      await updateDoc(docRef, {
-        ...eventData,
-        updatedAt: serverTimestamp(),
-      });
-      return;
-    } catch (err) {
-      console.error("Firestore updateEvent failed:", err);
-    }
-  }
-
-  const events = getLocalEvents();
-  const updated = events.map((e) => (e.id === id ? { ...e, ...eventData } : e));
-  saveLocalEvents(updated);
-}
-
-export async function deleteEvent(id: string): Promise<void> {
-  if (isFirebaseConfigured() && db) {
-    try {
-      const docRef = doc(db, "events", id);
-      await deleteDoc(docRef);
-      return;
-    } catch (err) {
-      console.error("Firestore deleteEvent failed:", err);
-    }
-  }
-
-  const events = getLocalEvents();
-  saveLocalEvents(events.filter((e) => e.id !== id));
-}
-
-export async function incrementEventReaction(
-  id: string,
-  reactionKey: string
-): Promise<void> {
-  if (isFirebaseConfigured() && db) {
-    try {
-      const docRef = doc(db, "events", id);
-      await updateDoc(docRef, {
-        [`reactions.${reactionKey}`]: increment(1),
-        updatedAt: serverTimestamp(),
-      });
-      return;
-    } catch (err) {
-      console.warn("Firestore incrementEventReaction failed, using local fallback:", err);
-    }
-  }
-
-  const events = getLocalEvents();
-  const updated = events.map((e) => {
-    if (e.id !== id) return e;
-    const prev = e.reactions || {};
-    return {
-      ...e,
-      reactions: {
-        ...prev,
-        [reactionKey]: (prev[reactionKey] || 0) + 1,
-      },
-    };
-  });
-  saveLocalEvents(updated);
-}
-
-// ──────────────────────────────────────────
-// MILESTONES SERVICE
-// ──────────────────────────────────────────
-
-export async function getMilestones(): Promise<Milestone[]> {
-  if (isFirebaseConfigured() && db) {
-    try {
-      const q = query(collection(db, "milestones"));
-      const snapshot = await getDocs(q);
-      if (!snapshot.empty) {
-        const items = snapshot.docs.map((d) => ({
-          id: d.id,
-          ...d.data(),
-        })) as Milestone[];
-        return sortMilestones(items);
-      }
-    } catch (err) {
-      console.warn("Firestore getMilestones error, falling back:", err);
-    }
-  }
-  return getLocalMilestones();
-}
-
-export function subscribeMilestones(
-  callback: (milestones: Milestone[]) => void,
-): () => void {
-  if (isFirebaseConfigured() && db) {
-    try {
-      const q = query(collection(db, "milestones"));
-      return onSnapshot(
-        q,
-        (snapshot) => {
-          if (!snapshot.empty) {
-            const items = snapshot.docs.map((d) => ({
-              id: d.id,
-              ...d.data(),
-            })) as Milestone[];
-            callback(sortMilestones(items));
-          } else {
-            callback(getLocalMilestones());
-          }
-        },
-        (error) => {
-          console.warn("Firestore subscribeMilestones listener error:", error);
-          callback(getLocalMilestones());
-        },
-      );
-    } catch (e) {
-      console.warn("Firestore milestones subscription failed:", e);
-    }
-  }
-
-  // Local fallback subscription
-  callback(getLocalMilestones());
-  const handler = (e: Event) => {
-    const custom = e as CustomEvent<Milestone[]>;
-    callback(custom.detail || getLocalMilestones());
-  };
-  if (typeof window !== "undefined") {
-    window.addEventListener("cms-milestones-updated", handler);
-  }
-  return () => {
-    if (typeof window !== "undefined") {
-      window.removeEventListener("cms-milestones-updated", handler);
-    }
-  };
-}
-
-export async function createMilestone(
-  milestoneData: Omit<Milestone, "id">,
-): Promise<string> {
-  const newId = `milestone-${Date.now()}`;
-  if (isFirebaseConfigured() && db) {
-    try {
-      const docRef = await addDoc(collection(db, "milestones"), {
-        ...sanitizeForFirestore(milestoneData),
-        createdAt: serverTimestamp(),
-      });
-      return docRef.id;
-    } catch (err) {
-      console.error("Firestore createMilestone failed:", err);
-    }
-  }
-
-  const milestones = getLocalMilestones();
-  const newMilestone: Milestone = { id: newId, ...milestoneData };
-  saveLocalMilestones([...milestones, newMilestone]);
-  return newId;
-}
-
-export async function updateMilestone(
-  id: string,
-  milestoneData: Partial<Milestone> & {
-    /** @deprecated Cleared when migrating to boardRelX/boardRelY */
-    boardX?: number | undefined;
-    /** @deprecated Cleared when migrating to boardRelX/boardRelY */
-    boardY?: number | undefined;
-  },
-): Promise<void> {
-  if (isFirebaseConfigured() && db) {
-    try {
-      const docRef = doc(db, "milestones", id);
-      await updateDoc(docRef, {
-        ...sanitizeForFirestore(milestoneData, { isUpdate: true }),
-        updatedAt: serverTimestamp(),
-      });
-      return;
-    } catch (err) {
-      console.error("Firestore updateMilestone failed:", err);
-    }
-  }
-
-  const milestones = getLocalMilestones();
-  const updated = milestones.map((m) =>
-    m.id === id ? { ...m, ...milestoneData } : m,
-  );
-  saveLocalMilestones(updated);
-}
-
-export async function deleteMilestone(id: string): Promise<void> {
-  if (isFirebaseConfigured() && db) {
-    try {
-      const docRef = doc(db, "milestones", id);
-      const snap = await getDoc(docRef);
-      if (snap.exists()) {
-        const data = snap.data() as Milestone;
-        if (Array.isArray(data?.images)) {
-          for (const image of data.images) {
-            await deleteMediaAsset(image);
-          }
-        }
-        if (data?.alumniAvatar) {
-          await deleteMediaAsset(data.alumniAvatar);
-        }
-      }
-      await deleteDoc(docRef);
-      return;
-    } catch (err) {
-      console.error("Firestore deleteMilestone failed:", err);
-    }
-  }
-
-  const milestones = getLocalMilestones();
-  saveLocalMilestones(milestones.filter((m) => m.id !== id));
 }
 
 // ──────────────────────────────────────────
@@ -744,12 +382,8 @@ export async function saveResourcePage(
 
 export async function seedInitialData(): Promise<{
   postsCount: number;
-  eventsCount: number;
-  milestonesCount: number;
 }> {
   let seededPosts = 0;
-  let seededEvents = 0;
-  let seededMilestones = 0;
 
   if (isFirebaseConfigured() && db) {
     for (const post of BLOG_POSTS) {
@@ -761,36 +395,14 @@ export async function seedInitialData(): Promise<{
       seededPosts++;
     }
 
-    for (const ev of EVENTS) {
-      await setDoc(doc(db, "events", ev.id), {
-        ...ev,
-        createdAt: serverTimestamp(),
-      });
-      seededEvents++;
-    }
-
-    for (const milestone of MILESTONES) {
-      await setDoc(doc(db, "milestones", milestone.id), {
-        ...milestone,
-        createdAt: serverTimestamp(),
-      });
-      seededMilestones++;
-    }
-
     await setDoc(doc(db, "settings", "recruitment"), RECRUITMENT_INFO);
   } else {
     saveLocalPosts(BLOG_POSTS);
-    saveLocalEvents(EVENTS);
-    saveLocalMilestones(MILESTONES);
     saveLocalRecruitment(RECRUITMENT_INFO);
     seededPosts = BLOG_POSTS.length;
-    seededEvents = EVENTS.length;
-    seededMilestones = MILESTONES.length;
   }
 
   return {
     postsCount: seededPosts,
-    eventsCount: seededEvents,
-    milestonesCount: seededMilestones,
   };
 }

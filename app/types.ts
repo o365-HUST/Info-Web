@@ -107,25 +107,6 @@ export interface BlogPost {
   authorDescription?: string;
 }
 
-export type EventStatus = "ongoing" | "upcoming" | "past";
-
-export interface EventItem {
-  id: string;
-  month: string;
-  title: string;
-  linkLabel: string;
-  linkUrl: string;
-  description?: string;
-  location?: string;
-  status?: EventStatus;
-  category?: string;
-  drl?: string;
-  isHighlight?: boolean;
-  funnyQuote?: string;
-  targetDate?: string;
-  reactions?: Record<string, number>;
-}
-
 export type MilestoneType = "moc" | "thanh_tich" | "alumni" | "photo";
 
 export interface Milestone {
