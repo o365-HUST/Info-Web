@@ -1,0 +1,46 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Keep in sync with DOCUMENT_CATEGORIES ids in app/data/clubData.ts
+    function isResourceSlug(slug) {
+      return slug in [
+        'huong-dan-tai-office-365',
+        'huong-dan-su-dung-microsoft-teams',
+        'xay-dung-ke-hoach-hoc-tap',
+        'khoa-hoc-ky-nang-tin-hoc-van-phong'
+      ];
+    }
+
+    match /resource_pages/{slug} {
+      allow read: if isResourceSlug(slug);
+      allow create, update: if isAdmin() && isResourceSlug(slug);
+      allow delete: if isAdmin() && isResourceSlug(slug);
+    }
+
+    match /admins/{uid} {
+      allow read: if isSignedIn() && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    match /posts/{postId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /settings/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}
