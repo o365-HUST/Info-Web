@@ -54,11 +54,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="vi"
-      className={`${beVietnamPro.variable} ${archivo.variable} scroll-smooth`}
+      className={`${beVietnamPro.variable} ${archivo.variable} ${beVietnamPro.className} scroll-smooth`}
       data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
-      <body className="min-h-dvh flex flex-col">
+      <body className="min-h-dvh flex flex-col font-sans">
         <ThemeInitScript />
         <ThemeProvider>
           <SiteChrome>{children}</SiteChrome>
