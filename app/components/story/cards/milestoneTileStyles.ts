@@ -3,7 +3,7 @@ import type { StoryTimelineVariant } from "@/app/data/storyTimeline";
 const TILE_TACTILE =
   "rounded-[var(--radius-2xl)] border-2 border-dashed text-left transition-[transform,box-shadow] duration-200 ease-[cubic-bezier(0.33,1,0.68,1)] hover:-translate-y-0.5 active:translate-y-1 active:shadow-[var(--timeline-chunky-shadow-press)] [box-shadow:var(--timeline-chunky-shadow),inset_0_1px_0_0_var(--border-subtle)]";
 
-/** Blue / yellow / pink / green pastels — opaque fills from design tokens. */
+/** Blue / yellow / pink / green pastels - opaque fills from design tokens. */
 const VARIANT_TILE: Record<
   StoryTimelineVariant,
   { surface: string; datePop: string; maxWidth: string }
@@ -70,7 +70,7 @@ export const VISITOR_TILE_SURFACE = `w-full max-w-[17.5rem] sm:max-w-[19rem] ${T
 export const MILESTONE_TILE_BUTTON =
   "rounded-[var(--radius-2xl)] focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-4";
 
-/** Colored rail icon — keep variant fill; tactile border/shadow only. */
+/** Colored rail icon - keep variant fill; tactile border/shadow only. */
 export const TIMELINE_RAIL_ICON_TACTILE =
   "border-2 border-dashed border-ink/35 [box-shadow:var(--timeline-chunky-shadow),inset_0_1px_0_0_rgba(255,255,255,0.12)] transition-[transform,box-shadow] duration-200 ease-[cubic-bezier(0.33,1,0.68,1)] hover:-translate-y-0.5 active:translate-y-1 active:shadow-[var(--timeline-chunky-shadow-press)]";
 

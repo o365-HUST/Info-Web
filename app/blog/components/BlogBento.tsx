@@ -70,7 +70,7 @@ export default function BlogBento({
           )}
         </div>
 
-        {/* Right: featured cards — grid on tablet, stretched column on lg+ */}
+        {/* Right: featured cards - grid on tablet, stretched column on lg+ */}
         <aside className="lg:col-span-4 flex flex-col min-h-0">
           <div className="mb-3 shrink-0">
             <h3 className="text-[11px] font-bold tracking-[0.2em] uppercase text-ink-muted m-0">

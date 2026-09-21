@@ -72,7 +72,7 @@ export function VisitorNoteSection({
               Ghim ghi chú của bạn
             </p>
             <p className="mt-1 max-w-xl text-sm leading-relaxed text-ink-light text-pretty">
-              Một dòng kỷ niệm riêng sau hành trình — chỉ lưu trên trình duyệt này.
+              Một dòng kỷ niệm riêng sau hành trình - chỉ lưu trên trình duyệt này.
             </p>
           </div>
           <button
@@ -89,7 +89,7 @@ export function VisitorNoteSection({
   );
 }
 
-/** @deprecated Visitor rows on the rail — use VisitorNoteSection below the timeline. */
+/** @deprecated Visitor rows on the rail - use VisitorNoteSection below the timeline. */
 export function AlternatingVisitorNode() {
   return null;
 }

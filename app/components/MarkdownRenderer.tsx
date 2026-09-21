@@ -167,7 +167,7 @@ export default function MarkdownRenderer({
 }: MarkdownRendererProps) {
   if (!content) return null;
 
-  // TipTap / WYSIWYG HTML — keep existing prose path
+  // TipTap / WYSIWYG HTML - keep existing prose path
   if (looksLikeHtml(content)) {
     return (
       <div

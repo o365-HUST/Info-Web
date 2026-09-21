@@ -264,7 +264,7 @@ export default function MilestoneTimeline() {
     maxRevealedRef.current = lastRevealIndex;
     revealTargetRef.current = lastRevealIndex;
     setMaxRevealed(lastRevealIndex);
-    markSessionRevealed("Đã bỏ qua hiệu ứng — lần sau mở thẳng dòng thời gian");
+    markSessionRevealed("Đã bỏ qua hiệu ứng - lần sau mở thẳng dòng thời gian");
   }, [clearRevealTimers, lastRevealIndex, markSessionRevealed]);
 
   const handleResetReveal = useCallback(() => {
@@ -283,7 +283,7 @@ export default function MilestoneTimeline() {
     setMaxRevealed(-1);
     setRevealEpoch((e) => e + 1);
     if (hadSession) {
-      showSessionNotice("Đã xóa trạng thái phiên — hiệu ứng sẽ chạy lại");
+      showSessionNotice("Đã xóa trạng thái phiên - hiệu ứng sẽ chạy lại");
     }
     timelineRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [clearRevealTimers, showSessionNotice]);
@@ -308,7 +308,7 @@ export default function MilestoneTimeline() {
 
         if (next >= lastRevealIndex) {
           markSessionRevealed(
-            "Đã xem hết hành trình — lần sau mở thẳng dòng thời gian",
+            "Đã xem hết hành trình - lần sau mở thẳng dòng thời gian",
           );
           pumpingRef.current = false;
           return;
@@ -446,7 +446,7 @@ export default function MilestoneTimeline() {
               Những cột mốc của CLB o365 - HUST
             </h1>
             <p className="text-sm leading-relaxed text-ink-light text-pretty sm:text-base">
-              Dòng thời gian hành trình CLB — chạm vào từng mốc để đọc chi
+              Dòng thời gian hành trình CLB - chạm vào từng mốc để đọc chi
               tiết. Cuộn để khám phá từng chương. Bạn cũng có thể ghim ghi chú
               của riêng mình ở cuối hành trình.
             </p>

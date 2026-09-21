@@ -685,7 +685,7 @@ function PostEditorContent() {
                       <span className="font-semibold">Hero spot</span>
                       <span className="text-ink-light">
                         {" "}
-                        — Ô lớn bên trái (1 bài; ưu tiên ghim rồi bài mới).
+                        - Ô lớn bên trái (1 bài; ưu tiên ghim rồi bài mới).
                       </span>
                     </span>
                   </label>
@@ -700,7 +700,7 @@ function PostEditorContent() {
                       <span className="font-semibold">Featured spot</span>
                       <span className="text-ink-light">
                         {" "}
-                        — Cột Nổi bật (tối đa 3; không trùng ô Hero).
+                        - Cột Nổi bật (tối đa 3; không trùng ô Hero).
                       </span>
                     </span>
                   </label>
@@ -715,7 +715,7 @@ function PostEditorContent() {
                       <span className="font-semibold">Ghim đầu danh sách</span>
                       <span className="text-ink-light">
                         {" "}
-                        — Đứng trước các bài không ghim.
+                        - Đứng trước các bài không ghim.
                       </span>
                     </span>
                   </label>

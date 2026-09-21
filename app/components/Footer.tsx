@@ -15,7 +15,7 @@ export default function Footer() {
           <Link
             href="/"
             className="flex items-center gap-2.5 shrink-0 rounded-lg focus-visible:outline-2 focus-visible:outline-accent"
-            aria-label="CLB o365 HUST — Trang chủ"
+            aria-label="CLB o365 HUST - Trang chủ"
           >
             <div className="w-8 h-8 rounded-full border border-accent/40 flex items-center justify-center overflow-hidden bg-surface p-1 shadow-sm">
               <Image
@@ -106,7 +106,7 @@ export default function Footer() {
             ·
           </span>
           <span>
-            {CLUB_INFO.leader.role} — {CLUB_INFO.leader.name}
+            {CLUB_INFO.leader.role} - {CLUB_INFO.leader.name}
             {" · "}
             <a
               href={`tel:${leaderPhone}`}

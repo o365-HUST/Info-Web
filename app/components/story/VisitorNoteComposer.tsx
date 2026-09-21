@@ -167,7 +167,7 @@ export default function VisitorNoteComposer({
                   {initial ? "Sửa ghi chú của bạn" : "Ghi dấu của bạn"}
                 </h2>
                 <p className="text-xs text-ink-light leading-relaxed mt-1 mb-0">
-                  Chỉ lưu trên trình duyệt này — không gửi lên server.
+                  Chỉ lưu trên trình duyệt này - không gửi lên server.
                 </p>
               </div>
             </div>

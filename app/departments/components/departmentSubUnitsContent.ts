@@ -1,4 +1,4 @@
-/** Hardcoded two-column sub-unit sections — not driven by clubData. */
+/** Hardcoded two-column sub-unit sections - not driven by clubData. */
 
 export type SubUnitAccent = "warm" | "cool";
 
@@ -24,7 +24,7 @@ export interface HardcodedSubUnitSection {
 
 export const CHUYEN_MON_SUB_UNITS: HardcodedSubUnitSection = {
   intro:
-    "KNM dạy sinh viên dùng công cụ — Kĩ thuật build những gì CLB và trường triển khai.",
+    "KNM dạy sinh viên dùng công cụ - Kĩ thuật build những gì CLB và trường triển khai.",
   cards: [
     {
       index: "01",
@@ -62,7 +62,7 @@ export const CHUYEN_MON_SUB_UNITS: HardcodedSubUnitSection = {
   ],
 };
 
-/** From content/BANSUKIEN.md — two mảng, distinct labels from Ban Chuyên môn */
+/** From content/BANSUKIEN.md - two mảng, distinct labels from Ban Chuyên môn */
 export const SU_KIEN_SUB_UNITS: HardcodedSubUnitSection = {
   intro:
     "",
@@ -87,7 +87,7 @@ export const SU_KIEN_SUB_UNITS: HardcodedSubUnitSection = {
       name: "Điều phối & Vận hành",
       tagline: "Thiên về hiện trường & trải nghiệm chương trình",
       about:
-        "Là phân ban thiên về hiện trường & trải nghiệm chương trình",
+        "Phối hợp điều phối hiện trường, lễ tân và trải nghiệm chương trình; tổ chức hoạt động nội bộ CLB.",
       aboutLabel: "Giới thiệu",
       focusLabel: "Nhiệm vụ",
       focusItems: [

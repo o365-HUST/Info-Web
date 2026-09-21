@@ -58,7 +58,7 @@ function looksLikeMarkdown(text: string): boolean {
   );
 }
 
-/** True when clipboard HTML is from Word / Docs / rich editors — keep TipTap's default paste. */
+/** True when clipboard HTML is from Word / Docs / rich editors - keep TipTap's default paste. */
 function isRichHtmlPaste(html: string): boolean {
   if (/mso-|Microsoft|docs-internal-guid|Apple-Interchange-Newline|xmlns:o=/i.test(html)) {
     return true;

@@ -30,11 +30,11 @@ export interface AlternatingMilestoneRow {
   iconY: number;
   year: number;
   rowHeight: number;
-  /** First milestone in this year — target for year badge `aria-controls`. */
+  /** First milestone in this year - target for year badge `aria-controls`. */
   yearControlsId?: string;
 }
 
-/** @deprecated Use AlternatingMilestoneRow — kept for row components. */
+/** @deprecated Use AlternatingMilestoneRow - kept for row components. */
 export type AlternatingRow = AlternatingMilestoneRow;
 
 export type AlternatingTimelineItem = AlternatingYearRow | AlternatingMilestoneRow;

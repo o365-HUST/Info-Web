@@ -166,18 +166,6 @@ const RAW_ENTRIES: Omit<StoryTimelineEntry, "variant" | "icon" | "accentClass">[
         "Kiện toàn khóa 1.0 của CLB. Số lượng thành viên chính thức: 52.",
     },
     {
-      id: "anh-kienn-toan-khoa1-2025",
-      type: "photo",
-      year: 2025,
-      dateLabel: "02/2025",
-      sortKey: "2025-02-a",
-      title: "Kiện toàn khóa 1.0",
-      description:
-        "Khoảnh khắc kiện toàn khóa 1.0 — 52 thành viên chính thức cùng nhau tạo nên bước ngoặt quan trọng của CLB.\n\nXem thêm bài viết về hành trình xây dựng đội ngũ.",
-      relatedPostId: "devlog-phan-ban",
-      images: ["/assets/marquee/marquee-08.jpg"],
-    },
-    {
       id: "quan-ly-moswc-2025",
       type: "thanh_tich",
       year: 2025,
@@ -186,16 +174,16 @@ const RAW_ENTRIES: Omit<StoryTimelineEntry, "variant" | "icon" | "accentClass">[
       title: "Chủ trì đội tuyển MOSWC ĐHBK",
       description:
         "CLB là đầu mối, đơn vị chủ trì quản lý đội tuyển MOSWC của ĐHBKHN.",
-      relatedPostId: "moswc-2026",
     },
     {
       id: "mot-tuoi-2025",
-      type: "thanh_tich",
+      type: "photo",
       year: 2025,
       dateLabel: "05/05/2025",
       sortKey: "2025-05-05",
       title: "CLB tròn 1 tuổi",
       description: "CLB o365 – HUST tròn 1 tuổi.",
+      images: ["/assets/story/HPBD1.jpg"],
     },
     {
       id: "fanpage-24k-2025",
@@ -208,13 +196,14 @@ const RAW_ENTRIES: Omit<StoryTimelineEntry, "variant" | "icon" | "accentClass">[
     },
     {
       id: "recruitment-2-2025",
-      type: "moc",
+      type: "photo",
       year: 2025,
       dateLabel: "08/09/2025",
       sortKey: "2025-09-08",
       title: "RECRUITMENT 2.0",
       description:
         "CLB o365 – HUST mở chiến dịch tuyển quân RECRUITMENT 2.0.",
+      images: ["/assets/story/RECR2.jpg"],
     },
     {
       id: "hoi-nghi-kien-toan-2026",
@@ -228,22 +217,24 @@ const RAW_ENTRIES: Omit<StoryTimelineEntry, "variant" | "icon" | "accentClass">[
     },
     {
       id: "hai-tuoi-2026",
-      type: "thanh_tich",
+      type: "photo",
       year: 2026,
       dateLabel: "05/05/2026",
       sortKey: "2026-05-05",
       title: "CLB tròn 2 tuổi",
       description: "CLB o365 – HUST tròn 2 tuổi.",
+      images: ["/assets/story/HPBD2.jpg"],
     },
     {
       id: "recruitment-3-2026",
-      type: "moc",
+      type: "photo",
       year: 2026,
       dateLabel: "03/09/2026",
       sortKey: "2026-09-03",
       title: "RECRUITMENT 3.0",
       description:
         "CLB o365 – HUST mở chiến dịch tuyển quân RECRUITMENT 3.0.",
+      images: ["/assets/story/RECR3.jpg"],
     },
     {
       id: "fanpage-42k-2026",
@@ -293,7 +284,7 @@ export function resolveTimelineVariant(type: MilestoneType): StoryTimelineVarian
 //     "CLB o365 là nơi mình học cách biến kỹ năng Office thành giá trị thật cho cộng đồng sinh viên Bách khoa.",
 //   alumniLink: "https://www.microsoft.com",
 //   description:
-//     "Gen 1.0 — góp phần xây dựng hệ thống quản trị và website CLB trong giai đoạn đầu.",
+//     "Gen 1.0 - góp phần xây dựng hệ thống quản trị và website CLB trong giai đoạn đầu.",
 //   relatedPostId: "devlog-phan-ban",
 //   threaded: false,
 // },

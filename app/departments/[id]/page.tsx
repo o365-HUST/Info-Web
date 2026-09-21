@@ -227,7 +227,7 @@ export default function DepartmentDetailPage({ params }: DepartmentPageProps) {
                 : `Kỹ năng rèn luyện tại ${dept.name}`}
             </h2>
             <p className="text-sm text-ink-light leading-relaxed max-w-2xl mb-6">
-              Thành viên làm việc trên các chương trình thật của CLB — hồ sơ và
+              Thành viên làm việc trên các chương trình thật của CLB - hồ sơ và
               kỹ năng đi cùng nhau.
             </p>
             <p className="text-base text-ink leading-relaxed max-w-2xl m-0">
@@ -251,7 +251,7 @@ export default function DepartmentDetailPage({ params }: DepartmentPageProps) {
             <p className="text-sm text-ink leading-relaxed max-w-xl mb-6 m-0">
               Chọn hướng phù hợp:{" "}
               <span className="font-semibold">KNM</span> nếu bạn muốn dạy và hỗ
-              trợ Office/MOS —{" "}
+              trợ Office/MOS -{" "}
               <span className="font-semibold">Kĩ thuật</span> nếu bạn muốn build
               công cụ thật. Ghi rõ trong form nếu có mục &ldquo;Ban / mảng mong
               muốn&rdquo;.
@@ -261,7 +261,7 @@ export default function DepartmentDetailPage({ params }: DepartmentPageProps) {
             <p className="text-sm text-ink leading-relaxed max-w-xl mb-6 m-0">
               Chọn hướng phù hợp:{" "}
               <span className="font-semibold">Kỹ thuật sự kiện</span> nếu bạn
-              thích hậu trường âm thanh, hình ảnh, livestream —{" "}
+              thích hậu trường âm thanh, hình ảnh, livestream -{" "}
               <span className="font-semibold">Điều phối &amp; Vận hành</span> nếu
               bạn muốn điều phối hiện trường, lễ tân và hậu cần. Ghi rõ trong form
               nếu có mục &ldquo;Ban / mảng mong muốn&rdquo;.

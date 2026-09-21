@@ -54,7 +54,7 @@ export interface DepartmentGallerySlide {
 
 export type DepartmentSubUnitId = "knm" | "ky-thuat";
 
-/** Gallery slide tag only — sub-unit copy lives in departmentSubUnitsContent.ts */
+/** Gallery slide tag only - sub-unit copy lives in departmentSubUnitsContent.ts */
 export interface DepartmentSubUnit {
   id: DepartmentSubUnitId;
   name: string;
@@ -101,7 +101,7 @@ export interface BlogPost {
   heroSpot?: boolean;
   /** Right-column Nổi bật cards (max 3; excludes hero). */
   featuredSpot?: boolean;
-  /** @deprecated Use featuredSpot — still read for older Firestore docs. */
+  /** @deprecated Use featuredSpot - still read for older Firestore docs. */
   featured?: boolean;
   /** Sort before non-pinned posts regardless of date. */
   pinned?: boolean;
@@ -175,7 +175,7 @@ export interface ResourceAttachment {
   url: string;
   type: ResourceAttachmentType;
   size?: number;
-  /** Firebase Storage object path — used for reliable deletes */
+  /** Firebase Storage object path - used for reliable deletes */
   storagePath?: string;
 }
 

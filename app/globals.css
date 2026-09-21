@@ -140,7 +140,7 @@ html.light {
 /* ─── Base ─── */
 html {
   scroll-behavior: smooth;
-  font-size: 106.25%; /* ~17px — slightly larger site type scale */
+  font-size: 106.25%; /* ~17px - slightly larger site type scale */
 }
 
 body {
@@ -172,7 +172,7 @@ p, .text-pretty {
   outline-offset: -1px;
 }
 
-/* Color PNG mark — do not invert (would wash brand blues) */
+/* Color PNG mark - do not invert (would wash brand blues) */
 .logo-transparent {
   filter: none;
 }

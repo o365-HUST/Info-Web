@@ -307,7 +307,7 @@ export default function PostEditorModal({
               />
               <span className="text-xs text-ink leading-snug">
                 <span className="font-semibold">Hero spot</span>
-                <span className="text-ink-light"> — Ô lớn bên trái (1 bài).</span>
+                <span className="text-ink-light"> - Ô lớn bên trái (1 bài).</span>
               </span>
             </label>
             <label className="flex items-start gap-2 cursor-pointer">
@@ -321,7 +321,7 @@ export default function PostEditorModal({
                 <span className="font-semibold">Featured spot</span>
                 <span className="text-ink-light">
                   {" "}
-                  — Cột Nổi bật (tối đa 3; không trùng Hero).
+                  - Cột Nổi bật (tối đa 3; không trùng Hero).
                 </span>
               </span>
             </label>
@@ -336,7 +336,7 @@ export default function PostEditorModal({
                 <span className="font-semibold">Ghim đầu danh sách</span>
                 <span className="text-ink-light">
                   {" "}
-                  — Đứng trước các bài không ghim.
+                  - Đứng trước các bài không ghim.
                 </span>
               </span>
             </label>

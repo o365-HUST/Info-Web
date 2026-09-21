@@ -74,7 +74,7 @@ export function noteTapeTilt(id: string): number {
   return -5 + (stableHash(`${id}:tape`) % 11);
 }
 
-/** Default true — only explicit `false` opts out of the connecting thread. */
+/** Default true - only explicit `false` opts out of the connecting thread. */
 export function isThreaded(m: Milestone): boolean {
   return m.threaded !== false;
 }

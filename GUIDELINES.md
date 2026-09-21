@@ -1,4 +1,4 @@
-# Hướng dẫn làm việc — CLB o365 Web Info
+# Hướng dẫn làm việc - CLB o365 Web Info
 
 Tài liệu này dành cho người và agent làm tiếp website. Đọc trước khi sửa copy tiếng Việt, font, CSS theme, hoặc rewrite file data lớn.
 
@@ -6,15 +6,15 @@ Stack hiện tại: **Next.js 16 (App Router)**, **React 19**, **Tailwind CSS v4
 
 ---
 
-## 1. Next.js 16 — đừng dựa vào trí nhớ cũ
+## 1. Next.js 16 - đừng dựa vào trí nhớ cũ
 
 Phiên bản Next trong repo **không** giống Next 13/14 trong training data. Trước khi thêm API, font, routing, hay metadata:
 
 1. Đọc guide tương ứng trong `node_modules/next/dist/docs/` (App Router).
 2. Tôn trọng deprecation trong docs đó.
-3. `AGENTS.md` / `CLAUDE.md` được `next dev` ghi lại — **không xóa**. Commit cùng thay đổi khác để working tree sạch.
+3. `AGENTS.md` / `CLAUDE.md` được `next dev` ghi lại - **không xóa**. Commit cùng thay đổi khác để working tree sạch.
 
-Lệnh dev trên nhánh timeline: `pnpm dev` (Turbopack). Sau khi đổi nhánh, nếu font hoặc CSS lạ, xóa `.next` rồi chạy lại — cache lẫn giữa nhánh rất dễ gây “font hỏng giả”.
+Lệnh dev trên nhánh timeline: `pnpm dev` (Turbopack). Sau khi đổi nhánh, nếu font hoặc CSS lạ, xóa `.next` rồi chạy lại - cache lẫn giữa nhánh rất dễ gây “font hỏng giả”.
 
 ---
 
@@ -24,7 +24,7 @@ Website hiển thị tiếng Việt. Mọi file nguồn phải là **UTF-8** (kh
 
 ### 2.1 Triệu chứng “font hỏng” thường là encoding, không phải typeface
 
-Nếu navbar/hero hiện `Giá»›i thiá»‡u`, `CÃ¢u láº¡c bá»™`, `Lá»‹ch sá»­` — đó là **mojibake**: UTF-8 bị đọc như Windows-1252/CP1252 rồi lưu lại. Typeface (Be Vietnam Pro, Archivo) vẫn có thể load bình thường.
+Nếu navbar/hero hiện `Giá»›i thiá»‡u`, `CÃ¢u láº¡c bá»™`, `Lá»‹ch sá»­` - đó là **mojibake**: UTF-8 bị đọc như Windows-1252/CP1252 rồi lưu lại. Typeface (Be Vietnam Pro, Archivo) vẫn có thể load bình thường.
 
 Dấu hiệu trong source:
 
@@ -36,7 +36,7 @@ Dấu hiệu trong source:
 | Tài liệu | TÃ i liá»‡u |
 | Cơ cấu | CÆ¡ cáº¥u |
 | Đại học | Äáº¡i há»c |
-| — (em dash) | â€” |
+| - (em dash) | â€” |
 
 Gặp chuỗi `á»`, `Ã¢`, `Ä‘`, `Æ¡`, `â€` trong `.ts`/`.tsx` thì **dừng merge** và sửa encoding trước khi làm feature khác.
 
@@ -48,7 +48,7 @@ Gặp chuỗi `á»`, `Ã¢`, `Ä‘`, `Æ¡`, `â€` trong `.ts`/`.tsx` thì *
   - Lấy bản UTF-8 đã biết đúng từ `main` (hoặc commit trước đó), rồi mới xóa/thêm export.
   - **Không** copy-paste cả file qua terminal Windows rồi ghi đè.
   - **Không** gộp “xóa CSS / đổi layout” với “ghi lại toàn bộ clubData” trong một bước không kiểm tra chữ.
-- Sau khi sửa data: mở file, tìm `Giới thiệu`, `Câu lạc bộ`. Nếu không thấy mà chỉ thấy `á»` — chưa xong.
+- Sau khi sửa data: mở file, tìm `Giới thiệu`, `Câu lạc bộ`. Nếu không thấy mà chỉ thấy `á»` - chưa xong.
 
 ### 2.3 Sửa khi đã bị hỏng
 
@@ -60,7 +60,7 @@ Không “sửa tay” từng chữ mojibake trừ khi không còn blob đúng. 
 
 Commit rewrite timeline (xóa corkboard CSS, chuyển mốc sang `storyTimeline.ts`) đã ghi lại `app/data/clubData.ts` sai encoding. `main` vẫn đúng. `app/data/storyTimeline.ts` (file mới) thì UTF-8 ổn.
 
-Kết luận vận hành: **xóa CSS corkboard không làm hỏng next/font**. Chữ méo trên toàn site vì `clubData.ts` — nguồn copy của nav, hero, about, ban, blog, tài liệu.
+Kết luận vận hành: **xóa CSS corkboard không làm hỏng next/font**. Chữ méo trên toàn site vì `clubData.ts` - nguồn copy của nav, hero, about, ban, blog, tài liệu.
 
 ---
 
@@ -81,7 +81,7 @@ Trong `app/layout.tsx`:
 
 - Gắn **cả** `.variable` (để có CSS variable) **và** `.className` của Be Vietnam Pro trên `<html>` (hoặc `className` trên `<body>`).
 - Chỉ `.variable` **không** set `font-family`. Tailwind preflight dùng `--font-sans`, không dùng `--font-body`.
-- `<html lang="vi">`. `suppressHydrationWarning` trên `<html>` vì script theme thêm class `light`/`dark` — script theme **chỉ** `classList.add/remove("light"|"dark")`, không được gán `className = ...` (sẽ xóa class font).
+- `<html lang="vi">`. `suppressHydrationWarning` trên `<html>` vì script theme thêm class `light`/`dark` - script theme **chỉ** `classList.add/remove("light"|"dark")`, không được gán `className = ...` (sẽ xóa class font).
 
 Trong `app/globals.css`, `@theme inline`:
 
@@ -108,7 +108,7 @@ Headline dùng class `font-display`. Body không cần class riêng nếu `font-
 
 - Đổi `--font-sans` thành system stack.
 - Bỏ `beVietnamPro.className` / `beVietnamPro.variable` / `archivo.variable` khỏi root layout.
-- Load Google Fonts bằng `<link>` ra fonts.googleapis.com — `next/font` self-host lúc build.
+- Load Google Fonts bằng `<link>` ra fonts.googleapis.com - `next/font` self-host lúc build.
 - Thêm font thứ ba trừ khi có lý do brand rõ (đã có body + display).
 
 ---
@@ -130,7 +130,7 @@ Chuỗi hiển thị với user không nhét sâu trong CSS. Component chỉ gh�
 
 ### 4.2 Timeline vs clubData
 
-Trên `feat/story/timeline`, `EVENTS` và `MILESTONES` **không** còn export từ `clubData.ts`. Mốc story sống trong `storyTimeline.ts`. Khi port từ `main`, giữ tách đó — đừng copy nguyên `clubData.ts` của `main` nếu nhánh đã bỏ hai export đó, trừ khi cố ý khôi phục CMS sự kiện/mốc cũ.
+Trên `feat/story/timeline`, `EVENTS` và `MILESTONES` **không** còn export từ `clubData.ts`. Mốc story sống trong `storyTimeline.ts`. Khi port từ `main`, giữ tách đó - đừng copy nguyên `clubData.ts` của `main` nếu nhánh đã bỏ hai export đó, trừ khi cố ý khôi phục CMS sự kiện/mốc cũ.
 
 `/events` redirect về `/` (xem `next.config.ts`). Đừng thêm lại trang sự kiện công khai trừ khi product yêu cầu.
 
@@ -143,7 +143,7 @@ Trên `feat/story/timeline`, `EVENTS` và `MILESTONES` **không** còn export t�
 Màu, shadow, radius, scrim nằm ở `:root` / `html.dark` / `html.light` trong `app/globals.css`. `@theme inline` chỉ **map** sang `--color-*`, `--font-*`, `--shadow-*` cho utility Tailwind (`bg-bg`, `text-ink`, `border-border`, …).
 
 - Dark là mặc định. Script `ThemeInitScript` đọc `localStorage` key `o365-theme` trước paint.
-- Đổi theme: `applyTheme` trong `app/lib/theme.ts` — chỉ thêm/bớt class `light`/`dark` trên `<html>`.
+- Đổi theme: `applyTheme` trong `app/lib/theme.ts` - chỉ thêm/bớt class `light`/`dark` trên `<html>`.
 - Utility: `text-ink`, `text-ink-light`, `text-accent`, `bg-card`, `bg-surface`, `border-border`. Tránh hex rải rác trong JSX trừ khi token chưa có.
 
 ### 5.2 Chrome
@@ -192,7 +192,7 @@ Server Components mặc định. `"use client"` chỉ khi cần state, hook, mot
 - Blog/recruitment/resource pages: Firestore là runtime; `clubData` là fallback khi chưa cấu hình hoặc lỗi quyền.
 - Secret (`.env.local`, service account) không commit.
 
-Listener thiếu quyền sẽ log `Missing or insufficient permissions` — kiểm tra rules và auth, đừng “sửa font” vì console đó.
+Listener thiếu quyền sẽ log `Missing or insufficient permissions` - kiểm tra rules và auth, đừng “sửa font” vì console đó.
 
 ---
 
@@ -209,9 +209,9 @@ Listener thiếu quyền sẽ log `Missing or insufficient permissions` — ki�
 
 UI (kể cả “chỉ sửa data chữ”):
 
-1. Trang chủ: nav **Giới thiệu / Lịch sử / Tài liệu / Cơ cấu ban / Blog** — dấu tiếng Việt đúng, không `á»`.
+1. Trang chủ: nav **Giới thiệu / Lịch sử / Tài liệu / Cơ cấu ban / Blog** - dấu tiếng Việt đúng, không `á»`.
 2. Hero: “Câu Lạc Bộ”, “Đại sứ số học đường” đúng chính tả; headline `font-display` (Archivo), body Be Vietnam Pro.
-3. `/story`, `/departments`, `/resources`, `/blog` — copy không mojibake.
+3. `/story`, `/departments`, `/resources`, `/blog` - copy không mojibake.
 4. Đổi theme light/dark: class font trên `<html>` vẫn còn (Inspect: `__variable` + `__className` của Be Vietnam Pro / Archivo).
 5. Computed `font-family` của `body` chứa `Be Vietnam Pro`, không chỉ `Segoe UI` / `Arial`.
 

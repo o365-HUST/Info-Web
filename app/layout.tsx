@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://clbo365.hust.edu.vn"),
   title: "CLB o365 - HUST | Đại sứ số học đường Đại học Bách khoa Hà Nội",
   description:
-    "Website chính thức của Câu lạc bộ o365 - Đại học Bách khoa Hà Nội. Kết nối đam mê, lan tỏa giá trị — đồng hành kỹ năng số, Microsoft 365 và MOSWC.",
+    "Website chính thức của Câu lạc bộ o365 - Đại học Bách khoa Hà Nội. Kết nối đam mê, lan tỏa giá trị - đồng hành kỹ năng số, Microsoft 365 và MOSWC.",
   openGraph: {
     type: "website",
     title: "CLB o365 - HUST | Đại sứ số học đường ĐHBK Hà Nội",

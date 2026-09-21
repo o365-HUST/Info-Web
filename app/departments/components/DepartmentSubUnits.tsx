@@ -17,10 +17,41 @@ function headerStripClass(accent: SubUnitAccent) {
   return "bg-card border-b border-border";
 }
 
-function SubUnitCard({ unit }: { unit: HardcodedSubUnitCard }) {
+function subgridRowCount(cards: HardcodedSubUnitCard[]): 3 | 4 {
+  const unit = cards[0];
+  if (unit.scopeBody) return 4;
+  return 3;
+}
+
+function subgridLayoutClasses(rowCount: 3 | 4) {
+  if (rowCount === 4) {
+    return {
+      grid: "md:[grid-template-rows:repeat(4,minmax(0,auto))]",
+      card: "md:[grid-row:span_4/span_4]",
+    };
+  }
+  return {
+    grid: "md:[grid-template-rows:repeat(3,minmax(0,auto))]",
+    card: "md:[grid-row:span_3/span_3]",
+  };
+}
+
+function SubUnitCard({
+  unit,
+  subgridCardClass,
+}: {
+  unit: HardcodedSubUnitCard;
+  subgridCardClass: string;
+}) {
+  const aboutLabel = unit.aboutLabel;
+
   return (
-    <article className="flex flex-col rounded-lg border border-border bg-card overflow-hidden">
-      <header className={`px-4 py-3 sm:px-5 sm:py-3.5 ${headerStripClass(unit.accent ?? "warm")}`}>
+    <article
+      className={`flex flex-col rounded-lg border border-border bg-card overflow-hidden md:grid md:grid-rows-subgrid md:gap-0 md:min-h-0 ${subgridCardClass}`}
+    >
+      <header
+        className={`px-4 py-3 sm:px-5 sm:py-3.5 ${headerStripClass(unit.accent ?? "warm")}`}
+      >
         <p className="font-mono text-[11px] font-semibold tracking-[0.2em] uppercase text-ink-muted m-0 mb-1">
           {unit.index}
         </p>
@@ -30,17 +61,23 @@ function SubUnitCard({ unit }: { unit: HardcodedSubUnitCard }) {
         <p className="text-sm text-ink-light leading-snug m-0 mt-1">{unit.tagline}</p>
       </header>
 
-      <div className="flex flex-col flex-1 px-4 py-4 sm:px-5 sm:py-5 gap-5">
-        <div className="border-l-2 border-accent/40 pl-4">
-          <p className="text-[11px] font-semibold tracking-[0.2em] uppercase text-accent mb-1.5 m-0">
-            {unit.aboutLabel}
-          </p>
-          <p className="text-sm sm:text-base text-ink leading-relaxed m-0">
-            {unit.about}
-          </p>
+      {unit.about ? (
+        <div className="px-4 pt-4 sm:px-5 sm:pt-5 md:pt-4 md:pb-0">
+          <div className="border-l-2 border-accent/40 pl-4 h-full">
+            {aboutLabel ? (
+              <p className="text-[11px] font-semibold tracking-[0.2em] uppercase text-accent mb-1.5 m-0">
+                {aboutLabel}
+              </p>
+            ) : null}
+            <p className="text-sm sm:text-base text-ink leading-relaxed m-0">
+              {unit.about}
+            </p>
+          </div>
         </div>
+      ) : null}
 
-        <div>
+      {unit.scopeBody ? (
+        <div className="px-4 pt-5 sm:px-5 md:pt-5 md:pb-0">
           <p className="text-[11px] font-semibold tracking-[0.2em] uppercase text-accent mb-2 m-0">
             {unit.scopeLabel}
           </p>
@@ -48,13 +85,15 @@ function SubUnitCard({ unit }: { unit: HardcodedSubUnitCard }) {
             {unit.scopeBody}
           </p>
         </div>
+      ) : null}
 
-        <div>
+      {unit.focusItems?.length ? (
+        <div className="px-4 py-4 sm:px-5 sm:py-5 md:pt-5">
           <p className="text-[11px] font-semibold tracking-[0.2em] uppercase text-accent mb-2 m-0">
             {unit.focusLabel}
           </p>
           <ul className="m-0 p-0 list-none space-y-2">
-            {unit.focusItems?.map((item) => (
+            {unit.focusItems.map((item) => (
               <li
                 key={item}
                 className="text-sm text-ink-light leading-relaxed pl-3 border-l border-border"
@@ -64,7 +103,7 @@ function SubUnitCard({ unit }: { unit: HardcodedSubUnitCard }) {
             ))}
           </ul>
         </div>
-      </div>
+      ) : null}
     </article>
   );
 }
@@ -75,6 +114,10 @@ export default function DepartmentSubUnits({
 }: DepartmentSubUnitsProps) {
   const section = getHardcodedSubUnits(departmentId);
   if (!section) return null;
+
+  const rowCount = subgridRowCount(section.cards);
+  const { grid: subgridParentClass, card: subgridCardClass } =
+    subgridLayoutClasses(rowCount);
 
   return (
     <section
@@ -92,9 +135,15 @@ export default function DepartmentSubUnits({
           {section.intro}
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 relative">
+        <div
+          className={`grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 md:items-stretch ${subgridParentClass}`}
+        >
           {section.cards.map((unit) => (
-            <SubUnitCard key={unit.index} unit={unit} />
+            <SubUnitCard
+              key={unit.index}
+              unit={unit}
+              subgridCardClass={subgridCardClass}
+            />
           ))}
         </div>
       </div>

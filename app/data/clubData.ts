@@ -1,4 +1,4 @@
-﻿import type {
+import type {
   ClubInfo,
   RecruitmentInfo,
   Department,
@@ -29,11 +29,11 @@ export const CLUB_INFO: ClubInfo = {
     },
     {
       title: "Trạm hỗ trợ Thư viện",
-      detail: "Phòng 907, Tầng 9 — Thư viện Tạ Quang Bửu",
+      detail: "Phòng 907, Tầng 9 - Thư viện Tạ Quang Bửu",
     },
     {
       title: "Văn phòng sinh hoạt",
-      detail: "Tầng 2 — Tòa nhà Alumni (Cựu sinh viên)",
+      detail: "Tầng 2 - Tòa nhà Alumni (Cựu sinh viên)",
     },
     {
       title: "Điểm tư vấn C1",
@@ -65,7 +65,7 @@ export const STATS: StatItem[] = [
   { value: 2, suffix: "+", label: "Năm phát triển", icon: "Award" },
 ];
 
-/** Hero support line — CONTENTv1 STAT CARD */
+/** Hero support line - CONTENTv1 STAT CARD */
 export const HERO_TAGLINE =
   "Một cộng đồng dành cho sinh viên Bách khoa cùng học hỏi, thực hành và phát triển kỹ năng tin học văn phòng. Tại o365-HUST, chúng mình cùng nhau khám phá công nghệ, chia sẻ kiến thức và tạo nên những giá trị thiết thực.";
 
@@ -77,7 +77,7 @@ export const ABOUT_COPY = {
   position:
     'Từ những ngày đầu thành lập, CLB o365 - HUST đã không ngừng phát triển và khẳng định vị thế. Hiện tại CLB là "Đại sứ số học đường" của Đại học Bách khoa Hà Nội và là đơn vị Cộng tác viên tin cậy của Ban Công tác Sinh viên và Trung tâm Chuyển đổi số của Đại học, đảm nhận nhiều vai trò và nhiệm vụ quan trọng.',
   future:
-    'CLB o365 - HUST phấn đấu trở thành một "ngôi nhà chung" — nơi mỗi thành viên không chỉ cùng nhau học tập, chia sẻ kiến thức công nghệ mà còn là nơi giao lưu, kết nối và hỗ trợ lẫn nhau trong cả học tập lẫn đời sống.',
+    'CLB o365 - HUST phấn đấu trở thành một "ngôi nhà chung" - nơi mỗi thành viên không chỉ cùng nhau học tập, chia sẻ kiến thức công nghệ mà còn là nơi giao lưu, kết nối và hỗ trợ lẫn nhau trong cả học tập lẫn đời sống.',
 } as const;
 
 export const CORE_MISSIONS: MissionItem[] = [
@@ -192,10 +192,10 @@ export const DEPARTMENTS: Department[] = [
     },
     viceLeaders: [
       { name: "Lê Hải Bình", role: "Thư ký" },
-      { name: "Lê Nguyễn Đức Long", role: "Phó chủ nhiệm CLB — Trưởng ban Tài chính" },
-      { name: "Nguyễn Phúc Anh", role: "Phó chủ nhiệm CLB — Trưởng ban Chuyên môn" },
-      { name: "Phạm Trần Thành Công", role: "Phó chủ nhiệm CLB — Trưởng ban Sự kiện" },
-      { name: "Vũ Vân Chi", role: "Phó chủ nhiệm CLB — Trưởng ban Truyền thông" },
+      { name: "Lê Nguyễn Đức Long", role: "Phó chủ nhiệm CLB - Trưởng ban Tài chính" },
+      { name: "Nguyễn Phúc Anh", role: "Phó chủ nhiệm CLB - Trưởng ban Chuyên môn" },
+      { name: "Phạm Trần Thành Công", role: "Phó chủ nhiệm CLB - Trưởng ban Sự kiện" },
+      { name: "Vũ Vân Chi", role: "Phó chủ nhiệm CLB - Trưởng ban Truyền thông" },
     ],
     keyActivities: [
       {
@@ -266,21 +266,21 @@ export const DEPARTMENTS: Department[] = [
     accentColor: "#0078D4",
     tagline: "Biến kiến thức công nghệ thành giá trị thực tiễn",
     description:
-      "Phụ trách chuyên môn Microsoft 365, tin học văn phòng và kỹ năng số — xây dựng tài liệu, công cụ và chương trình đào tạo phục vụ sinh viên.",
+      "Phụ trách chuyên môn Microsoft 365, tin học văn phòng và kỹ năng số - xây dựng tài liệu, công cụ và chương trình đào tạo phục vụ sinh viên.",
     fullDescription:
       "Ban Chuyên môn là một trong những phân ban nòng cốt của CLB o365 – HUST. Ban phụ trách các nội dung chuyên môn về Microsoft 365, tin học văn phòng và kỹ năng số; nghiên cứu, xây dựng tài liệu, công cụ và nội dung hướng dẫn phục vụ sinh viên; tổ chức các chương trình đào tạo kỹ năng, hỗ trợ học tập và ứng dụng công nghệ; tham gia kiểm duyệt, hỗ trợ và xử lý các hoạt động chuyên môn do CLB quản lý. Mục tiêu: biến kiến thức công nghệ thành những giá trị thực tiễn cho học tập và công việc.",
     mission:
       "Biến kiến thức công nghệ thành những giá trị thực tiễn cho học tập và công việc của sinh viên.",
     leader: {
       name: "Nguyễn Phúc Anh",
-      role: "Phó chủ nhiệm CLB — Trưởng ban Chuyên môn",
+      role: "Phó chủ nhiệm CLB - Trưởng ban Chuyên môn",
       quote:
         "Học công nghệ không phải để trở thành lập trình viên, mà để biến ý tưởng của bạn thành hiện thực với tốc độ nhanh nhất.",
     },
     keyActivities: [
       {
         title: "Kiểm duyệt & hỗ trợ chuyên môn CLB",
-        desc: "Kiểm tra, xử lý kết quả các hoạt động chuyên môn do CLB quản lý — minh chứng, nội dung và kết quả học tập.",
+        desc: "Kiểm tra, xử lý kết quả các hoạt động chuyên môn do CLB quản lý - minh chứng, nội dung và kết quả học tập.",
       },
       {
         title: "Hỗ trợ Trung tâm Chuyển đổi số Đại học",
@@ -332,7 +332,7 @@ export const DEPARTMENTS: Department[] = [
         src: "/assets/departments/ACADEMIC/carousel-01.jpg",
         alt: "Ấn phẩm hướng dẫn theo dõi tiến độ sinh hoạt công dân bằng PowerApps",
         title: "Công cụ PowerApps",
-        caption: "Theo dõi tiến độ sinh hoạt công dân — sản phẩm hướng dẫn của ban.",
+        caption: "Theo dõi tiến độ sinh hoạt công dân - sản phẩm hướng dẫn của ban.",
         fit: "contain",
         subUnitId: "ky-thuat",
       },
@@ -340,7 +340,7 @@ export const DEPARTMENTS: Department[] = [
         src: "/assets/departments/ACADEMIC/carousel-02.jpg",
         alt: "Ấn phẩm khóa học kỹ năng mềm Excel, PowerPoint, Word",
         title: "Khóa học kỹ năng mềm",
-        caption: "Excel, PowerPoint, Word — điểm rèn luyện kỹ năng tin học.",
+        caption: "Excel, PowerPoint, Word - điểm rèn luyện kỹ năng tin học.",
         fit: "contain",
         subUnitId: "knm",
       },
@@ -376,7 +376,7 @@ export const DEPARTMENTS: Department[] = [
     accentColor: "#F59E0B",
     tagline: "Gam màu vàng – lan tỏa bằng sáng tạo chân phương",
     description:
-      "Ngòi bút, ống kính và nét vẽ — với khát khao học hỏi và tinh thần đổi mới sáng tạo, lan tỏa ứng dụng và giá trị o365 đến sinh viên.",
+      "Ngòi bút, ống kính và nét vẽ - với khát khao học hỏi và tinh thần đổi mới sáng tạo, lan tỏa ứng dụng và giá trị o365 đến sinh viên.",
     fullDescription:
       "Ban Truyền thông dùng ngòi bút, ống kính và nét vẽ, bằng giá trị chân phương, khát khao học hỏi và tinh thần sẵn sàng đổi mới sáng tạo của gam màu vàng, để tạo nên những ý tưởng độc đáo, đảm bảo phần nhìn và lan tỏa ứng dụng cũng như giá trị của CLB đến các bạn sinh viên trong toàn Đại học.",
     mission:
@@ -400,7 +400,7 @@ export const DEPARTMENTS: Department[] = [
     ],
     leader: {
       name: "Vũ Vân Chi",
-      role: "Phó chủ nhiệm CLB — Trưởng ban Truyền thông",
+      role: "Phó chủ nhiệm CLB - Trưởng ban Truyền thông",
       quote:
         "Hình ảnh đẹp khiến người ta dừng lại 3 giây, nhưng thông điệp chân thành mới là điều giữ người xem ở lại lâu dài.",
     },
@@ -437,14 +437,14 @@ export const DEPARTMENTS: Department[] = [
         src: "/assets/departments/MEDIA/carousel-02.jpg",
         alt: "Photobooth tốt nghiệp 2026 của Ban Truyền thông",
         title: "Graduate 2026",
-        caption: "Photobooth lễ tốt nghiệp — #ĐHBKHN Một tình yêu. Một tương lai.",
+        caption: "Photobooth lễ tốt nghiệp - #ĐHBKHN Một tình yêu. Một tương lai.",
         fit: "contain",
       },
       {
         src: "/assets/departments/MEDIA/carousel-03.jpg",
         alt: "Ấn phẩm One Love One Future cùng sinh viên áo trẻ",
         title: "One Love One Future",
-        caption: "Ấn phẩm 70 năm HUST — nắng Bách khoa hong vàng màu áo trẻ.",
+        caption: "Ấn phẩm 70 năm HUST - nắng Bách khoa hong vàng màu áo trẻ.",
         fit: "contain",
       },
     ],
@@ -454,7 +454,7 @@ export const DEPARTMENTS: Department[] = [
         title: "DNA Truyền Thông",
         type: "quote",
         description:
-          "Ngòi bút, ống kính và nét vẽ — sáng tạo chân phương, sẵn sàng đổi mới để lan tỏa giá trị o365.",
+          "Ngòi bút, ống kính và nét vẽ - sáng tạo chân phương, sẵn sàng đổi mới để lan tỏa giá trị o365.",
         quoteAuthor: "Ban Truyền thông o365",
         colSpan: "col-span-1",
       },
@@ -494,14 +494,14 @@ export const DEPARTMENTS: Department[] = [
     accentColor: "#EF4444",
     tagline: "Sắc đỏ Sự kiện – Thắp sáng ngọn lửa trách nhiệm",
     description:
-      "“Trái tim” vận hành hoạt động CLB — tổ chức sự kiện, điều phối hiện trường, hậu cần và phối hợp các ban trong mọi chương trình.",
+      "“Trái tim” vận hành hoạt động CLB - tổ chức sự kiện, điều phối hiện trường, hậu cần và phối hợp các ban trong mọi chương trình.",
     fullDescription:
       "Ban Sự kiện là một trong những phân ban nòng cốt của CLB o365 – HUST, được ví như “trái tim” vận hành các hoạt động và chương trình của CLB. Ban phụ trách tổ chức và hỗ trợ triển khai sự kiện; điều phối nhân sự tại hiện trường; chuẩn bị hậu cần, vật dụng và công việc phía sau chương trình; phối hợp các ban khác và hỗ trợ công việc chung, duy trì hoạt động thường xuyên của CLB. Thành viên được tham gia trực tiếp các chương trình quy mô lớn của trường.",
     mission:
-      "Thắp sáng ngọn lửa trách nhiệm — đảm bảo mỗi chương trình vận hành đúng kế hoạch từ ý tưởng đến hiện trường.",
+      "Thắp sáng ngọn lửa trách nhiệm - đảm bảo mỗi chương trình vận hành đúng kế hoạch từ ý tưởng đến hiện trường.",
     leader: {
       name: "Phạm Trần Thành Công",
-      role: "Phó chủ nhiệm CLB — Trưởng ban Sự kiện",
+      role: "Phó chủ nhiệm CLB - Trưởng ban Sự kiện",
       quote:
         "Sự kiện thành công không nằm ở sân khấu hoành tráng, mà ở nụ cười và giá trị mà mỗi bạn sinh viên mang về sau buổi tối hôm đó.",
     },
@@ -581,7 +581,7 @@ export const DEPARTMENTS: Department[] = [
     image: "/assets/departments/HR/main.JPG",
     color: "#ECFDF5",
     accentColor: "#10B981",
-    tagline: "Thầm lặng, chỉn chu — hậu cần & tài chính",
+    tagline: "Thầm lặng, chỉn chu - hậu cần & tài chính",
     description:
       "Đội ngũ thầm lặng lên kế hoạch chỉn chu từ quản lý hậu cần, cân đối ngân sách, thu – chi hội phí đến tham mưu tài chính cho Ban Chủ nhiệm.",
     fullDescription:
@@ -590,7 +590,7 @@ export const DEPARTMENTS: Department[] = [
       "Đảm bảo nguồn lực tài chính minh bạch và ghi nhận đóng góp của từng thành viên.",
     leader: {
       name: "Lê Nguyễn Đức Long",
-      role: "Phó chủ nhiệm CLB — Trưởng ban Tài chính",
+      role: "Phó chủ nhiệm CLB - Trưởng ban Tài chính",
       quote:
         "Câu lạc bộ có thể thay đổi dự án, nhưng con người và những kỷ niệm cùng nhau đi qua năm tháng sẽ còn mãi.",
     },
@@ -622,8 +622,8 @@ export const DEPARTMENTS: Department[] = [
     gallery: [
       {
         src: "/assets/departments/dept-05-hr.jpg",
-        alt: "Ban Tài chính tạo dáng cùng bảng hiệu Ban Tài chính — Nhân sự",
-        title: "Ban Tài chính — Nhân sự",
+        alt: "Ban Tài chính tạo dáng cùng bảng hiệu Ban Tài chính - Nhân sự",
+        title: "Ban Tài chính - Nhân sự",
         caption: "Đội ngũ thầm lặng cân đối ngân sách và ghi nhận từng thành viên.",
         fit: "cover",
       },
@@ -634,7 +634,7 @@ export const DEPARTMENTS: Department[] = [
         title: "Triết Lý Ban",
         type: "quote",
         description:
-          "Thầm lặng nhưng chỉn chu — mỗi đồng hội phí và mỗi đánh giá thành viên đều góp phần vận hành CLB bền vững.",
+          "Thầm lặng nhưng chỉn chu - mỗi đồng hội phí và mỗi đánh giá thành viên đều góp phần vận hành CLB bền vững.",
         quoteAuthor: "Ban Tài chính o365",
         colSpan: "col-span-1",
       },
@@ -705,7 +705,7 @@ Chúng tôi sẽ tiếp tục cập nhật các tính năng mới trong chuỗi 
     id: "moswc-2026",
     title: "MOSWC 2026: Hành trình chinh phục kỹ năng số quốc tế",
     excerpt:
-      "Tổng kết vòng loại MOSWC tại ĐHBK Hà Nội — từ khâu tổ chức, ôn luyện đến những gương mặt xuất sắc đại diện trường.",
+      "Tổng kết vòng loại MOSWC tại ĐHBK Hà Nội - từ khâu tổ chức, ôn luyện đến những gương mặt xuất sắc đại diện trường.",
     tag: "Cuộc thi",
     date: "28/08/2026",
     author: "Ban Chuyên môn o365",
@@ -734,7 +734,7 @@ Ban Chuyên môn của CLB đã xây dựng lộ trình ôn tập kéo dài 6 tu
     id: "hanh-trinh-do",
     title: "Hành trình Đỏ Quảng Tây: Khi o365 vươn tầm quốc tế",
     excerpt:
-      "Câu chuyện về chuyến nghiên cứu học tập tại Trung Quốc — nơi các thành viên CLB trải nghiệm và hỗ trợ đoàn đại biểu nhà trường.",
+      "Câu chuyện về chuyến nghiên cứu học tập tại Trung Quốc - nơi các thành viên CLB trải nghiệm và hỗ trợ đoàn đại biểu nhà trường.",
     tag: "Hành trình",
     date: "21/04/2026",
     author: "Ban Truyền thông & Đối ngoại",

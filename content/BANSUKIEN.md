@@ -2,6 +2,16 @@
 Là một trong những phân ban nòng cốt của CLB o365 – HUST.
 Được giới thiệu với hình ảnh: “Sắc đỏ Sự kiện – Thắp sáng ngọn lửa trách nhiệm.”
 Được ví như “trái tim” vận hành các hoạt động và chương trình của CLB.
+
+Thiên về Kỹ thuật sự kiện
+- Đảm nhận vai trò kĩ thuật viên trong các sự kiện lớn của Ban CTSV cũng như Đại học: Trực tiếp setup âm thanh, ánh sáng, hình ảnh, phần mềm chạy slide, livestream...
+- Đóng vai trò nòng cốt phát triển ban Sự kiện.
+- Là phân ban tiền thân sáng lập CLB.
+Thiên về Điều phối & Vận hành
+- Hỗ trợ điều phối, lễ tân (trao học bổng), MC, văn nghệ ... trong các sự kiện của Ban CTSV Đại học. 
+- Tổ chức các hoạt động mini game trong meeting CLB, các buổi team building khi dã ngoại, ...
+- Đảm nhận trách nhiệm và vai trò trong các sự kiện lớn của CLB như: Sinh nhật CLB, Kiện toàn nhân sự. 
+
 Phụ trách các công việc chính:
 Tổ chức và hỗ trợ triển khai sự kiện.
 Điều phối nhân sự và hoạt động tại hiện trường.

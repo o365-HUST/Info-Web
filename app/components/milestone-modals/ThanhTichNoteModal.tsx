@@ -49,7 +49,7 @@ export default function ThanhTichNoteModal({
             <img
               key={`${src}-${idx}`}
               src={src}
-              alt={`${title} — hình ${idx + 1}`}
+              alt={`${title} - hình ${idx + 1}`}
               className="aspect-[4/3] w-48 shrink-0 snap-start rounded-2xl border-2 border-dashed border-ink/25 object-cover [box-shadow:var(--timeline-chunky-shadow)]"
             />
           ))}
