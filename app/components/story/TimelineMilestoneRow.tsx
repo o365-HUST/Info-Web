@@ -109,7 +109,7 @@ export default function TimelineMilestoneRow({
     <motion.li
       ref={ref}
       id={row.yearControlsId}
-      className={`absolute left-0 right-0 list-none ${isCollapsing ? "overflow-hidden" : "overflow-visible"}`}
+      className={`absolute left-0 right-0 list-none [content-visibility:auto] [contain-intrinsic-size:auto_220px] ${isCollapsing ? "overflow-hidden" : "overflow-visible"}`}
       initial={false}
       animate={{
         top: row.rowTop,

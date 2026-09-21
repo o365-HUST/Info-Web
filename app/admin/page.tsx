@@ -38,6 +38,7 @@ import {
   Folder,
 } from "lucide-react";
 import { DOCUMENT_CATEGORIES } from "@/app/data/clubData";
+import { canUseLocalCmsDemo } from "@/app/lib/cmsDemoMode";
 
 export default function AdminPage() {
   const [user, setUser] = useState<User | null>(null);
@@ -94,12 +95,15 @@ export default function AdminPage() {
         setAuthLoading(false);
       });
       return () => unsub();
-    } else {
-      // In demo mode without API keys: check local session
+    } else if (canUseLocalCmsDemo()) {
       const savedDemo = localStorage.getItem("o365_admin_demo_logged_in");
       if (savedDemo === "true") {
         setDemoLoggedIn(true);
       }
+      setAuthLoading(false);
+    } else {
+      localStorage.removeItem("o365_admin_demo_logged_in");
+      setDemoLoggedIn(false);
       setAuthLoading(false);
     }
   }, []);
@@ -131,10 +135,14 @@ export default function AdminPage() {
       } finally {
         setIsLoggingIn(false);
       }
-    } else {
-      // Demo login
+    } else if (canUseLocalCmsDemo()) {
       setDemoLoggedIn(true);
       localStorage.setItem("o365_admin_demo_logged_in", "true");
+      setIsLoggingIn(false);
+    } else {
+      setLoginError(
+        "CMS chưa được cấu hình (thiếu Firebase). Liên hệ quản trị hệ thống.",
+      );
       setIsLoggingIn(false);
     }
   };
@@ -150,16 +158,29 @@ export default function AdminPage() {
 
   // Post Actions
   const handleSavePost = async (postData: Omit<BlogPost, "id">, id?: string) => {
-    if (id) {
-      await updatePost(id, postData);
-    } else {
-      await createPost(postData);
+    try {
+      if (id) {
+        await updatePost(id, postData);
+      } else {
+        await createPost(postData);
+      }
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Không thể lưu bài viết.";
+      setLoginError(message);
+      throw err;
     }
   };
 
   const handleDeletePost = async (id: string, title: string) => {
     if (confirm(`Bạn có chắc chắn muốn xóa bài viết: "${title}"?`)) {
-      await deletePost(id);
+      try {
+        await deletePost(id);
+      } catch (err) {
+        const message =
+          err instanceof Error ? err.message : "Không thể xóa bài viết.";
+        alert(message);
+      }
     }
   };
 
@@ -184,12 +205,19 @@ export default function AdminPage() {
       await updateRecruitment(recruitment);
       setSeedSuccess("Đã lưu thông tin tuyển quân thành công!");
       setTimeout(() => setSeedSuccess(null), 3000);
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Không thể lưu cài đặt.";
+      alert(message);
     } finally {
       setIsSavingSettings(false);
     }
   };
 
-  const isAuthenticated = Boolean(user || demoLoggedIn);
+  const isAuthenticated = Boolean(
+    user || (demoLoggedIn && canUseLocalCmsDemo()),
+  );
+  const cmsAvailable = isFirebaseConfigured() || canUseLocalCmsDemo();
 
   if (authLoading) {
     return (
@@ -228,6 +256,15 @@ export default function AdminPage() {
             </div>
           )}
 
+          {!cmsAvailable && (
+            <p className="mb-4 text-sm text-ink-light leading-relaxed">
+              CMS yêu cầu cấu hình Firebase trên môi trường production. Chạy{" "}
+              <code className="text-xs">pnpm dev</code> với file{" "}
+              <code className="text-xs">.env.local</code> để dùng chế độ demo
+              cục bộ.
+            </p>
+          )}
+
           {/* Login Form */}
           <form onSubmit={handleEmailLogin} className="space-y-4">
             <div>
@@ -264,14 +301,14 @@ export default function AdminPage() {
 
             <button
               type="submit"
-              disabled={isLoggingIn}
+              disabled={isLoggingIn || !cmsAvailable}
               className="w-full py-2.5 rounded-xl bg-ink text-surface text-sm font-semibold hover:bg-ink/90 transition-colors shadow-xs cursor-pointer disabled:opacity-50"
             >
               {isLoggingIn
                 ? "Đang xác thực..."
                 : isFirebaseConfigured()
-                ? "Đăng nhập với Email"
-                : "Đăng nhập Quản trị (Demo)"}
+                  ? "Đăng nhập với Email"
+                  : "Đăng nhập Quản trị (Demo)"}
             </button>
           </form>
 

@@ -13,6 +13,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { db, isFirebaseConfigured } from "./firebase";
+import { canUseLocalCmsDemo } from "./cmsDemoMode";
 import { deleteMediaAsset } from "./storageService";
 import type {
   BlogPost,
@@ -47,8 +48,7 @@ function sanitizeForFirestore(
 
 export async function checkIsAdmin(uid: string): Promise<boolean> {
   if (!isFirebaseConfigured() || !db) {
-    // In local demo mode, allow access
-    return true;
+    return canUseLocalCmsDemo();
   }
   try {
     const adminDocRef = doc(db, "admins", uid);
@@ -82,6 +82,9 @@ function saveLocalPosts(posts: BlogPost[]) {
   if (typeof window === "undefined") return;
   localStorage.setItem(LOCAL_POSTS_KEY, JSON.stringify(posts));
   window.dispatchEvent(new CustomEvent("cms-posts-updated", { detail: posts }));
+  if (postsSubscribers.size > 0) {
+    notifyPostsSubscribers(posts);
+  }
 }
 
 function getLocalRecruitment(): RecruitmentInfo {
@@ -94,6 +97,77 @@ function getLocalRecruitment(): RecruitmentInfo {
   } catch {
     return RECRUITMENT_INFO;
   }
+}
+
+function useLocalCmsFallback(): boolean {
+  return canUseLocalCmsDemo();
+}
+
+function firestoreWriteError(action: string, err: unknown): never {
+  const message =
+    err instanceof Error ? err.message : "Unknown Firestore error";
+  throw new Error(`${action} failed: ${message}`);
+}
+
+// ─── Shared posts listener (one Firestore subscription per tab) ───
+type PostsListener = (posts: BlogPost[]) => void;
+const postsSubscribers = new Set<PostsListener>();
+let postsCache: BlogPost[] | null = null;
+let postsUnsubscribe: (() => void) | null = null;
+
+function notifyPostsSubscribers(posts: BlogPost[]) {
+  postsCache = posts;
+  postsSubscribers.forEach((cb) => cb(posts));
+}
+
+function teardownPostsListenerIfIdle() {
+  if (postsSubscribers.size === 0 && postsUnsubscribe) {
+    postsUnsubscribe();
+    postsUnsubscribe = null;
+  }
+}
+
+function ensurePostsListener() {
+  if (postsUnsubscribe) return;
+
+  if (isFirebaseConfigured() && db) {
+    try {
+      const q = query(collection(db, "posts"));
+      postsUnsubscribe = onSnapshot(
+        q,
+        (snapshot) => {
+          const posts = snapshot.docs.map((d) => ({
+            id: d.id,
+            ...d.data(),
+          })) as BlogPost[];
+          notifyPostsSubscribers(posts);
+        },
+        (error) => {
+          console.error("Firestore subscribePosts listener error:", error);
+          notifyPostsSubscribers([]);
+        },
+      );
+      return;
+    } catch (e) {
+      console.error("Firestore subscription failed:", e);
+      notifyPostsSubscribers([]);
+      return;
+    }
+  }
+
+  notifyPostsSubscribers(getLocalPosts());
+  const handler = (e: Event) => {
+    const custom = e as CustomEvent<BlogPost[]>;
+    notifyPostsSubscribers(custom.detail || getLocalPosts());
+  };
+  if (typeof window !== "undefined") {
+    window.addEventListener("cms-posts-updated", handler);
+  }
+  postsUnsubscribe = () => {
+    if (typeof window !== "undefined") {
+      window.removeEventListener("cms-posts-updated", handler);
+    }
+  };
 }
 
 function saveLocalRecruitment(info: RecruitmentInfo) {
@@ -111,14 +185,14 @@ export async function getPosts(): Promise<BlogPost[]> {
     try {
       const q = query(collection(db, "posts"));
       const snapshot = await getDocs(q);
-      if (!snapshot.empty) {
-        return snapshot.docs.map((d) => ({
-          id: d.id,
-          ...d.data(),
-        })) as BlogPost[];
-      }
+      return snapshot.docs.map((d) => ({
+        id: d.id,
+        ...d.data(),
+      })) as BlogPost[];
     } catch (err) {
-      console.warn("Firestore getPosts error, falling back:", err);
+      console.error("Firestore getPosts error:", err);
+      if (useLocalCmsFallback()) return getLocalPosts();
+      return [];
     }
   }
   return getLocalPosts();
@@ -131,12 +205,16 @@ export async function getPostById(id: string): Promise<BlogPost | null> {
       if (snap.exists()) {
         return { id: snap.id, ...snap.data() } as BlogPost;
       }
+      return null;
     } catch (err) {
-      console.warn("Firestore getPostById error, falling back:", err);
+      console.error("Firestore getPostById error:", err);
+      if (useLocalCmsFallback()) {
+        return getLocalPosts().find((p) => p.id === id) || null;
+      }
+      return null;
     }
   }
-  const localPosts = getLocalPosts();
-  return localPosts.find((p) => p.id === id) || null;
+  return getLocalPosts().find((p) => p.id === id) || null;
 }
 
 export async function getRelatedPosts(
@@ -160,45 +238,16 @@ export async function getRelatedPosts(
 }
 
 export function subscribePosts(callback: (posts: BlogPost[]) => void): () => void {
-  if (isFirebaseConfigured() && db) {
-    try {
-      const q = query(collection(db, "posts"));
-      return onSnapshot(
-        q,
-        (snapshot) => {
-          if (!snapshot.empty) {
-            const posts = snapshot.docs.map((d) => ({
-              id: d.id,
-              ...d.data(),
-            })) as BlogPost[];
-            callback(posts);
-          } else {
-            callback(getLocalPosts());
-          }
-        },
-        (error) => {
-          console.warn("Firestore subscribePosts listener error:", error);
-          callback(getLocalPosts());
-        }
-      );
-    } catch (e) {
-      console.warn("Firestore subscription failed, using local posts:", e);
-    }
+  postsSubscribers.add(callback);
+  if (postsCache) {
+    callback(postsCache);
+  } else {
+    ensurePostsListener();
   }
 
-  // Local fallback subscription
-  callback(getLocalPosts());
-  const handler = (e: Event) => {
-    const custom = e as CustomEvent<BlogPost[]>;
-    callback(custom.detail || getLocalPosts());
-  };
-  if (typeof window !== "undefined") {
-    window.addEventListener("cms-posts-updated", handler);
-  }
   return () => {
-    if (typeof window !== "undefined") {
-      window.removeEventListener("cms-posts-updated", handler);
-    }
+    postsSubscribers.delete(callback);
+    teardownPostsListenerIfIdle();
   };
 }
 
@@ -214,13 +263,20 @@ export async function createPost(postData: Omit<BlogPost, "id">): Promise<string
       });
       return docRef.id;
     } catch (err) {
-      console.error("Firestore createPost failed:", err);
+      firestoreWriteError("createPost", err);
     }
   }
 
-  // Local fallback
+  if (!useLocalCmsFallback()) {
+    throw new Error("CMS is not configured for this environment.");
+  }
+
   const posts = getLocalPosts();
-  const newPost: BlogPost = { id: newId, ...postData, published: postData.published ?? true };
+  const newPost: BlogPost = {
+    id: newId,
+    ...postData,
+    published: postData.published ?? true,
+  };
   saveLocalPosts([newPost, ...posts]);
   return newId;
 }
@@ -235,11 +291,14 @@ export async function updatePost(id: string, postData: Partial<BlogPost>): Promi
       });
       return;
     } catch (err) {
-      console.error("Firestore updatePost failed:", err);
+      firestoreWriteError("updatePost", err);
     }
   }
 
-  // Local fallback
+  if (!useLocalCmsFallback()) {
+    throw new Error("CMS is not configured for this environment.");
+  }
+
   const posts = getLocalPosts();
   const updated = posts.map((p) => (p.id === id ? { ...p, ...postData } : p));
   saveLocalPosts(updated);
@@ -259,11 +318,14 @@ export async function deletePost(id: string): Promise<void> {
       await deleteDoc(docRef);
       return;
     } catch (err) {
-      console.error("Firestore deletePost failed:", err);
+      firestoreWriteError("deletePost", err);
     }
   }
 
-  // Local fallback
+  if (!useLocalCmsFallback()) {
+    throw new Error("CMS is not configured for this environment.");
+  }
+
   const posts = getLocalPosts();
   saveLocalPosts(posts.filter((p) => p.id !== id));
 }
@@ -289,23 +351,34 @@ export async function getRecruitment(): Promise<RecruitmentInfo> {
       if (snap.exists()) {
         return normalizeRecruitment(snap.data() as Partial<RecruitmentInfo>);
       }
+      return normalizeRecruitment(undefined);
     } catch (err) {
-      console.warn("Firestore getRecruitment failed:", err);
+      console.error("Firestore getRecruitment failed:", err);
+      if (useLocalCmsFallback()) return getLocalRecruitment();
+      return normalizeRecruitment(undefined);
     }
   }
   return getLocalRecruitment();
 }
 
 export async function updateRecruitment(info: Partial<RecruitmentInfo>): Promise<void> {
-  const current = getLocalRecruitment();
+  const current =
+    isFirebaseConfigured() && db
+      ? await getRecruitment()
+      : getLocalRecruitment();
   const updated = normalizeRecruitment({ ...current, ...info });
 
   if (isFirebaseConfigured() && db) {
     try {
       await setDoc(doc(db, "settings", "recruitment"), updated, { merge: true });
+      return;
     } catch (err) {
-      console.error("Firestore updateRecruitment failed:", err);
+      firestoreWriteError("updateRecruitment", err);
     }
+  }
+
+  if (!useLocalCmsFallback()) {
+    throw new Error("CMS is not configured for this environment.");
   }
 
   saveLocalRecruitment(updated);
@@ -361,20 +434,21 @@ export async function saveResourcePage(
     updatedAt: new Date().toISOString(),
   };
 
-  let synced = false;
-
   if (isFirebaseConfigured() && db) {
     try {
       await setDoc(doc(db, "resource_pages", slug), payload, { merge: true });
-      synced = true;
+      return { synced: true };
     } catch (err) {
-      console.error("Firestore saveResourcePage failed:", err);
+      firestoreWriteError("saveResourcePage", err);
     }
   }
 
-  saveLocalResourcePage(slug, payload);
+  if (!useLocalCmsFallback()) {
+    throw new Error("CMS is not configured for this environment.");
+  }
 
-  return { synced: !isFirebaseConfigured() || synced };
+  saveLocalResourcePage(slug, payload);
+  return { synced: false };
 }
 
 // ──────────────────────────────────────────
@@ -384,9 +458,8 @@ export async function saveResourcePage(
 export async function seedInitialData(): Promise<{
   postsCount: number;
 }> {
-  let seededPosts = 0;
-
   if (isFirebaseConfigured() && db) {
+    let seededPosts = 0;
     for (const post of BLOG_POSTS) {
       await setDoc(doc(db, "posts", post.id), {
         ...post,
@@ -397,13 +470,14 @@ export async function seedInitialData(): Promise<{
     }
 
     await setDoc(doc(db, "settings", "recruitment"), RECRUITMENT_INFO);
-  } else {
-    saveLocalPosts(BLOG_POSTS);
-    saveLocalRecruitment(RECRUITMENT_INFO);
-    seededPosts = BLOG_POSTS.length;
+    return { postsCount: seededPosts };
   }
 
-  return {
-    postsCount: seededPosts,
-  };
+  if (!useLocalCmsFallback()) {
+    throw new Error("CMS is not configured for this environment.");
+  }
+
+  saveLocalPosts(BLOG_POSTS);
+  saveLocalRecruitment(RECRUITMENT_INFO);
+  return { postsCount: BLOG_POSTS.length };
 }

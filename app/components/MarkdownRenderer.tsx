@@ -4,6 +4,8 @@ import Image from "next/image";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import type { Components } from "react-markdown";
+import { normalizeSafeHref } from "@/app/lib/safeUrl";
+import { sanitizeRichHtml } from "@/app/lib/sanitizeHtml";
 
 interface MarkdownRendererProps {
   content: string;
@@ -68,7 +70,7 @@ const markdownComponents: Components = {
     </p>
   ),
   a: ({ href, children }) => {
-    const url = href ?? "#";
+    const url = normalizeSafeHref(href);
     const isExternal = url.startsWith("http");
     return (
       <a
@@ -172,7 +174,7 @@ export default function MarkdownRenderer({
     return (
       <div
         className={`prose-o365 ${className}`}
-        dangerouslySetInnerHTML={{ __html: content.trim() }}
+        dangerouslySetInnerHTML={{ __html: sanitizeRichHtml(content) }}
       />
     );
   }

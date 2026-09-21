@@ -13,6 +13,7 @@ import TableOfContents from "@/app/components/cms/TableOfContents";
 import { ChevronLeft, Edit3, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { sanitizeRichHtml } from "@/app/lib/sanitizeHtml";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -132,7 +133,7 @@ export default function DocumentDetailPage({ params }: PageProps) {
               <div className="flex-1 min-w-0" id="document-content">
                 <div 
                   className="prose-light bg-white p-8 md:p-12 rounded-3xl shadow-sm border border-slate-200 mb-10 max-w-none text-slate-800"
-                  dangerouslySetInnerHTML={{ __html: content }}
+                  dangerouslySetInnerHTML={{ __html: sanitizeRichHtml(content) }}
                 />
 
                 {/* Attachments rendering */}
