@@ -13,7 +13,7 @@ type ShowcaseImage = {
   index: number;
 };
 
-const SHOWCASE_IMAGE_COUNT = 12;
+const SHOWCASE_IMAGE_COUNT = 20;
 
 const SHOWCASE_IMAGES: ShowcaseImage[] = Array.from(
   { length: SHOWCASE_IMAGE_COUNT },
@@ -26,13 +26,24 @@ const SHOWCASE_IMAGES: ShowcaseImage[] = Array.from(
   };
 });
 
-const third = Math.floor(SHOWCASE_IMAGES.length / 3);
-const firstRow = SHOWCASE_IMAGES.slice(0, third);
-const secondRow = SHOWCASE_IMAGES.slice(third, third * 2);
-const thirdRow = SHOWCASE_IMAGES.slice(third * 2);
+/** Split all images across three rows (handles counts not divisible by 3). */
+function splitIntoThreeRows<T>(items: T[]): [T[], T[], T[]] {
+  const n = items.length;
+  const base = Math.floor(n / 3);
+  const rem = n % 3;
+  const firstSize = base + (rem > 0 ? 1 : 0);
+  const secondSize = base + (rem > 1 ? 1 : 0);
+  const thirdSize = base;
+  const first = items.slice(0, firstSize);
+  const second = items.slice(firstSize, firstSize + secondSize);
+  const third = items.slice(firstSize + secondSize, firstSize + secondSize + thirdSize);
+  return [first, second, third];
+}
+
+const [firstRow, secondRow, thirdRow] = splitIntoThreeRows(SHOWCASE_IMAGES);
 
 const MARQUEE_SHARED = {
-  className: "w-full",
+  className: "w-max max-w-none",
   baseVelocity: 6,
   repeat: 2,
   draggable: false,
@@ -305,17 +316,28 @@ export default function EventsTeaser() {
         transition={{ duration: motionOk ? 0.55 : 0.15, ease: [0.22, 1, 0.36, 1] }}
         className="flex flex-col gap-2 sm:gap-3 md:gap-4 origin-center"
       >
-        <SimpleMarquee {...MARQUEE_SHARED} paused={paused || !!selected} direction="left">
-          {renderRow(firstRow)}
-        </SimpleMarquee>
-
-        <SimpleMarquee {...MARQUEE_SHARED} paused={paused || !!selected} direction="right">
-          {renderRow(secondRow)}
-        </SimpleMarquee>
-
-        <SimpleMarquee {...MARQUEE_SHARED} paused={paused || !!selected} direction="left">
-          {renderRow(thirdRow)}
-        </SimpleMarquee>
+        {(
+          [
+            { row: firstRow, direction: "left" as const },
+            { row: secondRow, direction: "right" as const },
+            { row: thirdRow, direction: "left" as const },
+          ] as const
+        ).map(({ row, direction }, rowIndex) => (
+          <div
+            key={`events-marquee-${rowIndex}`}
+            className={`w-full overflow-hidden ${
+              paused || selected ? "flex justify-center" : ""
+            }`}
+          >
+            <SimpleMarquee
+              {...MARQUEE_SHARED}
+              paused={paused || !!selected}
+              direction={direction}
+            >
+              {renderRow(row)}
+            </SimpleMarquee>
+          </div>
+        ))}
       </motion.div>
     </section>
   );
