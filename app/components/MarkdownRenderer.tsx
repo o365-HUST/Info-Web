@@ -12,19 +12,23 @@ interface MarkdownRendererProps {
 
 function looksLikeHtml(content: string): boolean {
   const t = content.trim();
-  return (
-    t.startsWith("<p") ||
-    t.startsWith("<h1") ||
-    t.startsWith("<h2") ||
-    t.startsWith("<h3") ||
-    t.startsWith("<h4") ||
-    t.startsWith("<blockquote") ||
-    t.startsWith("<ul") ||
-    t.startsWith("<ol") ||
-    t.startsWith("<hr") ||
-    t.startsWith("<div") ||
-    t.startsWith("<figure")
-  );
+  if (!t) return false;
+
+  // TipTap / CMS HTML (often starts with inline images before paragraphs)
+  if (/^<(?:img|p|h[1-6]|blockquote|ul|ol|li|div|figure|hr|pre|table|a|strong|em|br)\b/i.test(t)) {
+    return true;
+  }
+
+  if (/data-video-embed/i.test(t)) {
+    return true;
+  }
+
+  // Any leading HTML tag (avoid treating markdown as HTML)
+  if (/^<[a-z!?][^>]*>/i.test(t) && !t.startsWith("<http")) {
+    return true;
+  }
+
+  return false;
 }
 
 const markdownComponents: Components = {
@@ -163,7 +167,7 @@ export default function MarkdownRenderer({
 }: MarkdownRendererProps) {
   if (!content) return null;
 
-  // TipTap / WYSIWYG HTML — keep existing prose path
+  // TipTap / WYSIWYG HTML - keep existing prose path
   if (looksLikeHtml(content)) {
     return (
       <div

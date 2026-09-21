@@ -7,7 +7,7 @@ import { useRef } from "react";
 import { DEPARTMENTS } from "@/app/data/clubData";
 import { ArrowRight } from "lucide-react";
 
-/** Ban Chủ nhiệm centered among operating bans — same order as full carousel. */
+/** Ban Chủ nhiệm centered among operating bans - same order as full carousel. */
 const OPERATING = DEPARTMENTS.filter((d) => d.id !== "ban-chu-nhiem");
 const LEADERSHIP = DEPARTMENTS.find((d) => d.id === "ban-chu-nhiem");
 const mid = Math.floor(OPERATING.length / 2);

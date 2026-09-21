@@ -1,0 +1,58 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn()
+        && firestore.exists(/databases/(default)/documents/admins/$(request.auth.uid))
+        && firestore.get(/databases/(default)/documents/admins/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Keep in sync with DOCUMENT_CATEGORIES ids in app/data/clubData.ts
+    function isResourceSlug(slug) {
+      return slug in [
+        'huong-dan-tai-office-365',
+        'huong-dan-su-dung-microsoft-teams',
+        'xay-dung-ke-hoach-hoc-tap',
+        'khoa-hoc-ky-nang-tin-hoc-van-phong'
+      ];
+    }
+
+    // Resource library - attachments + inline TipTap images
+    match /resources/{slug}/{kind}/{fileName} {
+      allow read: if isResourceSlug(slug);
+      allow write: if isAdmin()
+        && isResourceSlug(slug)
+        && kind in ['attachments', 'inline'];
+    }
+
+    // Legacy resource attachment path (read-only for old files)
+    match /documents/{slug}/{fileName} {
+      allow read: if isResourceSlug(slug);
+      allow write: if isAdmin() && isResourceSlug(slug);
+    }
+
+    // Blog CMS - covers, inline editor images
+    match /blog/{fileName} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Corkboard timeline - photo frames, gallery images, alumni avatars
+    match /milestones/{fileName} {
+      allow read: if true;
+      allow create, update: if isAdmin()
+        && request.resource.size < 10 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+      allow delete: if isAdmin();
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type CSSProperties, type KeyboardEvent, type MouseEvent } from "react";
+import { useState, type KeyboardEvent, type MouseEvent } from "react";
 import { motion } from "motion/react";
 import { X } from "lucide-react";
 import MarkdownRenderer from "@/app/components/MarkdownRenderer";
@@ -9,8 +9,12 @@ import {
   PHOTO_FRAME_IMAGE_CLASS,
   PHOTO_FRAME_PADDING_CLASS,
 } from "@/app/lib/milestoneBoard";
+import {
+  DOTTED_MODAL_CLOSE,
+  dottedSurfaceClass,
+  milestoneDatePopClass,
+} from "@/app/components/story/cards/milestoneTileStyles";
 import RelatedPostLink from "./RelatedPostLink";
-import { MODAL_THEMES, PAPER_GRAIN } from "./modalTheme";
 import { modalDateLabel, modalTitle } from "./milestoneModalUtils";
 
 interface PhotoFrameModalProps {
@@ -28,20 +32,14 @@ export default function PhotoFrameModal({
   reducedMotion,
   closeRef,
 }: PhotoFrameModalProps) {
-  const theme = MODAL_THEMES.photo;
   const title = modalTitle(milestone);
   const dateLabel = modalDateLabel(milestone);
   const cover = milestone.images?.[0];
   const [showBack, setShowBack] = useState(false);
+  const dateTint = milestoneDatePopClass("photo");
+  const panelClass = `${dottedSurfaceClass("photo")} overflow-hidden p-3`;
 
   const toggleSide = () => setShowBack((value) => !value);
-
-  const frameStyle = {
-    backgroundColor: theme.inner,
-    backgroundImage: PAPER_GRAIN,
-    boxShadow:
-      "1px 2px 0 rgba(0,0,0,0.06), 4px 10px 24px rgba(0,0,0,0.18)",
-  } as const;
 
   return (
     <motion.div
@@ -52,7 +50,7 @@ export default function PhotoFrameModal({
       transition={{ duration: 0.2 }}
     >
       <div
-        className="absolute inset-0 bg-black/70"
+        className="absolute inset-0 bg-black/45"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -62,7 +60,7 @@ export default function PhotoFrameModal({
         type="button"
         onClick={onClose}
         aria-label="Đóng"
-        className="absolute right-4 top-4 z-[70] flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-white text-neutral-700 shadow-md transition-colors hover:bg-neutral-100 focus-visible:outline-2 focus-visible:outline-white"
+        className={`absolute right-4 top-4 z-[70] ${DOTTED_MODAL_CLOSE}`}
       >
         <X className="h-4 w-4" />
       </button>
@@ -71,12 +69,18 @@ export default function PhotoFrameModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="photo-modal-title"
-        className="relative z-[61] w-full max-w-[340px]"
+        className="relative z-[61] w-full max-w-[min(100%,23rem)]"
         initial={reducedMotion ? false : { scale: 0.96, y: 8, opacity: 0 }}
         animate={{ scale: 1, y: 0, opacity: 1 }}
         exit={reducedMotion ? { opacity: 0 } : { scale: 0.98, opacity: 0 }}
         transition={{ type: "spring", duration: 0.3, bounce: 0 }}
       >
+        <p
+          className={`mb-2 text-center font-display text-lg font-extrabold uppercase tracking-[0.14em] sm:text-xl ${dateTint}`}
+        >
+          {dateLabel}
+        </p>
+
         <div
           className="w-full"
           style={{
@@ -103,17 +107,14 @@ export default function PhotoFrameModal({
                 <FrameBack
                   milestone={milestone}
                   postsById={postsById}
-                  theme={theme}
-                  frameStyle={frameStyle}
+                  panelClass={panelClass}
                   onFlip={toggleSide}
                 />
               ) : (
                 <FrameFront
                   title={title}
-                  dateLabel={dateLabel}
                   cover={cover}
-                  theme={theme}
-                  frameStyle={frameStyle}
+                  panelClass={panelClass}
                   onFlip={toggleSide}
                 />
               )
@@ -125,10 +126,8 @@ export default function PhotoFrameModal({
                 >
                   <FrameFront
                     title={title}
-                    dateLabel={dateLabel}
                     cover={cover}
-                    theme={theme}
-                    frameStyle={frameStyle}
+                    panelClass={panelClass}
                     onFlip={toggleSide}
                   />
                 </div>
@@ -140,8 +139,7 @@ export default function PhotoFrameModal({
                   <FrameBack
                     milestone={milestone}
                     postsById={postsById}
-                    theme={theme}
-                    frameStyle={frameStyle}
+                    panelClass={panelClass}
                     onFlip={toggleSide}
                   />
                 </div>
@@ -160,21 +158,17 @@ export default function PhotoFrameModal({
 
 function FrameFront({
   title,
-  dateLabel,
   cover,
-  theme,
-  frameStyle,
+  panelClass,
   onFlip,
 }: {
   title: string;
-  dateLabel: string;
   cover?: string;
-  theme: (typeof MODAL_THEMES)["photo"];
-  frameStyle: CSSProperties;
+  panelClass: string;
   onFlip: () => void;
 }) {
   return (
-    <FramePanel frameStyle={frameStyle}>
+    <FramePanel panelClass={panelClass}>
       <FlipPhotoZone
         onFlip={onFlip}
         label={cover ? `Lật khung ảnh: ${title}` : "Lật khung ảnh"}
@@ -188,22 +182,15 @@ function FrameFront({
             draggable={false}
           />
         ) : (
-          <div className="flex h-full items-center justify-center text-sm text-neutral-400">
+          <div className="flex h-full items-center justify-center text-sm text-ink-muted">
             Chưa có ảnh
           </div>
         )}
       </FlipPhotoZone>
 
       <div className="flex shrink-0 flex-col items-center px-1 pt-2 pb-0.5">
-        <p
-          className={`text-center font-display text-sm font-bold leading-snug ${theme.ink}`}
-        >
+        <p className="text-center font-display text-sm font-bold leading-snug text-ink">
           {title}
-        </p>
-        <p
-          className={`mt-0.5 text-center font-mono text-[11px] tabular-nums ${theme.inkMuted}`}
-        >
-          {dateLabel}
         </p>
       </div>
     </FramePanel>
@@ -213,32 +200,30 @@ function FrameFront({
 function FrameBack({
   milestone,
   postsById,
-  theme,
-  frameStyle,
+  panelClass,
   onFlip,
 }: {
   milestone: Milestone;
   postsById: Record<string, BlogPost>;
-  theme: (typeof MODAL_THEMES)["photo"];
-  frameStyle: CSSProperties;
+  panelClass: string;
   onFlip: () => void;
 }) {
   return (
-    <FramePanel frameStyle={frameStyle}>
+    <FramePanel panelClass={panelClass}>
       <FlipPhotoZone onFlip={onFlip} label="Xem mặt trước khung ảnh">
         <div className="flex h-full min-h-0 flex-col overflow-y-auto px-2 py-2 text-left">
           {milestone.description ? (
-            <div className={`prose-o365 text-sm ${theme.ink}`}>
+            <div className="prose-o365 text-sm text-ink-light">
               <MarkdownRenderer content={milestone.description} />
             </div>
           ) : (
-            <p className={`text-sm italic ${theme.inkMuted}`}>
+            <p className="text-sm italic text-ink-muted">
               Chưa có ghi chú ở mặt sau khung.
             </p>
           )}
 
           {milestone.relatedPostId && (
-            <div className="mt-3 border-t border-black/10 pt-3">
+            <div className="mt-3 border-t border-dashed border-border/80 pt-3">
               <RelatedPostLink
                 postId={milestone.relatedPostId}
                 postsById={postsById}
@@ -249,7 +234,7 @@ function FrameBack({
       </FlipPhotoZone>
 
       <div className="flex shrink-0 flex-col items-center px-1 pt-2 pb-0.5">
-        <p className={`mt-0.5 text-center text-[11px] ${theme.inkMuted}`}>
+        <p className="mt-0.5 text-center text-[11px] text-ink-muted">
           Chạm ảnh để lật
         </p>
       </div>
@@ -283,7 +268,7 @@ function FlipPhotoZone({
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       aria-label={label}
-      className={`${PHOTO_FRAME_IMAGE_CLASS} relative cursor-pointer overflow-hidden bg-neutral-100 outline outline-1 outline-black/8 transition-[filter] hover:brightness-[0.97] focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2`}
+      className={`${PHOTO_FRAME_IMAGE_CLASS} relative cursor-pointer overflow-hidden rounded-2xl border-2 border-dashed border-orange-400/45 bg-[var(--story-pastel-peach)] outline-none transition-[filter] hover:brightness-[0.97] focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2`}
     >
       {children}
     </button>
@@ -292,16 +277,13 @@ function FlipPhotoZone({
 
 function FramePanel({
   children,
-  frameStyle,
+  panelClass,
 }: {
   children: React.ReactNode;
-  frameStyle: CSSProperties;
+  panelClass: string;
 }) {
   return (
-    <div
-      className={`flex w-full flex-col overflow-hidden rounded-sm border-2 border-white/90 dark:border-[#e8e4dc]/20 ${PHOTO_FRAME_PADDING_CLASS}`}
-      style={frameStyle}
-    >
+    <div className={`flex w-full flex-col ${PHOTO_FRAME_PADDING_CLASS} ${panelClass}`}>
       {children}
     </div>
   );

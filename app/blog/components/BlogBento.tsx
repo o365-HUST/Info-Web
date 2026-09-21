@@ -5,14 +5,18 @@ import type { BlogPost } from "@/app/types";
 import BlogCard from "./BlogCard";
 
 interface BlogBentoProps {
-  posts: BlogPost[];
+  hero: BlogPost;
+  underHero: BlogPost[];
+  sidebarFeatured: BlogPost[];
+  others: BlogPost[];
 }
 
-export default function BlogBento({ posts }: BlogBentoProps) {
-  const featured = posts.slice(0, 3);
-  const [hero, ...underHero] = featured;
-  const others = posts.slice(3);
-
+export default function BlogBento({
+  hero,
+  underHero,
+  sidebarFeatured,
+  others,
+}: BlogBentoProps) {
   return (
     <div className="space-y-10">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 lg:items-stretch">
@@ -66,21 +70,21 @@ export default function BlogBento({ posts }: BlogBentoProps) {
           )}
         </div>
 
-        {/* Right: 3 featured cards — stretch to match left column height */}
-        <aside className="lg:col-span-4 flex flex-col h-full min-h-0">
+        {/* Right: featured cards - grid on tablet, stretched column on lg+ */}
+        <aside className="lg:col-span-4 flex flex-col min-h-0">
           <div className="mb-3 shrink-0">
             <h3 className="text-[11px] font-bold tracking-[0.2em] uppercase text-ink-muted m-0">
               Nổi bật
             </h3>
           </div>
-          <div className="flex-1 flex flex-col gap-5 lg:gap-6 min-h-0">
-            {featured.map((post, i) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:flex lg:flex-col lg:flex-1 gap-5 lg:gap-6 min-h-0">
+            {sidebarFeatured.map((post, i) => (
               <BlogCard
                 key={post.id}
                 post={post}
                 priority={i === 0}
                 fillHeight
-                className="flex-1 min-h-0"
+                className="lg:flex-1 lg:min-h-0"
               />
             ))}
           </div>

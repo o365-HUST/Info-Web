@@ -155,7 +155,7 @@ export default function Hero() {
             }}
             className="inline-flex items-center justify-center px-7 py-3.5 rounded-lg text-[15px] font-semibold text-ink border border-border hover:border-border-strong hover:bg-surface/80 active:scale-[0.96] transition-[border-color,background-color,scale] duration-150 focus-visible:outline-2 focus-visible:outline-accent"
           >
-            Về chúng tôi
+            Về chúng mình
           </a>
         </motion.div>
       </motion.div>

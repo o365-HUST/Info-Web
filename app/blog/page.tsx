@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { BLOG_POSTS } from "@/app/data/clubData";
 import { subscribePosts } from "@/app/lib/firestoreService";
-import { sortPostsNewestFirst } from "@/app/lib/blogUtils";
+import { sortPostsForListing, splitBentoLayout, BLOG_ARCHIVE_FILTERS } from "@/app/lib/blogUtils";
 import type { BlogPost } from "@/app/types";
 import BlogCard from "./components/BlogCard";
 import BlogBento from "./components/BlogBento";
@@ -15,17 +15,8 @@ import {
   Code2,
   X,
   FileText,
+  ChevronDown,
 } from "lucide-react";
-
-const CATEGORIES = [
-  "Tất cả",
-  "Devlog",
-  "Cuộc thi",
-  "Hành trình",
-  "Workshop",
-  "Kỹ năng số",
-  "Thông báo",
-];
 
 function BlogContent() {
   const searchParams = useSearchParams();
@@ -38,7 +29,7 @@ function BlogContent() {
 
   useEffect(() => {
     const cat = searchParams.get("category");
-    if (cat && CATEGORIES.includes(cat)) {
+    if (cat && (BLOG_ARCHIVE_FILTERS as readonly string[]).includes(cat)) {
       setSelectedCategory(cat);
     }
   }, [searchParams]);
@@ -54,7 +45,7 @@ function BlogContent() {
   }, []);
 
   const filteredPosts = useMemo(() => {
-    const sorted = sortPostsNewestFirst(posts);
+    const sorted = sortPostsForListing(posts);
     return sorted.filter((post) => {
       const matchesCategory =
         selectedCategory === "Tất cả" || post.tag === selectedCategory;
@@ -70,34 +61,34 @@ function BlogContent() {
     });
   }, [posts, selectedCategory, searchQuery]);
 
+  const bentoLayout = useMemo(
+    () => splitBentoLayout(filteredPosts),
+    [filteredPosts],
+  );
+
   const isDevlogActive = selectedCategory === "Devlog";
   const useBento =
     !loading &&
     selectedCategory === "Tất cả" &&
     !searchQuery.trim() &&
-    filteredPosts.length >= 3;
+    filteredPosts.length >= 3 &&
+    bentoLayout.hero !== null;
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-ink flex flex-col">
       <main className="flex-1 max-w-[var(--max-width)] w-full mx-auto px-5 sm:px-6 py-10 sm:py-16">
         <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg text-xs font-semibold bg-card text-ink border border-border mb-4 shadow-2xs">
-            <Sparkles className="w-3.5 h-3.5 text-accent" />
-            <span>Bản Tin &amp; Chia Sẻ Tri Thức</span>
-          </div>
-
           <h1 className="font-display text-3xl sm:text-5xl font-extrabold tracking-tight text-ink mb-4">
             Khám Phá Góc Nhìn Từ o365
           </h1>
           <p className="text-sm sm:text-base text-ink-light leading-relaxed">
-            Hành trình chuyển đổi số, chuyên môn Microsoft 365, phóng sự cuộc thi và
-            nhật ký kỹ thuật từ CLB.
+            Dấu ấn của CLB o365 - HUST trong những hoạt động
           </p>
         </div>
 
-        {/* Compact search + category toolbar */}
+        {/* Search + category dropdown */}
         <div className="mb-8 sm:mb-10 flex flex-col sm:flex-row sm:items-center gap-3">
-          <div className="relative w-full sm:flex-1 sm:min-w-[200px] sm:max-w-sm">
+          <div className="relative flex-1 min-w-0 w-full">
             <Search
               className="w-4 h-4 text-ink-muted absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
               aria-hidden="true"
@@ -106,9 +97,9 @@ function BlogContent() {
               type="search"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Tìm bài viết, tác giả…"
+              placeholder="Tìm bài viết, tác giả, chuyên mục…"
               aria-label="Tìm kiếm bài viết"
-              className="w-full pl-9 pr-9 py-2 rounded-lg border border-border bg-surface text-ink text-sm placeholder:text-ink-muted/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:border-accent"
+              className="w-full pl-9 pr-9 py-2.5 sm:py-2 rounded-lg border border-border bg-surface text-ink text-sm placeholder:text-ink-muted/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:border-accent"
             />
             {searchQuery && (
               <button
@@ -123,28 +114,32 @@ function BlogContent() {
             )}
           </div>
 
-          <div
-            className="flex items-center gap-1.5 overflow-x-auto scrollbar-none pb-0.5 sm:pb-0 -mx-1 px-1 sm:mx-0 sm:px-0 sm:flex-1"
-            role="toolbar"
-            aria-label="Lọc chuyên mục"
-          >
-            {CATEGORIES.map((cat) => {
-              const active = selectedCategory === cat;
-              return (
-                <button
-                  key={cat}
-                  type="button"
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-2.5 py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer shrink-0 focus-visible:outline-2 focus-visible:outline-accent ${
-                    active
-                      ? "bg-ink text-surface"
-                      : "bg-surface border border-border text-ink-light hover:text-ink hover:bg-card"
-                  }`}
-                >
-                  {cat}
-                </button>
-              );
-            })}
+          <div className="w-full sm:w-52 shrink-0">
+            <label
+              htmlFor="blog-category-filter"
+              className="block text-[11px] font-semibold text-ink-muted uppercase tracking-wider mb-1.5 sm:sr-only"
+            >
+              Chuyên mục
+            </label>
+            <div className="relative">
+              <select
+                id="blog-category-filter"
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                aria-label="Lọc theo chuyên mục"
+                className="w-full px-3 py-2.5 sm:py-2 rounded-lg border border-border bg-surface text-ink text-sm font-semibold cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:border-accent appearance-none pr-9"
+              >
+                {BLOG_ARCHIVE_FILTERS.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat === "Tất cả" ? "Tất cả chuyên mục" : cat}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown
+                className="w-4 h-4 text-ink-muted absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none"
+                aria-hidden="true"
+              />
+            </div>
           </div>
         </div>
 
@@ -193,8 +188,13 @@ function BlogContent() {
               Xem tất cả bài viết
             </button>
           </div>
-        ) : useBento ? (
-          <BlogBento posts={filteredPosts} />
+        ) : useBento && bentoLayout.hero ? (
+          <BlogBento
+            hero={bentoLayout.hero}
+            underHero={bentoLayout.underHero}
+            sidebarFeatured={bentoLayout.sidebarFeatured}
+            others={bentoLayout.others}
+          />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {filteredPosts.map((post, i) => (

@@ -11,6 +11,7 @@ import { useRecruitment } from "@/app/hooks/useRecruitment";
 import DepartmentBentoGrid from "../components/DepartmentBentoGrid";
 import DepartmentGallery from "../components/DepartmentGallery";
 import DepartmentSubUnits from "../components/DepartmentSubUnits";
+import { CHUYEN_MON_GALLERY_SUBUNIT_LABELS } from "../components/departmentSubUnitsContent";
 import Footer from "@/app/components/Footer";
 import { ArrowRight } from "lucide-react";
 
@@ -114,9 +115,9 @@ export default function DepartmentDetailPage({ params }: DepartmentPageProps) {
         </div>
       </section>
 
-      {dept.subUnits && dept.subUnits.length > 0 && (
+      {(dept.id === "chuyen-mon" || dept.id === "su-kien") && (
         <DepartmentSubUnits
-          units={dept.subUnits}
+          departmentId={dept.id}
           departmentName={dept.name}
         />
       )}
@@ -155,10 +156,9 @@ export default function DepartmentDetailPage({ params }: DepartmentPageProps) {
               slides={dept.gallery || []}
               departmentName={dept.name}
               subUnitLabels={
-                dept.subUnits?.reduce<Record<string, string>>((acc, unit) => {
-                  acc[unit.id] = unit.name;
-                  return acc;
-                }, {}) ?? undefined
+                dept.id === "chuyen-mon"
+                  ? CHUYEN_MON_GALLERY_SUBUNIT_LABELS
+                  : undefined
               }
             />
             <DepartmentBentoGrid items={dept.bentoItems || []} />
@@ -222,12 +222,12 @@ export default function DepartmentDetailPage({ params }: DepartmentPageProps) {
         <section className="py-12 sm:py-16 border-t border-border">
           <div className="max-w-[var(--max-width)] mx-auto px-5 sm:px-8">
             <h2 className="font-display text-xl sm:text-2xl font-bold text-ink tracking-tight mb-3">
-              {dept.subUnits?.length
+              {dept.id === "chuyen-mon" || dept.id === "su-kien"
                 ? "Kỹ năng chung tại ban"
                 : `Kỹ năng rèn luyện tại ${dept.name}`}
             </h2>
             <p className="text-sm text-ink-light leading-relaxed max-w-2xl mb-6">
-              Thành viên làm việc trên các chương trình thật của CLB — hồ sơ và
+              Thành viên làm việc trên các chương trình thật của CLB - hồ sơ và
               kỹ năng đi cùng nhau.
             </p>
             <p className="text-base text-ink leading-relaxed max-w-2xl m-0">
@@ -247,14 +247,24 @@ export default function DepartmentDetailPage({ params }: DepartmentPageProps) {
             Đợt tuyển thành viên {recruitment.generation} đang mở đơn. Nộp hồ sơ
             để cùng CLB kiến tạo kỹ năng số tại ĐHBK Hà Nội.
           </p>
-          {dept.subUnits && dept.subUnits.length > 0 && (
+          {dept.id === "chuyen-mon" && (
             <p className="text-sm text-ink leading-relaxed max-w-xl mb-6 m-0">
               Chọn hướng phù hợp:{" "}
               <span className="font-semibold">KNM</span> nếu bạn muốn dạy và hỗ
-              trợ Office/MOS —{" "}
+              trợ Office/MOS -{" "}
               <span className="font-semibold">Kĩ thuật</span> nếu bạn muốn build
               công cụ thật. Ghi rõ trong form nếu có mục &ldquo;Ban / mảng mong
               muốn&rdquo;.
+            </p>
+          )}
+          {dept.id === "su-kien" && (
+            <p className="text-sm text-ink leading-relaxed max-w-xl mb-6 m-0">
+              Chọn hướng phù hợp:{" "}
+              <span className="font-semibold">Kỹ thuật sự kiện</span> nếu bạn
+              thích hậu trường âm thanh, hình ảnh, livestream -{" "}
+              <span className="font-semibold">Điều phối &amp; Vận hành</span> nếu
+              bạn muốn điều phối hiện trường, lễ tân và hậu cần. Ghi rõ trong form
+              nếu có mục &ldquo;Ban / mảng mong muốn&rdquo;.
             </p>
           )}
           <a

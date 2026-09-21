@@ -1,10 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import { useEditor, EditorContent, type Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import TiptapImage from "@tiptap/extension-image";
-import TiptapLink from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
 import { marked } from "marked";
 import {
@@ -24,8 +29,10 @@ import {
   Redo2,
   Loader2,
   Unlink,
+  Video,
 } from "lucide-react";
 import { uploadMediaAsset } from "@/app/lib/storageService";
+import { VideoEmbed, parseEmbedSrc } from "@/app/admin/components/tiptapVideoEmbed";
 
 marked.setOptions({ gfm: true, breaks: false });
 
@@ -51,7 +58,7 @@ function looksLikeMarkdown(text: string): boolean {
   );
 }
 
-/** True when clipboard HTML is from Word / Docs / rich editors — keep TipTap's default paste. */
+/** True when clipboard HTML is from Word / Docs / rich editors - keep TipTap's default paste. */
 function isRichHtmlPaste(html: string): boolean {
   if (/mso-|Microsoft|docs-internal-guid|Apple-Interchange-Newline|xmlns:o=/i.test(html)) {
     return true;
@@ -88,8 +95,24 @@ function htmlIsPlainWrapper(html: string, plain: string): boolean {
 
 function markdownToEditorHtml(markdown: string): string {
   const html = marked.parse(markdown, { async: false }) as string;
-  // TipTap toolbar is H2/H3; map H1 from pasted MD so structure is preserved.
   return html.replace(/<h1(\b[^>]*)>/gi, "<h2$1>").replace(/<\/h1>/gi, "</h2>");
+}
+
+function extractBlobSrcs(html: string): string[] {
+  const found = new Set<string>();
+  for (const match of html.matchAll(/\ssrc="(blob:[^"]+)"/gi)) {
+    found.add(match[1]);
+  }
+  return [...found];
+}
+
+export interface TipTapEditorHandle {
+  /** Upload blob: images in HTML and return content with Firebase URLs. */
+  flushPendingImages: (
+    html: string,
+    onProgress?: (percent: number) => void,
+  ) => Promise<string>;
+  hasPendingImages: () => boolean;
 }
 
 interface TipTapEditorProps {
@@ -98,395 +121,542 @@ interface TipTapEditorProps {
   placeholder?: string;
   /** Storage folder prefix, e.g. "blog" or "resources/my-slug/inline" */
   uploadFolder?: string;
+  /** Insert images as local blob URLs; upload on flush (blog). */
+  deferImageUpload?: boolean;
+  /** Tailwind top offset for sticky ribbon (e.g. top-16 under admin header, top-0 in modal). */
+  ribbonStickyClass?: string;
 }
 
-export default function TipTapEditor({
-  content,
-  onChange,
-  placeholder = "Bắt đầu soạn thảo nội dung bài viết...",
-  uploadFolder = "blog",
-}: TipTapEditorProps) {
-  const [isUploadingImage, setIsUploadingImage] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [uploadError, setUploadError] = useState("");
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const editorRef = useRef<Editor | null>(null);
+const TipTapEditor = forwardRef<TipTapEditorHandle, TipTapEditorProps>(
+  function TipTapEditor(
+    {
+      content,
+      onChange,
+      placeholder = "Bắt đầu soạn thảo nội dung bài viết...",
+      uploadFolder = "blog",
+      deferImageUpload = uploadFolder === "blog" || uploadFolder.startsWith("blog/"),
+      ribbonStickyClass = "top-16",
+    },
+    ref,
+  ) {
+    const [isUploadingImage, setIsUploadingImage] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState(0);
+    const [uploadError, setUploadError] = useState("");
+    const [pendingImageCount, setPendingImageCount] = useState(0);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const editorRef = useRef<Editor | null>(null);
+    const pendingBlobsRef = useRef<Map<string, File>>(new Map());
 
-  const editor = useEditor({
-    extensions: [
-      StarterKit.configure({
-        heading: {
-          levels: [2, 3],
+    const syncPendingCount = () => {
+      setPendingImageCount(pendingBlobsRef.current.size);
+    };
+
+    const editor = useEditor({
+      extensions: [
+        StarterKit.configure({
+          heading: {
+            levels: [2, 3],
+          },
+          link: {
+            openOnClick: false,
+            HTMLAttributes: {
+              class: "text-accent font-semibold hover:underline",
+            },
+          },
+        }),
+        TiptapImage.configure({
+          inline: false,
+          HTMLAttributes: {
+            class:
+              "rounded-2xl border border-border shadow-card my-6 max-w-full mx-auto",
+          },
+        }),
+        Placeholder.configure({
+          placeholder,
+        }),
+        VideoEmbed,
+      ],
+      content: content || "",
+      editorProps: {
+        attributes: {
+          class: "prose-o365 p-4 sm:p-5 min-h-[260px] focus:outline-none",
         },
-      }),
-      TiptapImage.configure({
-        inline: false,
-        HTMLAttributes: {
-          class: "rounded-2xl border border-border shadow-card my-6 max-w-full mx-auto",
+        handlePaste: (_view, event) => {
+          const clipboard = event.clipboardData;
+          if (!clipboard) return false;
+
+          const plain = clipboard.getData("text/plain");
+          const html = clipboard.getData("text/html");
+
+          if (!plain?.trim() || !looksLikeMarkdown(plain)) {
+            return false;
+          }
+
+          if (html && isRichHtmlPaste(html) && !htmlIsPlainWrapper(html, plain)) {
+            return false;
+          }
+
+          event.preventDefault();
+          const ed = editorRef.current;
+          if (!ed) return false;
+
+          ed.chain().focus().insertContent(markdownToEditorHtml(plain)).run();
+          return true;
         },
-      }),
-      TiptapLink.configure({
-        openOnClick: false,
-        HTMLAttributes: {
-          class: "text-accent font-semibold hover:underline",
-        },
-      }),
-      Placeholder.configure({
-        placeholder,
-      }),
-    ],
-    content: content || "",
-    editorProps: {
-      attributes: {
-        class: "prose-o365 p-4 sm:p-5 min-h-[260px] focus:outline-none",
       },
-      handlePaste: (_view, event) => {
-        const clipboard = event.clipboardData;
-        if (!clipboard) return false;
+      onUpdate: ({ editor: ed }) => {
+        onChange(ed.getHTML());
+      },
+      immediatelyRender: false,
+    });
 
-        const plain = clipboard.getData("text/plain");
-        const html = clipboard.getData("text/html");
+    editorRef.current = editor;
 
-        if (!plain?.trim() || !looksLikeMarkdown(plain)) {
-          return false;
+    useImperativeHandle(ref, () => ({
+      hasPendingImages: () => pendingBlobsRef.current.size > 0,
+      flushPendingImages: async (html, onProgress) => {
+        const blobSrcs = extractBlobSrcs(html);
+        if (blobSrcs.length === 0) return html;
+
+        let result = html;
+        let completed = 0;
+        const total = blobSrcs.filter((src) =>
+          pendingBlobsRef.current.has(src),
+        ).length;
+
+        for (const blobUrl of blobSrcs) {
+          const file = pendingBlobsRef.current.get(blobUrl);
+          if (!file) continue;
+
+          const downloadUrl = await uploadMediaAsset(
+            file,
+            uploadFolder,
+            (progress) => {
+              if (onProgress && total > 0) {
+                const overall = Math.round(
+                  ((completed + progress / 100) / total) * 100,
+                );
+                onProgress(Math.min(100, overall));
+              }
+            },
+          );
+
+          result = result.split(blobUrl).join(downloadUrl);
+          pendingBlobsRef.current.delete(blobUrl);
+          URL.revokeObjectURL(blobUrl);
+          completed += 1;
+          if (onProgress && total > 0) {
+            onProgress(Math.round((completed / total) * 100));
+          }
         }
 
-        // Keep rich pastes from Word / Google Docs / browsers.
-        if (html && isRichHtmlPaste(html) && !htmlIsPlainWrapper(html, plain)) {
-          return false;
+        syncPendingCount();
+
+        if (editor && result !== html) {
+          editor.commands.setContent(result, { emitUpdate: false });
+          onChange(result);
         }
 
-        event.preventDefault();
-        const ed = editorRef.current;
-        if (!ed) return false;
-
-        ed.chain().focus().insertContent(markdownToEditorHtml(plain)).run();
-        return true;
+        return result;
       },
-    },
-    onUpdate: ({ editor }) => {
-      onChange(editor.getHTML());
-    },
-    immediatelyRender: false,
-  });
+    }));
 
-  editorRef.current = editor;
-
-  // Sync external content changes if editing a post or switching posts
-  useEffect(() => {
-    if (editor && content !== editor.getHTML()) {
-      // If content is empty or different, set content
-      if (!editor.isFocused) {
-        editor.commands.setContent(content || "");
+    useEffect(() => {
+      if (editor && content !== editor.getHTML()) {
+        if (!editor.isFocused) {
+          editor.commands.setContent(content || "");
+        }
       }
-    }
-  }, [content, editor]);
+    }, [content, editor]);
 
-  if (!editor) {
-    return (
-      <div className="rounded-2xl border border-border bg-surface p-12 text-center text-xs text-ink-muted flex items-center justify-center gap-2">
-        <Loader2 className="w-4 h-4 animate-spin text-accent" />
-        <span>Đang khởi tạo trình soạn thảo WYSIWYG...</span>
-      </div>
-    );
-  }
+    useEffect(() => {
+      return () => {
+        for (const blobUrl of pendingBlobsRef.current.keys()) {
+          URL.revokeObjectURL(blobUrl);
+        }
+        pendingBlobsRef.current.clear();
+      };
+    }, []);
 
-  // Handle link prompt
-  const setLink = () => {
-    const previousUrl = editor.getAttributes("link").href;
-    const url = window.prompt("Nhập địa chỉ URL liên kết:", previousUrl);
-
-    if (url === null) return;
-
-    if (url === "") {
-      editor.chain().focus().extendMarkRange("link").unsetLink().run();
-      return;
+    if (!editor) {
+      return (
+        <div className="rounded-2xl border border-border bg-surface p-12 text-center text-xs text-ink-muted flex items-center justify-center gap-2">
+          <Loader2 className="w-4 h-4 animate-spin text-accent" />
+          <span>Đang khởi tạo trình soạn thảo WYSIWYG...</span>
+        </div>
+      );
     }
 
-    editor
-      .chain()
-      .focus()
-      .extendMarkRange("link")
-      .setLink({ href: url })
-      .run();
-  };
+    const setLink = () => {
+      const previousUrl = editor.getAttributes("link").href;
+      const url = window.prompt("Nhập địa chỉ URL liên kết:", previousUrl);
 
-  // Handle uploading an image directly into the document
-  const handleInlineImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+      if (url === null) return;
 
-    setUploadError("");
-    setIsUploadingImage(true);
-    setUploadProgress(0);
-
-    try {
-      const downloadUrl = await uploadMediaAsset(file, uploadFolder, (progress) => {
-        setUploadProgress(progress);
-      });
+      if (url === "") {
+        editor.chain().focus().extendMarkRange("link").unsetLink().run();
+        return;
+      }
 
       editor
         .chain()
         .focus()
-        .setImage({ src: downloadUrl, alt: file.name })
+        .extendMarkRange("link")
+        .setLink({ href: url })
         .run();
-    } catch (err: any) {
-      setUploadError(err.message || "Tải ảnh thất bại.");
-    } finally {
-      setIsUploadingImage(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
-    }
-  };
+    };
 
-  // Stats
-  const textContent = editor.getText();
-  const wordsCount = textContent.trim()
-    ? textContent.trim().split(/\s+/).filter(Boolean).length
-    : 0;
-  const charsCount = textContent.length;
-  const readTimeEst = Math.max(1, Math.ceil(wordsCount / 180));
+    const insertVideoEmbed = () => {
+      const raw = window.prompt(
+        "Dán link nhúng hoặc mã iframe từ Microsoft Stream / SharePoint / OneDrive (hoặc YouTube):",
+      );
+      if (raw === null) return;
 
-  return (
-    <div className="rounded-2xl border border-border bg-surface shadow-2xs overflow-hidden flex flex-col transition-all">
-      {/* Top Formatting Toolbar */}
-      <div className="flex flex-wrap items-center gap-1 px-3 py-2 bg-card/40 border-b border-border">
-        {/* Undo / Redo */}
-        <button
-          type="button"
-          onClick={() => editor.chain().focus().undo().run()}
-          disabled={!editor.can().undo()}
-          className="p-1.5 rounded-lg text-ink-muted hover:text-ink hover:bg-surface transition-colors disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
-          title="Hoàn tác (Ctrl+Z)"
+      const src = parseEmbedSrc(raw);
+      if (!src) {
+        setUploadError(
+          "Không nhận diện được link nhúng. Hãy dùng URL trong thẻ iframe từ menu Embed/ Nhúng của Microsoft.",
+        );
+        return;
+      }
+
+      setUploadError("");
+      editor
+        .chain()
+        .focus()
+        .insertContent({
+          type: "videoEmbed",
+          attrs: { src, title: "Video nhúng" },
+        })
+        .run();
+    };
+
+    const handleInlineImageUpload = async (
+      e: React.ChangeEvent<HTMLInputElement>,
+    ) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+
+      if (!file.type.startsWith("image/")) {
+        setUploadError("Chỉ hỗ trợ tệp hình ảnh (PNG, JPG, WEBP, GIF, v.v.).");
+        if (fileInputRef.current) fileInputRef.current.value = "";
+        return;
+      }
+
+      setUploadError("");
+
+      if (deferImageUpload) {
+        const blobUrl = URL.createObjectURL(file);
+        pendingBlobsRef.current.set(blobUrl, file);
+        syncPendingCount();
+        editor
+          .chain()
+          .focus()
+          .setImage({ src: blobUrl, alt: file.name })
+          .run();
+        if (fileInputRef.current) fileInputRef.current.value = "";
+        return;
+      }
+
+      setIsUploadingImage(true);
+      setUploadProgress(0);
+
+      try {
+        const downloadUrl = await uploadMediaAsset(file, uploadFolder, (progress) => {
+          setUploadProgress(progress);
+        });
+
+        editor
+          .chain()
+          .focus()
+          .setImage({ src: downloadUrl, alt: file.name })
+          .run();
+      } catch (err: unknown) {
+        const message =
+          err instanceof Error ? err.message : "Tải ảnh thất bại.";
+        setUploadError(message);
+      } finally {
+        setIsUploadingImage(false);
+        if (fileInputRef.current) fileInputRef.current.value = "";
+      }
+    };
+
+    const textContent = editor.getText();
+    const wordsCount = textContent.trim()
+      ? textContent.trim().split(/\s+/).filter(Boolean).length
+      : 0;
+    const charsCount = textContent.length;
+    const readTimeEst = Math.max(1, Math.ceil(wordsCount / 180));
+
+    return (
+      <div className="rounded-2xl border border-border bg-surface shadow-2xs flex flex-col transition-all">
+        {/* Sticky formatting ribbon (below admin sticky header ~4rem) */}
+        <div
+          className={`sticky ${ribbonStickyClass} z-30 shrink-0 rounded-t-2xl border-b border-border bg-card/95 backdrop-blur-md shadow-2xs`}
         >
-          <Undo2 className="w-4 h-4" />
-        </button>
-        <button
-          type="button"
-          onClick={() => editor.chain().focus().redo().run()}
-          disabled={!editor.can().redo()}
-          className="p-1.5 rounded-lg text-ink-muted hover:text-ink hover:bg-surface transition-colors disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
-          title="Làm lại (Ctrl+Y)"
-        >
-          <Redo2 className="w-4 h-4" />
-        </button>
+          <div className="flex flex-wrap items-center gap-1 px-3 py-2">
+            <button
+              type="button"
+              onClick={() => editor.chain().focus().undo().run()}
+              disabled={!editor.can().undo()}
+              className="p-1.5 rounded-lg text-ink-muted hover:text-ink hover:bg-surface transition-colors disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
+              title="Hoàn tác (Ctrl+Z)"
+            >
+              <Undo2 className="w-4 h-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => editor.chain().focus().redo().run()}
+              disabled={!editor.can().redo()}
+              className="p-1.5 rounded-lg text-ink-muted hover:text-ink hover:bg-surface transition-colors disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
+              title="Làm lại (Ctrl+Y)"
+            >
+              <Redo2 className="w-4 h-4" />
+            </button>
 
-        <div className="w-px h-4 bg-border/80 mx-1" />
+            <div className="w-px h-4 bg-border/80 mx-1" />
 
-        {/* Headings */}
-        <button
-          type="button"
-          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          className={`p-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
-            editor.isActive("heading", { level: 2 })
-              ? "bg-ink text-surface shadow-xs"
-              : "text-ink-muted hover:text-ink hover:bg-surface"
-          }`}
-          title="Tiêu đề lớn (H2)"
-        >
-          <Heading2 className="w-4 h-4" />
-        </button>
+            <button
+              type="button"
+              onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+              className={`p-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
+                editor.isActive("heading", { level: 2 })
+                  ? "bg-ink text-surface shadow-xs"
+                  : "text-ink-muted hover:text-ink hover:bg-surface"
+              }`}
+              title="Tiêu đề lớn (H2)"
+            >
+              <Heading2 className="w-4 h-4" />
+            </button>
 
-        <button
-          type="button"
-          onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-          className={`p-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
-            editor.isActive("heading", { level: 3 })
-              ? "bg-ink text-surface shadow-xs"
-              : "text-ink-muted hover:text-ink hover:bg-surface"
-          }`}
-          title="Tiêu đề vừa (H3)"
-        >
-          <Heading3 className="w-4 h-4" />
-        </button>
+            <button
+              type="button"
+              onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+              className={`p-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
+                editor.isActive("heading", { level: 3 })
+                  ? "bg-ink text-surface shadow-xs"
+                  : "text-ink-muted hover:text-ink hover:bg-surface"
+              }`}
+              title="Tiêu đề vừa (H3)"
+            >
+              <Heading3 className="w-4 h-4" />
+            </button>
 
-        <div className="w-px h-4 bg-border/80 mx-1" />
+            <div className="w-px h-4 bg-border/80 mx-1" />
 
-        {/* Text styling */}
-        <button
-          type="button"
-          onClick={() => editor.chain().focus().toggleBold().run()}
-          className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-            editor.isActive("bold")
-              ? "bg-ink text-surface shadow-xs"
-              : "text-ink-muted hover:text-ink hover:bg-surface"
-          }`}
-          title="In đậm (Ctrl+B)"
-        >
-          <Bold className="w-4 h-4" />
-        </button>
+            <button
+              type="button"
+              onClick={() => editor.chain().focus().toggleBold().run()}
+              className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                editor.isActive("bold")
+                  ? "bg-ink text-surface shadow-xs"
+                  : "text-ink-muted hover:text-ink hover:bg-surface"
+              }`}
+              title="In đậm (Ctrl+B)"
+            >
+              <Bold className="w-4 h-4" />
+            </button>
 
-        <button
-          type="button"
-          onClick={() => editor.chain().focus().toggleItalic().run()}
-          className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-            editor.isActive("italic")
-              ? "bg-ink text-surface shadow-xs"
-              : "text-ink-muted hover:text-ink hover:bg-surface"
-          }`}
-          title="In nghiêng (Ctrl+I)"
-        >
-          <Italic className="w-4 h-4" />
-        </button>
+            <button
+              type="button"
+              onClick={() => editor.chain().focus().toggleItalic().run()}
+              className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                editor.isActive("italic")
+                  ? "bg-ink text-surface shadow-xs"
+                  : "text-ink-muted hover:text-ink hover:bg-surface"
+              }`}
+              title="In nghiêng (Ctrl+I)"
+            >
+              <Italic className="w-4 h-4" />
+            </button>
 
-        <button
-          type="button"
-          onClick={() => editor.chain().focus().toggleStrike().run()}
-          className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-            editor.isActive("strike")
-              ? "bg-ink text-surface shadow-xs"
-              : "text-ink-muted hover:text-ink hover:bg-surface"
-          }`}
-          title="Gạch ngang chữ"
-        >
-          <Strikethrough className="w-4 h-4" />
-        </button>
+            <button
+              type="button"
+              onClick={() => editor.chain().focus().toggleStrike().run()}
+              className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                editor.isActive("strike")
+                  ? "bg-ink text-surface shadow-xs"
+                  : "text-ink-muted hover:text-ink hover:bg-surface"
+              }`}
+              title="Gạch ngang chữ"
+            >
+              <Strikethrough className="w-4 h-4" />
+            </button>
 
-        <div className="w-px h-4 bg-border/80 mx-1" />
+            <div className="w-px h-4 bg-border/80 mx-1" />
 
-        {/* Lists & Quotes */}
-        <button
-          type="button"
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-            editor.isActive("bulletList")
-              ? "bg-ink text-surface shadow-xs"
-              : "text-ink-muted hover:text-ink hover:bg-surface"
-          }`}
-          title="Danh sách gạch đầu dòng"
-        >
-          <List className="w-4 h-4" />
-        </button>
+            <button
+              type="button"
+              onClick={() => editor.chain().focus().toggleBulletList().run()}
+              className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                editor.isActive("bulletList")
+                  ? "bg-ink text-surface shadow-xs"
+                  : "text-ink-muted hover:text-ink hover:bg-surface"
+              }`}
+              title="Danh sách gạch đầu dòng"
+            >
+              <List className="w-4 h-4" />
+            </button>
 
-        <button
-          type="button"
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-            editor.isActive("orderedList")
-              ? "bg-ink text-surface shadow-xs"
-              : "text-ink-muted hover:text-ink hover:bg-surface"
-          }`}
-          title="Danh sách đánh số"
-        >
-          <ListOrdered className="w-4 h-4" />
-        </button>
+            <button
+              type="button"
+              onClick={() => editor.chain().focus().toggleOrderedList().run()}
+              className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                editor.isActive("orderedList")
+                  ? "bg-ink text-surface shadow-xs"
+                  : "text-ink-muted hover:text-ink hover:bg-surface"
+              }`}
+              title="Danh sách đánh số"
+            >
+              <ListOrdered className="w-4 h-4" />
+            </button>
 
-        <button
-          type="button"
-          onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-            editor.isActive("blockquote")
-              ? "bg-ink text-surface shadow-xs"
-              : "text-ink-muted hover:text-ink hover:bg-surface"
-          }`}
-          title="Khối trích dẫn"
-        >
-          <Quote className="w-4 h-4" />
-        </button>
+            <button
+              type="button"
+              onClick={() => editor.chain().focus().toggleBlockquote().run()}
+              className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                editor.isActive("blockquote")
+                  ? "bg-ink text-surface shadow-xs"
+                  : "text-ink-muted hover:text-ink hover:bg-surface"
+              }`}
+              title="Khối trích dẫn"
+            >
+              <Quote className="w-4 h-4" />
+            </button>
 
-        <button
-          type="button"
-          onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-          className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-            editor.isActive("codeBlock")
-              ? "bg-ink text-surface shadow-xs"
-              : "text-ink-muted hover:text-ink hover:bg-surface"
-          }`}
-          title="Khối code"
-        >
-          <Code className="w-4 h-4" />
-        </button>
+            <button
+              type="button"
+              onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+              className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                editor.isActive("codeBlock")
+                  ? "bg-ink text-surface shadow-xs"
+                  : "text-ink-muted hover:text-ink hover:bg-surface"
+              }`}
+              title="Khối code"
+            >
+              <Code className="w-4 h-4" />
+            </button>
 
-        <div className="w-px h-4 bg-border/80 mx-1" />
+            <div className="w-px h-4 bg-border/80 mx-1" />
 
-        {/* Links */}
-        <button
-          type="button"
-          onClick={setLink}
-          className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-            editor.isActive("link")
-              ? "bg-ink text-surface shadow-xs"
-              : "text-ink-muted hover:text-ink hover:bg-surface"
-          }`}
-          title="Chèn liên kết"
-        >
-          <Link2 className="w-4 h-4" />
-        </button>
+            <button
+              type="button"
+              onClick={setLink}
+              className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                editor.isActive("link")
+                  ? "bg-ink text-surface shadow-xs"
+                  : "text-ink-muted hover:text-ink hover:bg-surface"
+              }`}
+              title="Chèn liên kết"
+            >
+              <Link2 className="w-4 h-4" />
+            </button>
 
-        {editor.isActive("link") && (
-          <button
-            type="button"
-            onClick={() => editor.chain().focus().unsetLink().run()}
-            className="p-1.5 rounded-lg text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
-            title="Gỡ liên kết"
-          >
-            <Unlink className="w-4 h-4" />
-          </button>
-        )}
+            {editor.isActive("link") && (
+              <button
+                type="button"
+                onClick={() => editor.chain().focus().unsetLink().run()}
+                className="p-1.5 rounded-lg text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                title="Gỡ liên kết"
+              >
+                <Unlink className="w-4 h-4" />
+              </button>
+            )}
 
-        {/* Image Upload */}
-        <button
-          type="button"
-          onClick={() => fileInputRef.current?.click()}
-          disabled={isUploadingImage}
-          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-border bg-surface hover:bg-card text-ink text-xs font-semibold transition-colors cursor-pointer shadow-2xs ml-auto sm:ml-0"
-          title="Tải ảnh lên và chèn vào bài viết"
-        >
-          {isUploadingImage ? (
-            <>
-              <Loader2 className="w-3.5 h-3.5 text-accent animate-spin" />
-              <span className="text-[11px] text-accent font-mono">{uploadProgress}%</span>
-            </>
-          ) : (
-            <>
-              <ImageIcon className="w-3.5 h-3.5 text-accent" />
-              <span className="text-[11px]">Chèn ảnh</span>
-            </>
+            <button
+              type="button"
+              onClick={insertVideoEmbed}
+              className="p-1.5 rounded-lg text-ink-muted hover:text-ink hover:bg-surface transition-colors cursor-pointer"
+              title="Nhúng video (Microsoft Stream, SharePoint, YouTube…)"
+            >
+              <Video className="w-4 h-4" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isUploadingImage}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-border bg-surface hover:bg-card text-ink text-xs font-semibold transition-colors cursor-pointer shadow-2xs ml-auto sm:ml-0"
+              title={
+                deferImageUpload
+                  ? "Chèn ảnh xem trước cục bộ (tải lên khi lưu bài)"
+                  : "Tải ảnh lên và chèn vào bài viết"
+              }
+            >
+              {isUploadingImage ? (
+                <>
+                  <Loader2 className="w-3.5 h-3.5 text-accent animate-spin" />
+                  <span className="text-[11px] text-accent font-mono">
+                    {uploadProgress}%
+                  </span>
+                </>
+              ) : (
+                <>
+                  <ImageIcon className="w-3.5 h-3.5 text-accent" />
+                  <span className="text-[11px]">Chèn ảnh</span>
+                  {deferImageUpload && pendingImageCount > 0 && (
+                    <span className="text-[10px] font-mono text-amber-700 bg-amber-500/15 px-1.5 py-0.5 rounded-md">
+                      {pendingImageCount} chờ lưu
+                    </span>
+                  )}
+                </>
+              )}
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleInlineImageUpload}
+            />
+
+            <button
+              type="button"
+              onClick={() => editor.chain().focus().setHorizontalRule().run()}
+              className="p-1.5 rounded-lg text-ink-muted hover:text-ink hover:bg-surface transition-colors cursor-pointer"
+              title="Đường phân cách ngang"
+            >
+              <Minus className="w-4 h-4" />
+            </button>
+          </div>
+
+          {uploadError && (
+            <div className="px-4 py-2 bg-red-50 border-t border-red-200 text-red-700 text-xs font-medium">
+              {uploadError}
+            </div>
           )}
-        </button>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={handleInlineImageUpload}
-        />
+        </div>
 
-        {/* Divider */}
-        <button
-          type="button"
-          onClick={() => editor.chain().focus().setHorizontalRule().run()}
-          className="p-1.5 rounded-lg text-ink-muted hover:text-ink hover:bg-surface transition-colors cursor-pointer"
-          title="Đường phân cách ngang"
+        <div
+          className="flex-1 bg-surface cursor-text rounded-b-2xl"
+          onClick={() => editor.commands.focus()}
         >
-          <Minus className="w-4 h-4" />
-        </button>
-      </div>
-
-      {/* Upload Error Banner */}
-      {uploadError && (
-        <div className="px-4 py-2 bg-red-50 border-b border-red-200 text-red-700 text-xs font-medium">
-          {uploadError}
+          <EditorContent editor={editor} />
         </div>
-      )}
 
-      {/* WYSIWYG Content Area */}
-      <div className="flex-1 bg-surface cursor-text" onClick={() => editor.commands.focus()}>
-        <EditorContent editor={editor} />
-      </div>
-
-      {/* Status Bar */}
-      <div className="px-4 py-2 bg-card/30 border-t border-border/80 flex items-center justify-between text-[11px] font-mono text-ink-muted">
-        <div className="flex items-center gap-3">
-          <span>{wordsCount} từ</span>
-          <span>•</span>
-          <span>{charsCount} ký tự</span>
-          <span>•</span>
-          <span>~{readTimeEst} phút đọc</span>
+        <div className="px-4 py-2 bg-card/30 border-t border-border/80 flex items-center justify-between text-[11px] font-mono text-ink-muted rounded-b-2xl">
+          <div className="flex items-center gap-3 flex-wrap">
+            <span>{wordsCount} từ</span>
+            <span>•</span>
+            <span>{charsCount} ký tự</span>
+            <span>•</span>
+            <span>~{readTimeEst} phút đọc</span>
+            {deferImageUpload && pendingImageCount > 0 && (
+              <>
+                <span>•</span>
+                <span className="text-amber-700">
+                  {pendingImageCount} ảnh chưa tải lên
+                </span>
+              </>
+            )}
+          </div>
+          <span className="hidden sm:inline text-ink-muted/80">
+            Dán Markdown sẽ tự chuyển thành định dạng
+          </span>
         </div>
-        <span className="hidden sm:inline text-ink-muted/80">
-          Dán Markdown sẽ tự chuyển thành định dạng
-        </span>
       </div>
-    </div>
-  );
-}
+    );
+  },
+);
+
+export default TipTapEditor;

@@ -15,4 +15,4 @@ Tổ chức các lớp đào tạo, workshop chuyên sâu về các công cụ M
 Xây dựng đội tuyển xuất sắc, tiên phong tham dự và đạt thành tích cao tại cuộc thi Vô địch Tin học Văn phòng Thế giới (MOSWC).
 
 Định hướng tương lai:
-CLB o365 - HUST phấn đấu trở thành một "ngôi nhà chung" — nơi mỗi thành viên không chỉ cùng nhau học tập, chia sẻ kiến thức công nghệ mà còn là nơi giao lưu, kết nối và hỗ trợ lẫn nhau trong cả học tập lẫn đời sống.
+CLB o365 - HUST phấn đấu trở thành một "ngôi nhà chung" - nơi mỗi thành viên không chỉ cùng nhau học tập, chia sẻ kiến thức công nghệ mà còn là nơi giao lưu, kết nối và hỗ trợ lẫn nhau trong cả học tập lẫn đời sống.

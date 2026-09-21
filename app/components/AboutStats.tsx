@@ -88,13 +88,13 @@ export default function AboutStats() {
             className="text-xs font-semibold tracking-widest uppercase mb-2 sm:mb-3"
             style={{ color: "var(--ink-muted)" }}
           >
-            Về chúng tôi
+            Về chúng mình
           </p>
           <h2
             className="text-2xl sm:text-3xl font-bold tracking-tight mb-3"
             style={{ color: "var(--ink)" }}
           >
-            CLB o365 — Đại Sứ Chuyển Đổi Số HUST
+            CLB o365 - Đại Sứ Chuyển Đổi Số HUST
           </h2>
           <div className="text-center max-w-[480px] mx-auto">
             <p

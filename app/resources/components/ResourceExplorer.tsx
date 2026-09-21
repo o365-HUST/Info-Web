@@ -76,7 +76,7 @@ export default function ResourceExplorer() {
         </h1>
         <p className="text-sm sm:text-base text-ink-light leading-relaxed text-pretty">
           Hướng dẫn Office 365, Teams, biểu mẫu học tập và tài liệu MOS do Ban
-          Chuyên môn CLB o365 – HUST biên soạn — dành riêng cho sinh viên ĐHBK
+          Chuyên môn CLB o365 – HUST biên soạn - dành riêng cho sinh viên ĐHBK
           Hà Nội.
         </p>
       </header>

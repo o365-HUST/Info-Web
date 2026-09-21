@@ -5,7 +5,7 @@ import { useRef, useState, useEffect, useMemo } from "react";
 import { motion, useInView } from "motion/react";
 import { BLOG_POSTS } from "@/app/data/clubData";
 import { subscribePosts } from "@/app/lib/firestoreService";
-import { sortPostsNewestFirst } from "@/app/lib/blogUtils";
+import { pickHomepagePosts } from "@/app/lib/blogUtils";
 import type { BlogPost } from "@/app/types";
 import { ArrowRight, Calendar } from "lucide-react";
 import Image from "next/image";
@@ -24,7 +24,7 @@ export default function BlogPosts() {
   }, []);
 
   const recentPosts = useMemo(
-    () => sortPostsNewestFirst(posts).slice(0, 3),
+    () => pickHomepagePosts(posts, 3),
     [posts]
   );
 

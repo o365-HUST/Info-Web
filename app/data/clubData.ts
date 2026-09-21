@@ -3,8 +3,6 @@ import type {
   RecruitmentInfo,
   Department,
   BlogPost,
-  EventItem,
-  Milestone,
   StatItem,
   Advisor,
   MissionItem,
@@ -31,11 +29,11 @@ export const CLUB_INFO: ClubInfo = {
     },
     {
       title: "Trạm hỗ trợ Thư viện",
-      detail: "Phòng 907, Tầng 9 — Thư viện Tạ Quang Bửu",
+      detail: "Phòng 907, Tầng 9 - Thư viện Tạ Quang Bửu",
     },
     {
       title: "Văn phòng sinh hoạt",
-      detail: "Tầng 2 — Tòa nhà Alumni (Cựu sinh viên)",
+      detail: "Tầng 2 - Tòa nhà Alumni (Cựu sinh viên)",
     },
     {
       title: "Điểm tư vấn C1",
@@ -67,7 +65,7 @@ export const STATS: StatItem[] = [
   { value: 2, suffix: "+", label: "Năm phát triển", icon: "Award" },
 ];
 
-/** Hero support line — CONTENTv1 STAT CARD */
+/** Hero support line - CONTENTv1 STAT CARD */
 export const HERO_TAGLINE =
   "Một cộng đồng dành cho sinh viên Bách khoa cùng học hỏi, thực hành và phát triển kỹ năng tin học văn phòng. Tại o365-HUST, chúng mình cùng nhau khám phá công nghệ, chia sẻ kiến thức và tạo nên những giá trị thiết thực.";
 
@@ -79,7 +77,7 @@ export const ABOUT_COPY = {
   position:
     'Từ những ngày đầu thành lập, CLB o365 - HUST đã không ngừng phát triển và khẳng định vị thế. Hiện tại CLB là "Đại sứ số học đường" của Đại học Bách khoa Hà Nội và là đơn vị Cộng tác viên tin cậy của Ban Công tác Sinh viên và Trung tâm Chuyển đổi số của Đại học, đảm nhận nhiều vai trò và nhiệm vụ quan trọng.',
   future:
-    'CLB o365 - HUST phấn đấu trở thành một "ngôi nhà chung" — nơi mỗi thành viên không chỉ cùng nhau học tập, chia sẻ kiến thức công nghệ mà còn là nơi giao lưu, kết nối và hỗ trợ lẫn nhau trong cả học tập lẫn đời sống.',
+    'CLB o365 - HUST phấn đấu trở thành một "ngôi nhà chung" - nơi mỗi thành viên không chỉ cùng nhau học tập, chia sẻ kiến thức công nghệ mà còn là nơi giao lưu, kết nối và hỗ trợ lẫn nhau trong cả học tập lẫn đời sống.',
 } as const;
 
 export const CORE_MISSIONS: MissionItem[] = [
@@ -194,10 +192,10 @@ export const DEPARTMENTS: Department[] = [
     },
     viceLeaders: [
       { name: "Lê Hải Bình", role: "Thư ký" },
-      { name: "Lê Nguyễn Đức Long", role: "Phó chủ nhiệm CLB — Trưởng ban Tài chính" },
-      { name: "Nguyễn Phúc Anh", role: "Phó chủ nhiệm CLB — Trưởng ban Chuyên môn" },
-      { name: "Phạm Trần Thành Công", role: "Phó chủ nhiệm CLB — Trưởng ban Sự kiện" },
-      { name: "Vũ Vân Chi", role: "Phó chủ nhiệm CLB — Trưởng ban Truyền thông" },
+      { name: "Lê Nguyễn Đức Long", role: "Phó chủ nhiệm CLB - Trưởng ban Tài chính" },
+      { name: "Nguyễn Phúc Anh", role: "Phó chủ nhiệm CLB - Trưởng ban Chuyên môn" },
+      { name: "Phạm Trần Thành Công", role: "Phó chủ nhiệm CLB - Trưởng ban Sự kiện" },
+      { name: "Vũ Vân Chi", role: "Phó chủ nhiệm CLB - Trưởng ban Truyền thông" },
     ],
     keyActivities: [
       {
@@ -268,21 +266,21 @@ export const DEPARTMENTS: Department[] = [
     accentColor: "#0078D4",
     tagline: "Biến kiến thức công nghệ thành giá trị thực tiễn",
     description:
-      "Phụ trách chuyên môn Microsoft 365, tin học văn phòng và kỹ năng số — xây dựng tài liệu, công cụ và chương trình đào tạo phục vụ sinh viên.",
+      "Phụ trách chuyên môn Microsoft 365, tin học văn phòng và kỹ năng số - xây dựng tài liệu, công cụ và chương trình đào tạo phục vụ sinh viên.",
     fullDescription:
       "Ban Chuyên môn là một trong những phân ban nòng cốt của CLB o365 – HUST. Ban phụ trách các nội dung chuyên môn về Microsoft 365, tin học văn phòng và kỹ năng số; nghiên cứu, xây dựng tài liệu, công cụ và nội dung hướng dẫn phục vụ sinh viên; tổ chức các chương trình đào tạo kỹ năng, hỗ trợ học tập và ứng dụng công nghệ; tham gia kiểm duyệt, hỗ trợ và xử lý các hoạt động chuyên môn do CLB quản lý. Mục tiêu: biến kiến thức công nghệ thành những giá trị thực tiễn cho học tập và công việc.",
     mission:
       "Biến kiến thức công nghệ thành những giá trị thực tiễn cho học tập và công việc của sinh viên.",
     leader: {
       name: "Nguyễn Phúc Anh",
-      role: "Phó chủ nhiệm CLB — Trưởng ban Chuyên môn",
+      role: "Phó chủ nhiệm CLB - Trưởng ban Chuyên môn",
       quote:
         "Học công nghệ không phải để trở thành lập trình viên, mà để biến ý tưởng của bạn thành hiện thực với tốc độ nhanh nhất.",
     },
     keyActivities: [
       {
         title: "Kiểm duyệt & hỗ trợ chuyên môn CLB",
-        desc: "Kiểm tra, xử lý kết quả các hoạt động chuyên môn do CLB quản lý — minh chứng, nội dung và kết quả học tập.",
+        desc: "Kiểm tra, xử lý kết quả các hoạt động chuyên môn do CLB quản lý - minh chứng, nội dung và kết quả học tập.",
       },
       {
         title: "Hỗ trợ Trung tâm Chuyển đổi số Đại học",
@@ -290,59 +288,12 @@ export const DEPARTMENTS: Department[] = [
       },
       {
         title: "Biến kiến thức thành giá trị thực tiễn",
-        desc: "Phối hợp hai mảng Kĩ năng mềm và Kĩ thuật — dạy công cụ sinh viên cần, build công cụ CLB và trường dùng được.",
+        desc: "Phối hợp hai mảng Kĩ năng mềm và Kĩ thuật - dạy công cụ sinh viên cần, build công cụ CLB và trường dùng được.",
       },
     ],
     skillsLearned: [
       "Phối hợp đào tạo và triển khai công cụ số trong môi trường CLB",
       "Viết tài liệu, hướng dẫn và hỗ trợ sinh viên trên chương trình thật",
-    ],
-    subUnits: [
-      {
-        id: "knm",
-        index: "01",
-        name: "Kĩ năng mềm",
-        tagline: "Dạy và hỗ trợ sinh viên dùng Microsoft 365",
-        mission:
-          "Nghiên cứu và triển khai Microsoft 365 trong công việc và cuộc sống; xây dựng lớp KNM tin học; hỗ trợ MOSWC và Trung tâm Chuyển đổi số.",
-        tools: [
-          "Word",
-          "Excel",
-          "PowerPoint",
-          "Teams",
-          "OneDrive",
-          "Forms",
-          "Outlook",
-          "MOSWC",
-        ],
-        trainingFocus: [
-          "Xây dựng và quản lý các lớp KNM tin học văn phòng và kỹ năng số",
-          "Soạn nội dung Word, Excel, PowerPoint, Teams và giải đáp Q&A Office 365",
-          "Hỗ trợ tổ chức, ôn luyện và định hướng thí sinh MOSWC (kể cả cấp ĐHBK Hà Nội)",
-        ],
-
-        accent: "warm",
-      },
-      {
-        id: "ky-thuat",
-        index: "02",
-        name: "Kĩ thuật",
-        tagline: "Xây công cụ và hỗ trợ kỹ thuật chuyển đổi số",
-        mission:
-          "Hỗ trợ kỹ thuật trong các hoạt động chuyển đổi số; tìm hiểu và phát triển ứng dụng phục vụ CLB và Đại học.",
-        tools: [
-          "Power Apps",
-          "Power Automate",
-          "SharePoint",
-          "Microsoft 365",
-        ],
-        trainingFocus: [
-          "Prototype và triển khai ứng dụng hỗ trợ hoạt động nội bộ CLB",
-          "Tự động hóa quy trình và tích hợp công cụ số cho ban và sự kiện",
-          "Hỗ trợ kỹ thuật cho các chương trình chuyển đổi số của trường",
-        ],
-        accent: "cool",
-      },
     ],
     memberHighlights: [
       {
@@ -381,7 +332,7 @@ export const DEPARTMENTS: Department[] = [
         src: "/assets/departments/ACADEMIC/carousel-01.jpg",
         alt: "Ấn phẩm hướng dẫn theo dõi tiến độ sinh hoạt công dân bằng PowerApps",
         title: "Công cụ PowerApps",
-        caption: "Theo dõi tiến độ sinh hoạt công dân — sản phẩm hướng dẫn của ban.",
+        caption: "Theo dõi tiến độ sinh hoạt công dân - sản phẩm hướng dẫn của ban.",
         fit: "contain",
         subUnitId: "ky-thuat",
       },
@@ -389,7 +340,7 @@ export const DEPARTMENTS: Department[] = [
         src: "/assets/departments/ACADEMIC/carousel-02.jpg",
         alt: "Ấn phẩm khóa học kỹ năng mềm Excel, PowerPoint, Word",
         title: "Khóa học kỹ năng mềm",
-        caption: "Excel, PowerPoint, Word — điểm rèn luyện kỹ năng tin học.",
+        caption: "Excel, PowerPoint, Word - điểm rèn luyện kỹ năng tin học.",
         fit: "contain",
         subUnitId: "knm",
       },
@@ -425,7 +376,7 @@ export const DEPARTMENTS: Department[] = [
     accentColor: "#F59E0B",
     tagline: "Gam màu vàng – lan tỏa bằng sáng tạo chân phương",
     description:
-      "Ngòi bút, ống kính và nét vẽ — với khát khao học hỏi và tinh thần đổi mới sáng tạo, lan tỏa ứng dụng và giá trị o365 đến sinh viên.",
+      "Ngòi bút, ống kính và nét vẽ - với khát khao học hỏi và tinh thần đổi mới sáng tạo, lan tỏa ứng dụng và giá trị o365 đến sinh viên.",
     fullDescription:
       "Ban Truyền thông dùng ngòi bút, ống kính và nét vẽ, bằng giá trị chân phương, khát khao học hỏi và tinh thần sẵn sàng đổi mới sáng tạo của gam màu vàng, để tạo nên những ý tưởng độc đáo, đảm bảo phần nhìn và lan tỏa ứng dụng cũng như giá trị của CLB đến các bạn sinh viên trong toàn Đại học.",
     mission:
@@ -449,7 +400,7 @@ export const DEPARTMENTS: Department[] = [
     ],
     leader: {
       name: "Vũ Vân Chi",
-      role: "Phó chủ nhiệm CLB — Trưởng ban Truyền thông",
+      role: "Phó chủ nhiệm CLB - Trưởng ban Truyền thông",
       quote:
         "Hình ảnh đẹp khiến người ta dừng lại 3 giây, nhưng thông điệp chân thành mới là điều giữ người xem ở lại lâu dài.",
     },
@@ -486,14 +437,14 @@ export const DEPARTMENTS: Department[] = [
         src: "/assets/departments/MEDIA/carousel-02.jpg",
         alt: "Photobooth tốt nghiệp 2026 của Ban Truyền thông",
         title: "Graduate 2026",
-        caption: "Photobooth lễ tốt nghiệp — #ĐHBKHN Một tình yêu. Một tương lai.",
+        caption: "Photobooth lễ tốt nghiệp - #ĐHBKHN Một tình yêu. Một tương lai.",
         fit: "contain",
       },
       {
         src: "/assets/departments/MEDIA/carousel-03.jpg",
         alt: "Ấn phẩm One Love One Future cùng sinh viên áo trẻ",
         title: "One Love One Future",
-        caption: "Ấn phẩm 70 năm HUST — nắng Bách khoa hong vàng màu áo trẻ.",
+        caption: "Ấn phẩm 70 năm HUST - nắng Bách khoa hong vàng màu áo trẻ.",
         fit: "contain",
       },
     ],
@@ -503,7 +454,7 @@ export const DEPARTMENTS: Department[] = [
         title: "DNA Truyền Thông",
         type: "quote",
         description:
-          "Ngòi bút, ống kính và nét vẽ — sáng tạo chân phương, sẵn sàng đổi mới để lan tỏa giá trị o365.",
+          "Ngòi bút, ống kính và nét vẽ - sáng tạo chân phương, sẵn sàng đổi mới để lan tỏa giá trị o365.",
         quoteAuthor: "Ban Truyền thông o365",
         colSpan: "col-span-1",
       },
@@ -543,14 +494,14 @@ export const DEPARTMENTS: Department[] = [
     accentColor: "#EF4444",
     tagline: "Sắc đỏ Sự kiện – Thắp sáng ngọn lửa trách nhiệm",
     description:
-      "“Trái tim” vận hành hoạt động CLB — tổ chức sự kiện, điều phối hiện trường, hậu cần và phối hợp các ban trong mọi chương trình.",
+      "“Trái tim” vận hành hoạt động CLB - tổ chức sự kiện, điều phối hiện trường, hậu cần và phối hợp các ban trong mọi chương trình.",
     fullDescription:
       "Ban Sự kiện là một trong những phân ban nòng cốt của CLB o365 – HUST, được ví như “trái tim” vận hành các hoạt động và chương trình của CLB. Ban phụ trách tổ chức và hỗ trợ triển khai sự kiện; điều phối nhân sự tại hiện trường; chuẩn bị hậu cần, vật dụng và công việc phía sau chương trình; phối hợp các ban khác và hỗ trợ công việc chung, duy trì hoạt động thường xuyên của CLB. Thành viên được tham gia trực tiếp các chương trình quy mô lớn của trường.",
     mission:
-      "Thắp sáng ngọn lửa trách nhiệm — đảm bảo mỗi chương trình vận hành đúng kế hoạch từ ý tưởng đến hiện trường.",
+      "Thắp sáng ngọn lửa trách nhiệm - đảm bảo mỗi chương trình vận hành đúng kế hoạch từ ý tưởng đến hiện trường.",
     leader: {
       name: "Phạm Trần Thành Công",
-      role: "Phó chủ nhiệm CLB — Trưởng ban Sự kiện",
+      role: "Phó chủ nhiệm CLB - Trưởng ban Sự kiện",
       quote:
         "Sự kiện thành công không nằm ở sân khấu hoành tráng, mà ở nụ cười và giá trị mà mỗi bạn sinh viên mang về sau buổi tối hôm đó.",
     },
@@ -591,7 +542,7 @@ export const DEPARTMENTS: Department[] = [
         src: "/assets/departments/EVENTS/carousel-02.jpg",
         alt: "Khán phòng workshop của CLB o365-HUST",
         title: "Workshop tại giảng đường",
-        caption: "Một buổi tập huấn — hàng ghế đầy sinh viên Bách khoa.",
+        caption: "Buổi tập huấn vô cùng thú vị",
         fit: "cover",
       },
       {
@@ -630,7 +581,7 @@ export const DEPARTMENTS: Department[] = [
     image: "/assets/departments/HR/main.JPG",
     color: "#ECFDF5",
     accentColor: "#10B981",
-    tagline: "Thầm lặng, chỉn chu — hậu cần & tài chính",
+    tagline: "Thầm lặng, chỉn chu - hậu cần & tài chính",
     description:
       "Đội ngũ thầm lặng lên kế hoạch chỉn chu từ quản lý hậu cần, cân đối ngân sách, thu – chi hội phí đến tham mưu tài chính cho Ban Chủ nhiệm.",
     fullDescription:
@@ -639,7 +590,7 @@ export const DEPARTMENTS: Department[] = [
       "Đảm bảo nguồn lực tài chính minh bạch và ghi nhận đóng góp của từng thành viên.",
     leader: {
       name: "Lê Nguyễn Đức Long",
-      role: "Phó chủ nhiệm CLB — Trưởng ban Tài chính",
+      role: "Phó chủ nhiệm CLB - Trưởng ban Tài chính",
       quote:
         "Câu lạc bộ có thể thay đổi dự án, nhưng con người và những kỷ niệm cùng nhau đi qua năm tháng sẽ còn mãi.",
     },
@@ -671,8 +622,8 @@ export const DEPARTMENTS: Department[] = [
     gallery: [
       {
         src: "/assets/departments/dept-05-hr.jpg",
-        alt: "Ban Tài chính tạo dáng cùng bảng hiệu Ban Tài chính — Nhân sự",
-        title: "Ban Tài chính — Nhân sự",
+        alt: "Ban Tài chính tạo dáng cùng bảng hiệu Ban Tài chính - Nhân sự",
+        title: "Ban Tài chính - Nhân sự",
         caption: "Đội ngũ thầm lặng cân đối ngân sách và ghi nhận từng thành viên.",
         fit: "cover",
       },
@@ -683,7 +634,7 @@ export const DEPARTMENTS: Department[] = [
         title: "Triết Lý Ban",
         type: "quote",
         description:
-          "Thầm lặng nhưng chỉn chu — mỗi đồng hội phí và mỗi đánh giá thành viên đều góp phần vận hành CLB bền vững.",
+          "Thầm lặng nhưng chỉn chu - mỗi đồng hội phí và mỗi đánh giá thành viên đều góp phần vận hành CLB bền vững.",
         quoteAuthor: "Ban Tài chính o365",
         colSpan: "col-span-1",
       },
@@ -723,6 +674,8 @@ export const BLOG_POSTS: BlogPost[] = [
     thumbnail: "/assets/blog/thumb-devlog.jpg",
     url: "/blog/devlog-phan-ban",
     published: true,
+    heroSpot: true,
+    featuredSpot: true,
     content: `## Khởi đầu và Bài toán Đặt ra
 
 Khi bước vào năm học mới 2026, Câu lạc bộ Đại sứ Chuyển đổi số o365 - ĐHBK Hà Nội nhận thấy nhu cầu cấp thiết về một cổng thông tin chính thức. Website cũ không còn đáp ứng được tốc độ cập nhật thông tin tuyển sinh, quản trị các sự kiện thường niên như MOSWC và lưu trữ tài liệu kỹ thuật dành cho sinh viên.
@@ -752,13 +705,14 @@ Chúng tôi sẽ tiếp tục cập nhật các tính năng mới trong chuỗi 
     id: "moswc-2026",
     title: "MOSWC 2026: Hành trình chinh phục kỹ năng số quốc tế",
     excerpt:
-      "Tổng kết vòng loại MOSWC tại ĐHBK Hà Nội — từ khâu tổ chức, ôn luyện đến những gương mặt xuất sắc đại diện trường.",
+      "Tổng kết vòng loại MOSWC tại ĐHBK Hà Nội - từ khâu tổ chức, ôn luyện đến những gương mặt xuất sắc đại diện trường.",
     tag: "Cuộc thi",
     date: "28/08/2026",
     author: "Ban Chuyên môn o365",
     thumbnail: "/assets/blog/thumb-moswc.jpg",
     url: "/blog/moswc-2026",
     published: true,
+    featuredSpot: true,
     content: `## Sân chơi Đẳng cấp Quốc tế cho Sinh viên Bách khoa
 
 Cuộc thi Vô địch Tin học Văn phòng Thế giới (MOSWC) hàng năm luôn là một trong những sự kiện trọng tâm mà CLB o365 đồng hành tổ chức tại Đại học Bách khoa Hà Nội. Năm 2026 ghi nhận số lượng thí sinh đăng ký kỷ lục với hơn 1.200 sinh viên tham gia tranh tài ở 3 nội dung: Microsoft Word, Microsoft Excel và Microsoft PowerPoint.
@@ -780,13 +734,14 @@ Ban Chuyên môn của CLB đã xây dựng lộ trình ôn tập kéo dài 6 tu
     id: "hanh-trinh-do",
     title: "Hành trình Đỏ Quảng Tây: Khi o365 vươn tầm quốc tế",
     excerpt:
-      "Câu chuyện về chuyến nghiên cứu học tập tại Trung Quốc — nơi các thành viên CLB trải nghiệm và hỗ trợ đoàn đại biểu nhà trường.",
+      "Câu chuyện về chuyến nghiên cứu học tập tại Trung Quốc - nơi các thành viên CLB trải nghiệm và hỗ trợ đoàn đại biểu nhà trường.",
     tag: "Hành trình",
     date: "21/04/2026",
     author: "Ban Truyền thông & Đối ngoại",
     thumbnail: "/assets/blog/thumb-redjourney.jpg",
     url: "/blog/hanh-trinh-do",
     published: true,
+    featuredSpot: true,
     content: `## Dấu ấn Giao lưu Văn hóa và Công nghệ
 
 Chuyến công tác và giao lưu học thuật tại Quảng Tây, Trung Quốc là một kỷ niệm khó quên đối với các thành viên đại diện CLB o365. Chuyến đi không chỉ là cơ hội để học hỏi mô hình chuyển đổi số trong giáo dục của nước bạn, mà còn là dịp để sinh viên Bách khoa thể hiện sự năng động và tự tin trên trường quốc tế.
@@ -798,338 +753,6 @@ Chuyến công tác và giao lưu học thuật tại Quảng Tây, Trung Quốc
 - **Giao lưu Văn hóa**: Kết nối bạn bè quốc tế, lan tỏa hình ảnh sinh viên Bách khoa Hà Nội nhiệt huyết, tài năng và hội nhập.
 
 Hành trình đã mang lại nguồn cảm hứng to lớn để CLB tiếp tục đổi mới và sáng tạo trong các hoạt động sắp tới!`,
-  },
-];
-
-export const EVENTS: EventItem[] = [
-  // ── ĐANG DIỄN RA (ONGOING) ──
-  {
-    id: "recruitment-3",
-    month: "Tháng 9 - 10",
-    title: "Tuyển thành viên Gen 3.0: Bứt phá giới hạn số",
-    linkLabel: "Nộp đơn ứng tuyển ngay",
-    linkUrl: RECRUITMENT_INFO.formUrl,
-    description: "Cơ hội trở thành Đại sứ Chuyển đổi số ĐHBK Hà Nội! Đồng hành cùng các dự án công nghệ, MOSWC và workshop toàn trường.",
-    location: "Online / Microsoft Forms",
-    status: "ongoing",
-    category: "Tuyển quân",
-    drl: "+5 ĐRL",
-    isHighlight: true,
-    funnyQuote: "Deadline dí sát nút rồi bạn ơi! Nộp đơn ngay trước khi cổng đóng lúc 23:59!",
-    targetDate: "2026-10-15",
-    reactions: { fire: 42, drl: 89, deadline: 34, trophy: 28 },
-  },
-  {
-    id: "support-desk-o365",
-    month: "Thường niên",
-    title: "Trạm Hỗ trợ Sinh viên: Kích hoạt O365 & Copilot HUST",
-    linkLabel: "Nhận hỗ trợ kỹ thuật",
-    linkUrl: "https://fb.com/clbo365hust",
-    description: "Giải đáp lỗi tài khoản Microsoft 365, OneDrive 1TB, cài đặt bộ Office bản quyền cho tân sinh viên K70, K69.",
-    location: "Sảnh B1 & Fanpage o365",
-    status: "ongoing",
-    category: "Công tác SV",
-    drl: "+3 ĐRL",
-    isHighlight: false,
-    funnyQuote: "Cứu tân sinh viên thoát khỏi mê cung đăng nhập tài khoản Bách Khoa!",
-    targetDate: "2026-10-30",
-    reactions: { fire: 19, drl: 45, deadline: 8, trophy: 12 },
-  },
-
-  // ── SẮP DIỄN RA (UPCOMING) ──
-  {
-    id: "workshop-ai",
-    month: "18/10/2026",
-    title: "Workshop AI Skills for Students: Làm chủ Microsoft Copilot",
-    linkLabel: "Cổng CTSV — Đăng ký lấy ĐRL",
-    linkUrl: "https://ctsv.hust.edu.vn",
-    description: "Thực hành ứng dụng Copilot trong nghiên cứu, làm slide thuyết trình và xử lý dữ liệu báo cáo chuyên đề.",
-    location: "Hội trường C2 - ĐHBK Hà Nội",
-    status: "upcoming",
-    category: "Học thuật & AI",
-    drl: "+8 ĐRL",
-    isHighlight: true,
-    funnyQuote: "AI không cướp việc của bạn, nhưng bạn biết dùng Copilot sẽ qua môn nhẹ tênh!",
-    targetDate: "2026-10-18",
-    reactions: { fire: 67, drl: 120, deadline: 15, trophy: 51 },
-  },
-  {
-    id: "moswc-qualifier",
-    month: "15/11/2026",
-    title: "Vòng loại cấp Trường MOSWC HUST 2027",
-    linkLabel: "Xem thể lệ & Đăng ký",
-    linkUrl: "https://ctsv.hust.edu.vn",
-    description: "Sân chơi Tin học Văn phòng danh giá nhất dành cho sinh viên. Cơ hội rinh chứng chỉ quốc tế và vé đi Mỹ!",
-    location: "Phòng máy Thư viện Tạ Quang Bửu",
-    status: "upcoming",
-    category: "MOS & Thi đấu",
-    drl: "+10 ĐRL",
-    isHighlight: true,
-    funnyQuote: "Bấm chuột giật giải quốc tế, thoát kiếp ám ảnh thi Tin học đại cương!",
-    targetDate: "2026-11-15",
-    reactions: { fire: 95, drl: 142, deadline: 29, trophy: 110 },
-  },
-  {
-    id: "teambuilding",
-    month: "28/11/2026",
-    title: "Teambuilding Mùa Thu 2026: Trạm Sạc Năng Lượng o365",
-    linkLabel: "Đăng ký nội bộ",
-    linkUrl: "#",
-    description: "Hoạt động dã ngoại gắn kết đại gia đình o365, chào đón các tân binh Gen 3.0 sau chuỗi ngày cày deadline.",
-    location: "Khu sinh thái Ecopark",
-    status: "upcoming",
-    category: "Văn hóa & Nội bộ",
-    drl: "+5 ĐRL",
-    isHighlight: false,
-    funnyQuote: "Cơ hội vàng tìm người gánh tạ bài tập lớn và người yêu cùng lúc tại o365!",
-    targetDate: "2026-11-28",
-    reactions: { fire: 53, drl: 31, deadline: 12, trophy: 44 },
-  },
-
-  // ── ĐÃ DIỄN RA (PAST) ──
-  {
-    id: "taiwan-exchange-2026",
-    month: "Tháng 8/2026",
-    title: "Chương trình Giao lưu Quốc tế: Học tập số tại Đài Loan",
-    linkLabel: "Xem bài viết tổng kết",
-    linkUrl: "/blog/taiwan-exchange-2026",
-    description: "Đại diện o365-HUST tham gia trao đổi văn hóa và mô hình CLB công nghệ tại các trường đại học hàng đầu Đài Loan.",
-    location: "Taipei, Taiwan",
-    status: "past",
-    category: "Hợp tác Quốc tế",
-    drl: "Chứng nhận cấp Trường",
-    isHighlight: false,
-    funnyQuote: "Dân Bách Khoa mang tinh thần số vươn tầm châu Á!",
-    reactions: { fire: 88, drl: 62, deadline: 5, trophy: 76 },
-  },
-  {
-    id: "excel-mastery-bootcamp",
-    month: "Tháng 7/2026",
-    title: "Bootcamp Cấp tốc: Excel Mastery & Tự Động Hóa Báo Cáo",
-    linkLabel: "Xem tài liệu & Slide",
-    linkUrl: "#",
-    description: "Khóa đào tạo 3 buổi trang bị thủ thuật hàm mảng động, Power Query và tự động hóa bảng tính văn phòng.",
-    location: "Online qua Microsoft Teams",
-    status: "past",
-    category: "Học thuật & Kỹ năng",
-    drl: "+5 ĐRL",
-    isHighlight: false,
-    funnyQuote: "VBA và Power Query không khó, chỉ sợ không ai ngồi cầm tay chỉ chuột!",
-    reactions: { fire: 41, drl: 75, deadline: 7, trophy: 39 },
-  },
-  {
-    id: "gen2-gala",
-    month: "Tháng 6/2026",
-    title: "Gala Vinh Danh Đại Sứ Số & Tổng Kết Gen 2.0",
-    linkLabel: "Xem ảnh kỷ niệm",
-    linkUrl: "#",
-    description: "Nhìn lại 1 năm cống hiến đầy tự hào của các thành viên Gen 2.0 và trao bằng khen từ Đoàn Thanh niên ĐHBK.",
-    location: "Hội trường C2 - ĐHBK Hà Nội",
-    status: "past",
-    category: "Văn hóa & Gala",
-    drl: "Giấy khen ĐHBK",
-    isHighlight: false,
-    funnyQuote: "Một năm deadline ngập đầu nhưng ấm áp tình đồng chí Bách Khoa!",
-    reactions: { fire: 79, drl: 44, deadline: 11, trophy: 83 },
-  },
-];
-
-export const MILESTONES: Milestone[] = [
-  {
-    id: "tien-than-2023",
-    type: "moc",
-    year: 2023,
-    dateLabel: "08/2023",
-    sortKey: "2023-08",
-    title: "Thành lập tiền thân Office 365",
-    description:
-      "CLB Office 365 được thành lập – tiền thân là Chi bộ sinh viên Đại học bao gồm các Khoa Toán Tin, Vật lý kỹ thuật, Sư phạm kỹ thuật,… Đây là quá trình thành lập chưa chính thức, chưa có đề án giấy tờ, văn bản cụ thể xác minh. Đơn vị bảo trợ: Ban CTSV.",
-  },
-  {
-    id: "tam-ngung-2023",
-    type: "moc",
-    year: 2023,
-    dateLabel: "10/2023",
-    sortKey: "2023-10",
-    title: "Tạm ngưng hoạt động",
-    description:
-      "Do không có định hướng cụ thể sau khi hoạt động 2 tháng, CLB tạm ngưng hoạt động vô thời hạn.",
-  },
-  {
-    id: "khoi-dong-lai-2024",
-    type: "moc",
-    year: 2024,
-    dateLabel: "04/2024",
-    sortKey: "2024-04",
-    title: "Khởi động lại đề án thành lập",
-    description:
-      "Đề án thành lập CLB o365 được khởi động lại. Trong suốt 1 tháng lên ý tưởng và xác định tầm nhìn, CLB đổi mới cơ cấu tổ chức và định hướng phát triển.",
-  },
-  {
-    id: "doi-ten-o365-2024",
-    type: "moc",
-    year: 2024,
-    dateLabel: "02/05/2024",
-    sortKey: "2024-05-02",
-    title: "Đổi tên thành CLB o365 – HUST",
-    description:
-      "CLB đổi tên thành CLB o365 – HUST với chủ nhiệm đầu tiên là Dương Đức Tùng – người ký đề án xác nhận thành lập và chịu trách nhiệm CLB. Đơn vị trực thuộc Ban CTSV ĐHBKHN.",
-  },
-  {
-    id: "ngay-sinh-2024",
-    type: "moc",
-    year: 2024,
-    dateLabel: "05/05/2024",
-    sortKey: "2024-05-05",
-    title: "Ngày sinh chính thức của CLB",
-    description:
-      "CLB o365 – HUST chính thức thay màu cho Fanpage và đây cũng là dấu mốc được lựa chọn làm ngày sinh của CLB.",
-  },
-  {
-    id: "ctv-chuyen-doi-so-2024",
-    type: "moc",
-    year: 2024,
-    dateLabel: "16/10/2024",
-    sortKey: "2024-10-16",
-    title: "Trở thành CTV Trung tâm Chuyển đổi số",
-    description:
-      "CLB o365 – HUST tiếp tục phát triển, trở thành Cộng tác viên của Trung tâm Chuyển đổi số đại học.",
-  },
-  {
-    id: "tuyen-ctv-gen1-2024",
-    type: "moc",
-    year: 2024,
-    dateLabel: "09–12/2024",
-    sortKey: "2024-11",
-    title: "Tuyển CTV Gen 1.0",
-    description:
-      "CLB o365 – HUST tiến hành tuyển CTV Gen 1.0. Số lượng CTV sau phỏng vấn: 37.",
-  },
-  {
-    id: "fanpage-10k-2024",
-    type: "thanh_tich",
-    year: 2024,
-    dateLabel: "12/2024",
-    sortKey: "2024-12",
-    title: "Fanpage đạt 10k followers",
-    description: "Fanpage CLB o365 – HUST đạt 10k followers.",
-  },
-  {
-    id: "kien-toan-khoa1-2025",
-    type: "thanh_tich",
-    year: 2025,
-    dateLabel: "02/2025",
-    sortKey: "2025-02",
-    title: "Kiện toàn khóa 1.0",
-    description:
-      "Kiện toàn khóa 1.0 của CLB. Số lượng thành viên chính thức: 52.",
-  },
-  {
-    id: "anh-kienn-toan-khoa1-2025",
-    type: "photo",
-    year: 2025,
-    dateLabel: "02/2025",
-    sortKey: "2025-02-a",
-    title: "Kiện toàn khóa 1.0",
-    description:
-      "Khoảnh khắc kiện toàn khóa 1.0 — 52 thành viên chính thức cùng nhau tạo nên bước ngoặt quan trọng của CLB.\n\nXem thêm bài viết về hành trình xây dựng đội ngũ.",
-    relatedPostId: "devlog-phan-ban",
-    images: ["/assets/marquee/marquee-08.jpg"],
-  },
-  {
-    id: "quan-ly-moswc-2025",
-    type: "thanh_tich",
-    year: 2025,
-    dateLabel: "03–04/2025",
-    sortKey: "2025-03",
-    title: "Chủ trì đội tuyển MOSWC ĐHBK",
-    description:
-      "CLB là đầu mối, đơn vị chủ trì quản lý đội tuyển MOSWC của ĐHBKHN.",
-    relatedPostId: "moswc-2026",
-  },
-  {
-    id: "mot-tuoi-2025",
-    type: "thanh_tich",
-    year: 2025,
-    dateLabel: "05/05/2025",
-    sortKey: "2025-05-05",
-    title: "CLB tròn 1 tuổi",
-    description: "CLB o365 – HUST tròn 1 tuổi.",
-  },
-  {
-    id: "fanpage-24k-2025",
-    type: "thanh_tich",
-    year: 2025,
-    dateLabel: "Giữa 05/2025",
-    sortKey: "2025-05-mid",
-    title: "Fanpage đạt 24k followers",
-    description: "Fanpage CLB o365 – HUST đạt 24k followers.",
-  },
-  {
-    id: "recruitment-2-2025",
-    type: "moc",
-    year: 2025,
-    dateLabel: "08/09/2025",
-    sortKey: "2025-09-08",
-    title: "RECRUITMENT 2.0",
-    description:
-      "CLB o365 – HUST mở chiến dịch tuyển quân RECRUITMENT 2.0.",
-  },
-  {
-    id: "hoi-nghi-kien-toan-2026",
-    type: "moc",
-    year: 2026,
-    dateLabel: "16/01/2026",
-    sortKey: "2026-01-16",
-    title: "Hội nghị kiện toàn nhân sự 2025 – 2026",
-    description:
-      "Hội nghị kiện toàn nhân sự CLB o365 – HUST năm học 2025 – 2026.",
-  },
-  {
-    id: "hai-tuoi-2026",
-    type: "thanh_tich",
-    year: 2026,
-    dateLabel: "05/05/2026",
-    sortKey: "2026-05-05",
-    title: "CLB tròn 2 tuổi",
-    description: "CLB o365 – HUST tròn 2 tuổi.",
-  },
-  {
-    id: "recruitment-3-2026",
-    type: "moc",
-    year: 2026,
-    dateLabel: "03/09/2026",
-    sortKey: "2026-09-03",
-    title: "RECRUITMENT 3.0",
-    description:
-      "CLB o365 – HUST mở chiến dịch tuyển quân RECRUITMENT 3.0.",
-  },
-  {
-    id: "fanpage-42k-2026",
-    type: "thanh_tich",
-    year: 2026,
-    dateLabel: "10/09/2026",
-    sortKey: "2026-09-10",
-    title: "Fanpage đạt 42k followers",
-    description: "Fanpage CLB o365 – HUST đạt 42k followers.",
-  },
-  {
-    id: "alumni-spotlight-2026",
-    type: "alumni",
-    year: 2026,
-    dateLabel: "09/2026",
-    sortKey: "2026-09-15",
-    title: "Cựu thành viên tiêu biểu",
-    alumniName: "Nguyễn Minh Anh",
-    alumniRole: "Microsoft MVP · Cựu Trưởng ban Kỹ thuật",
-    alumniAvatar: "/assets/marquee/marquee-08.jpg",
-    alumniQuote:
-      "CLB o365 là nơi mình học cách biến kỹ năng Office thành giá trị thật cho cộng đồng sinh viên Bách khoa.",
-    alumniLink: "https://www.microsoft.com",
-    description:
-      "Gen 1.0 — góp phần xây dựng hệ thống quản trị và website CLB trong giai đoạn đầu.",
-    relatedPostId: "devlog-phan-ban",
-    threaded: false,
   },
 ];
 
@@ -1153,22 +776,12 @@ export const DOCUMENT_CATEGORIES = [
     updated: "2025",
   },
   {
-    id: "huong-dan-su-dung-microsoft-teams",
-    title: "Hướng dẫn sử dụng Microsoft Teams",
-    description: "Sử dụng Teams trong học tập và làm việc nhóm hiệu quả",
-    icon: "MessageSquare",
-    tag: "Microsoft 365",
-    format: "Hướng dẫn",
-    topics: ["Teams", "Lớp học trực tuyến", "Làm việc nhóm"],
-    updated: "2025",
-  },
-  {
     id: "xay-dung-ke-hoach-hoc-tap",
     title: "Xây dựng kế hoạch học tập",
-    description: "Phương pháp và biểu mẫu quản lý thời gian, học tập khoa học",
+    description: "Công cụ hỗ trợ quản lý thời gian, học tập khoa học",
     icon: "CalendarDays",
     tag: "Kỹ năng học tập",
-    format: "Biểu mẫu",
+    format: "Công cụ",
     topics: ["Quản lý thời gian", "Kế hoạch kỳ", "Excel & Forms"],
     updated: "2024",
   },

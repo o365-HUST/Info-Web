@@ -1,22 +1,57 @@
 "use client";
 
-import type { DepartmentSubUnit } from "@/app/types";
+import {
+  getHardcodedSubUnits,
+  type HardcodedSubUnitCard,
+  type SubUnitAccent,
+} from "./departmentSubUnitsContent";
 
 interface DepartmentSubUnitsProps {
-  units: DepartmentSubUnit[];
+  departmentId: string;
   departmentName: string;
 }
 
-function headerStripClass(accent: DepartmentSubUnit["accent"]) {
+function headerStripClass(accent: SubUnitAccent) {
   if (accent === "warm") return "bg-warm border-b border-border";
   if (accent === "cool") return "bg-surface border-b border-border";
   return "bg-card border-b border-border";
 }
 
-function SubUnitCard({ unit }: { unit: DepartmentSubUnit }) {
+function subgridRowCount(cards: HardcodedSubUnitCard[]): 3 | 4 {
+  const unit = cards[0];
+  if (unit.scopeBody) return 4;
+  return 3;
+}
+
+function subgridLayoutClasses(rowCount: 3 | 4) {
+  if (rowCount === 4) {
+    return {
+      grid: "md:[grid-template-rows:repeat(4,minmax(0,auto))]",
+      card: "md:[grid-row:span_4/span_4]",
+    };
+  }
+  return {
+    grid: "md:[grid-template-rows:repeat(3,minmax(0,auto))]",
+    card: "md:[grid-row:span_3/span_3]",
+  };
+}
+
+function SubUnitCard({
+  unit,
+  subgridCardClass,
+}: {
+  unit: HardcodedSubUnitCard;
+  subgridCardClass: string;
+}) {
+  const aboutLabel = unit.aboutLabel;
+
   return (
-    <article className="flex flex-col rounded-lg border border-border bg-card overflow-hidden">
-      <header className={`px-4 py-3 sm:px-5 sm:py-3.5 ${headerStripClass(unit.accent)}`}>
+    <article
+      className={`flex flex-col rounded-lg border border-border bg-card overflow-hidden md:grid md:grid-rows-subgrid md:gap-0 md:min-h-0 ${subgridCardClass}`}
+    >
+      <header
+        className={`px-4 py-3 sm:px-5 sm:py-3.5 ${headerStripClass(unit.accent ?? "warm")}`}
+      >
         <p className="font-mono text-[11px] font-semibold tracking-[0.2em] uppercase text-ink-muted m-0 mb-1">
           {unit.index}
         </p>
@@ -26,31 +61,39 @@ function SubUnitCard({ unit }: { unit: DepartmentSubUnit }) {
         <p className="text-sm text-ink-light leading-snug m-0 mt-1">{unit.tagline}</p>
       </header>
 
-      <div className="flex flex-col flex-1 px-4 py-4 sm:px-5 sm:py-5 gap-5">
-        <div className="border-l-2 border-accent/40 pl-4">
-          <p className="text-[11px] font-semibold tracking-[0.2em] uppercase text-accent mb-1.5 m-0">
-            Nhiệm vụ
+      {unit.about ? (
+        <div className="px-4 pt-4 sm:px-5 sm:pt-5 md:pt-4 md:pb-0">
+          <div className="border-l-2 border-accent/40 pl-4 h-full">
+            {aboutLabel ? (
+              <p className="text-[11px] font-semibold tracking-[0.2em] uppercase text-accent mb-1.5 m-0">
+                {aboutLabel}
+              </p>
+            ) : null}
+            <p className="text-sm sm:text-base text-ink leading-relaxed m-0">
+              {unit.about}
+            </p>
+          </div>
+        </div>
+      ) : null}
+
+      {unit.scopeBody ? (
+        <div className="px-4 pt-5 sm:px-5 md:pt-5 md:pb-0">
+          <p className="text-[11px] font-semibold tracking-[0.2em] uppercase text-accent mb-2 m-0">
+            {unit.scopeLabel}
           </p>
           <p className="text-sm sm:text-base text-ink leading-relaxed m-0">
-            {unit.mission}
+            {unit.scopeBody}
           </p>
         </div>
+      ) : null}
 
-        <div>
+      {unit.focusItems?.length ? (
+        <div className="px-4 py-4 sm:px-5 sm:py-5 md:pt-5">
           <p className="text-[11px] font-semibold tracking-[0.2em] uppercase text-accent mb-2 m-0">
-            Công cụ
-          </p>
-          <p className="text-sm sm:text-base text-ink leading-relaxed m-0">
-            {unit.tools.join(" · ")}
-          </p>
-        </div>
-
-        <div>
-          <p className="text-[11px] font-semibold tracking-[0.2em] uppercase text-accent mb-2 m-0">
-            Đào tạo
+            {unit.focusLabel}
           </p>
           <ul className="m-0 p-0 list-none space-y-2">
-            {unit.trainingFocus.map((item) => (
+            {unit.focusItems.map((item) => (
               <li
                 key={item}
                 className="text-sm text-ink-light leading-relaxed pl-3 border-l border-border"
@@ -60,16 +103,21 @@ function SubUnitCard({ unit }: { unit: DepartmentSubUnit }) {
             ))}
           </ul>
         </div>
-      </div>
+      ) : null}
     </article>
   );
 }
 
 export default function DepartmentSubUnits({
-  units,
+  departmentId,
   departmentName,
 }: DepartmentSubUnitsProps) {
-  if (!units.length) return null;
+  const section = getHardcodedSubUnits(departmentId);
+  if (!section) return null;
+
+  const rowCount = subgridRowCount(section.cards);
+  const { grid: subgridParentClass, card: subgridCardClass } =
+    subgridLayoutClasses(rowCount);
 
   return (
     <section
@@ -84,13 +132,18 @@ export default function DepartmentSubUnits({
           Hai mảng trong {departmentName}
         </h2>
         <p className="text-sm text-ink-light leading-relaxed max-w-2xl mb-8 m-0">
-          KNM dạy sinh viên dùng công cụ — Kĩ thuật build những gì CLB và trường
-          triển khai.
+          {section.intro}
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 relative">
-          {units.map((unit) => (
-            <SubUnitCard key={unit.id} unit={unit} />
+        <div
+          className={`grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 md:items-stretch ${subgridParentClass}`}
+        >
+          {section.cards.map((unit) => (
+            <SubUnitCard
+              key={unit.index}
+              unit={unit}
+              subgridCardClass={subgridCardClass}
+            />
           ))}
         </div>
       </div>

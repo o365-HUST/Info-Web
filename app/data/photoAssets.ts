@@ -4,7 +4,7 @@
  * using the same filenames (see public/assets/README.md).
  */
 export const PHOTO_ASSETS = {
-  /** Full-bleed hero — prefer 16:9 or 3:2, real campus/event atmosphere */
+  /** Full-bleed hero - prefer 16:9 or 3:2, real campus/event atmosphere */
   heroAllClub: "/assets/hero/hero-allclub.jpg",
   /** About: support desk / Office 365 help */
   aboutSupport: "/assets/about/about-support.jpg",

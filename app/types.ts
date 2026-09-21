@@ -54,16 +54,10 @@ export interface DepartmentGallerySlide {
 
 export type DepartmentSubUnitId = "knm" | "ky-thuat";
 
+/** Gallery slide tag only - sub-unit copy lives in departmentSubUnitsContent.ts */
 export interface DepartmentSubUnit {
   id: DepartmentSubUnitId;
-  index: "01" | "02";
   name: string;
-  tagline: string;
-  mission: string;
-  tools: string[];
-  /** Up to 3 bullets */
-  trainingFocus: string[];
-  accent?: "warm" | "cool";
 }
 
 export interface Department {
@@ -89,8 +83,6 @@ export interface Department {
   /** Activity photos for the Điểm nhấn gallery (not the hero team shot) */
   gallery?: DepartmentGallerySlide[];
   bentoItems?: DepartmentBentoItem[];
-  /** Internal mảng (e.g. KNM + Kĩ thuật within Ban Chuyên môn) */
-  subUnits?: DepartmentSubUnit[];
 }
 
 export interface BlogPost {
@@ -105,25 +97,14 @@ export interface BlogPost {
   published?: boolean;
   author?: string;
   authorDescription?: string;
-}
-
-export type EventStatus = "ongoing" | "upcoming" | "past";
-
-export interface EventItem {
-  id: string;
-  month: string;
-  title: string;
-  linkLabel: string;
-  linkUrl: string;
-  description?: string;
-  location?: string;
-  status?: EventStatus;
-  category?: string;
-  drl?: string;
-  isHighlight?: boolean;
-  funnyQuote?: string;
-  targetDate?: string;
-  reactions?: Record<string, number>;
+  /** Large hero tile on /blog bento (max one shown). */
+  heroSpot?: boolean;
+  /** Right-column Nổi bật cards (max 3; excludes hero). */
+  featuredSpot?: boolean;
+  /** @deprecated Use featuredSpot - still read for older Firestore docs. */
+  featured?: boolean;
+  /** Sort before non-pinned posts regardless of date. */
+  pinned?: boolean;
 }
 
 export type MilestoneType = "moc" | "thanh_tich" | "alumni" | "photo";
@@ -194,7 +175,7 @@ export interface ResourceAttachment {
   url: string;
   type: ResourceAttachmentType;
   size?: number;
-  /** Firebase Storage object path — used for reliable deletes */
+  /** Firebase Storage object path - used for reliable deletes */
   storagePath?: string;
 }
 

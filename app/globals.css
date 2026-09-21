@@ -25,6 +25,16 @@ html.dark {
   --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.35);
   --shadow-md: 0 8px 28px rgba(0, 0, 0, 0.45);
   --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.55);
+  --timeline-chunky-shadow: 0 3px 0 0 rgba(0, 0, 0, 0.28);
+  --timeline-chunky-shadow-press: 0 1px 0 0 rgba(0, 0, 0, 0.24);
+
+  /* Story timeline / modal pastels (opaque) */
+  --story-pastel-blue: #1a3358;
+  --story-pastel-yellow: #2e2a18;
+  --story-pastel-pink: #3d2236;
+  --story-pastel-green: #123728;
+  --story-pastel-peach: #2e1c12;
+  --story-pastel-rose: #3d2236;
 
   --radius-sm: 6px;
   --radius-md: 10px;
@@ -74,6 +84,16 @@ html.light {
   --shadow-card: 0 4px 16px rgba(11, 26, 46, 0.1);
   --shadow-md: 0 8px 28px rgba(11, 26, 46, 0.12);
   --shadow-lg: 0 16px 48px rgba(11, 26, 46, 0.14);
+  --timeline-chunky-shadow: 0 3px 0 0 rgba(11, 26, 46, 0.22);
+  --timeline-chunky-shadow-press: 0 1px 0 0 rgba(11, 26, 46, 0.2);
+
+  /* Story timeline / modal pastels (opaque) */
+  --story-pastel-blue: #eff6ff;
+  --story-pastel-yellow: #fffef7;
+  --story-pastel-pink: #fff5f9;
+  --story-pastel-green: #f0fdf4;
+  --story-pastel-peach: #fffaf5;
+  --story-pastel-rose: #fff1f2;
 
   --photo-scrim: linear-gradient(
     105deg,
@@ -120,7 +140,7 @@ html.light {
 /* ─── Base ─── */
 html {
   scroll-behavior: smooth;
-  font-size: 106.25%; /* ~17px — slightly larger site type scale */
+  font-size: 106.25%; /* ~17px - slightly larger site type scale */
 }
 
 body {
@@ -152,7 +172,7 @@ p, .text-pretty {
   outline-offset: -1px;
 }
 
-/* Color PNG mark — do not invert (would wash brand blues) */
+/* Color PNG mark - do not invert (would wash brand blues) */
 .logo-transparent {
   filter: none;
 }
@@ -292,6 +312,22 @@ p, .text-pretty {
   opacity: 0.7;
 }
 
+.tiptap .tiptap-video-embed {
+  aspect-ratio: 16 / 9;
+  margin: 1rem 0;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  border: 1px solid var(--border);
+  background: var(--card);
+}
+
+.tiptap .tiptap-video-embed__frame {
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+  border: 0;
+}
+
 .prose-o365 h2 {
   font-size: 1.5rem;
   font-weight: 800;
@@ -416,6 +452,31 @@ p, .text-pretty {
   height: auto;
 }
 
+.prose-o365 .tiptap-video-embed,
+.prose-o365 iframe.tiptap-video-embed__frame {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+}
+
+.prose-o365 .tiptap-video-embed {
+  aspect-ratio: 16 / 9;
+  margin: 1.5rem 0;
+  overflow: hidden;
+  border-radius: 1rem;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+  background: var(--card);
+}
+
+.prose-o365 .tiptap-video-embed__frame,
+.prose-o365 iframe {
+  width: 100%;
+  height: 100%;
+  min-height: 240px;
+  border: 0;
+}
+
 .prose-o365 hr {
   margin: 2rem 0;
   border-top: 1px solid var(--border);
@@ -432,161 +493,6 @@ p, .text-pretty {
 .prose-light ol { margin: 1rem 0; padding-left: 1.5rem; list-style-type: decimal; color: #475569; }
 .prose-light li { margin-bottom: 0.35rem; }
 .prose-light img { border-radius: 1rem; border: 1px solid #e2e8f0; margin: 1.5rem auto; max-width: 100%; height: auto; }
-
-/* Story corkboard — wood frame + cork/linen surface */
-.story-board-frame {
-  padding: 6px;
-  border-radius: 1.125rem;
-  background: linear-gradient(145deg, #b8894a 0%, #9a6f3a 38%, #7a5528 100%);
-  box-shadow:
-    0 12px 32px rgba(40, 24, 8, 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18),
-    inset 0 -2px 0 rgba(0, 0, 0, 0.18);
-}
-
-@media (min-width: 640px) {
-  .story-board-frame {
-    padding: 8px;
-  }
-}
-
-html.dark .story-board-frame {
-  background: linear-gradient(145deg, #4a3d2c 0%, #3a3024 42%, #2a221a 100%);
-  box-shadow:
-    0 12px 32px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    inset 0 -2px 0 rgba(0, 0, 0, 0.35);
-}
-
-.story-board-surface {
-  border-radius: 0.9rem;
-  background-color: #c9a87c;
-  background-image:
-    radial-gradient(
-      ellipse 120% 80% at 18% 12%,
-      rgba(255, 255, 255, 0.16) 0%,
-      transparent 52%
-    ),
-    radial-gradient(
-      ellipse 90% 70% at 82% 88%,
-      rgba(0, 0, 0, 0.1) 0%,
-      transparent 48%
-    ),
-    radial-gradient(
-      circle at 35% 68%,
-      rgba(139, 105, 60, 0.16) 0%,
-      transparent 42%
-    ),
-    radial-gradient(
-      circle at 72% 28%,
-      rgba(255, 248, 235, 0.12) 0%,
-      transparent 38%
-    ),
-    repeating-linear-gradient(
-      0deg,
-      rgba(255, 255, 255, 0.055) 0 1px,
-      transparent 1px 4px
-    ),
-    repeating-linear-gradient(
-      90deg,
-      rgba(0, 0, 0, 0.034) 0 1px,
-      transparent 1px 5px
-    ),
-    repeating-linear-gradient(
-      45deg,
-      rgba(0, 0, 0, 0.022) 0 1px,
-      transparent 1px 6px
-    ),
-    repeating-linear-gradient(
-      -45deg,
-      rgba(255, 255, 255, 0.038) 0 1px,
-      transparent 1px 7px
-    ),
-    repeating-linear-gradient(
-      113deg,
-      rgba(0, 0, 0, 0.015) 0 1px,
-      transparent 1px 9px
-    );
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.12),
-    inset 0 2px 10px rgba(0, 0, 0, 0.08);
-}
-
-html.dark .story-board-surface {
-  background-color: #3f362b;
-  background-image:
-    radial-gradient(
-      ellipse 120% 80% at 18% 12%,
-      rgba(255, 255, 255, 0.07) 0%,
-      transparent 52%
-    ),
-    radial-gradient(
-      ellipse 90% 70% at 82% 88%,
-      rgba(0, 0, 0, 0.22) 0%,
-      transparent 48%
-    ),
-    radial-gradient(
-      circle at 35% 68%,
-      rgba(0, 0, 0, 0.16) 0%,
-      transparent 42%
-    ),
-    repeating-linear-gradient(
-      0deg,
-      rgba(255, 255, 255, 0.04) 0 1px,
-      transparent 1px 4px
-    ),
-    repeating-linear-gradient(
-      90deg,
-      rgba(0, 0, 0, 0.12) 0 1px,
-      transparent 1px 5px
-    ),
-    repeating-linear-gradient(
-      45deg,
-      rgba(0, 0, 0, 0.075) 0 1px,
-      transparent 1px 6px
-    ),
-    repeating-linear-gradient(
-      -45deg,
-      rgba(255, 255, 255, 0.03) 0 1px,
-      transparent 1px 7px
-    );
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.06),
-    inset 0 2px 10px rgba(0, 0, 0, 0.24);
-}
-
-/* Visitor cork patch — dashed affordance before first note */
-.story-board-visitor-patch {
-  border: 2px dashed rgba(113, 63, 18, 0.22);
-  background-color: rgba(255, 254, 247, 0.35);
-  background-image:
-    repeating-linear-gradient(
-      0deg,
-      rgba(255, 255, 255, 0.04) 0 1px,
-      transparent 1px 4px
-    ),
-    repeating-linear-gradient(
-      90deg,
-      rgba(0, 0, 0, 0.02) 0 1px,
-      transparent 1px 5px
-    );
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
-}
-
-.story-board-visitor-patch:hover {
-  border-color: rgba(113, 63, 18, 0.38);
-  background-color: rgba(255, 254, 247, 0.55);
-}
-
-html.dark .story-board-visitor-patch {
-  border-color: rgba(253, 230, 138, 0.18);
-  background-color: rgba(63, 54, 43, 0.45);
-}
-
-html.dark .story-board-visitor-patch:hover {
-  border-color: rgba(253, 230, 138, 0.32);
-  background-color: rgba(63, 54, 43, 0.62);
-}
 
 @keyframes visitorPatchPulse {
   0%,

@@ -10,7 +10,10 @@ import {
 } from "@/app/lib/firestoreService";
 import { uploadMediaAsset, deleteMediaAsset } from "@/app/lib/storageService";
 import type { BlogPost } from "@/app/types";
-import TipTapEditor from "../components/TipTapEditor";
+import { BLOG_POST_TAGS } from "@/app/lib/blogUtils";
+import TipTapEditor, {
+  type TipTapEditorHandle,
+} from "../components/TipTapEditor";
 import MarkdownRenderer from "@/app/components/MarkdownRenderer";
 import {
   ArrowLeft,
@@ -32,14 +35,6 @@ import {
   RefreshCw,
 } from "lucide-react";
 
-const CATEGORIES = [
-  "Devlog",
-  "Cuộc thi",
-  "Hành trình",
-  "Workshop",
-  "Kỹ năng số",
-  "Thông báo",
-];
 import Cropper from "cropperjs";
 import "cropperjs/dist/cropper.css";
 import { useState, useEffect, Suspense, useMemo, useRef } from "react";
@@ -306,6 +301,9 @@ function PostEditorContent() {
   const [excerpt, setExcerpt] = useState("");
   const [content, setContent] = useState("");
   const [published, setPublished] = useState(true);
+  const [heroSpot, setHeroSpot] = useState(false);
+  const [featuredSpot, setFeaturedSpot] = useState(false);
+  const [pinned, setPinned] = useState(false);
 
   const [selectedCoverFile, setSelectedCoverFile] = useState<File | null>(null);
   const [coverPreviewUrl, setCoverPreviewUrl] = useState("");
@@ -316,6 +314,7 @@ function PostEditorContent() {
   const [uploadError, setUploadError] = useState("");
 
   const [previewMode, setPreviewMode] = useState<"article" | "card">("article");
+  const tipTapRef = useRef<TipTapEditorHandle>(null);
 
   useEffect(() => {
     if (!postId) return;
@@ -337,6 +336,11 @@ function PostEditorContent() {
           setExcerpt(found.excerpt);
           setContent(found.content || found.excerpt);
           setPublished(found.published !== false);
+          setHeroSpot(found.heroSpot === true);
+          setFeaturedSpot(
+            found.featuredSpot === true || found.featured === true,
+          );
+          setPinned(found.pinned === true);
         }
       } finally {
         if (isMounted) setIsLoadingPost(false);
@@ -414,6 +418,14 @@ function PostEditorContent() {
       const isPublic =
         overridePublished !== undefined ? overridePublished : published;
 
+      let finalContent = content.trim() || excerpt.trim();
+      if (tipTapRef.current?.hasPendingImages()) {
+        finalContent = await tipTapRef.current.flushPendingImages(
+          finalContent,
+          (progress) => setUploadProgress(progress),
+        );
+      }
+
       const postData: Omit<BlogPost, "id"> = {
         title: title.trim(),
         tag,
@@ -423,9 +435,12 @@ function PostEditorContent() {
           authorDescription.trim() || "Đại sứ số Học đường ĐHBK Hà Nội",
         thumbnail: finalThumbnail,
         excerpt: excerpt.trim(),
-        content: content.trim() || excerpt.trim(),
+        content: finalContent,
         url: "#",
         published: isPublic,
+        heroSpot,
+        featuredSpot,
+        pinned,
       };
 
       if (postId) {
@@ -632,7 +647,7 @@ function PostEditorContent() {
                     onChange={(e) => setTag(e.target.value)}
                     className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent font-medium cursor-pointer"
                   >
-                    {CATEGORIES.map((cat) => (
+                    {BLOG_POST_TAGS.map((cat) => (
                       <option key={cat} value={cat}>
                         {cat}
                       </option>
@@ -651,6 +666,59 @@ function PostEditorContent() {
                     placeholder="DD/MM/YYYY"
                     className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent font-mono"
                   ></input>
+                </div>
+              </div>
+
+              <div className="pt-3 mt-1 border-t border-border/60">
+                <p className="text-[11px] font-bold text-ink uppercase tracking-wider mb-2">
+                  Vị trí trên trang Blog
+                </p>
+                <div className="space-y-2">
+                  <label className="flex items-start gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={heroSpot}
+                      onChange={(e) => setHeroSpot(e.target.checked)}
+                      className="mt-0.5 w-4 h-4 rounded text-accent focus:ring-accent border-border"
+                    />
+                    <span className="text-xs text-ink leading-snug">
+                      <span className="font-semibold">Hero spot</span>
+                      <span className="text-ink-light">
+                        {" "}
+                        - Ô lớn bên trái (1 bài; ưu tiên ghim rồi bài mới).
+                      </span>
+                    </span>
+                  </label>
+                  <label className="flex items-start gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={featuredSpot}
+                      onChange={(e) => setFeaturedSpot(e.target.checked)}
+                      className="mt-0.5 w-4 h-4 rounded text-accent focus:ring-accent border-border"
+                    />
+                    <span className="text-xs text-ink leading-snug">
+                      <span className="font-semibold">Featured spot</span>
+                      <span className="text-ink-light">
+                        {" "}
+                        - Cột Nổi bật (tối đa 3; không trùng ô Hero).
+                      </span>
+                    </span>
+                  </label>
+                  <label className="flex items-start gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={pinned}
+                      onChange={(e) => setPinned(e.target.checked)}
+                      className="mt-0.5 w-4 h-4 rounded text-accent focus:ring-accent border-border"
+                    />
+                    <span className="text-xs text-ink leading-snug">
+                      <span className="font-semibold">Ghim đầu danh sách</span>
+                      <span className="text-ink-light">
+                        {" "}
+                        - Đứng trước các bài không ghim.
+                      </span>
+                    </span>
+                  </label>
                 </div>
               </div>
             </div>
@@ -856,6 +924,7 @@ function PostEditorContent() {
                 </div>
 
                 <TipTapEditor
+                  ref={tipTapRef}
                   content={content}
                   onChange={setContent}
                   placeholder="Viết nội dung bài viết... Bạn có thể bôi đậm, chèn tiêu đề H2/H3, danh sách, trích dẫn hoặc tải ảnh trực tiếp."
