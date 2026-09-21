@@ -6,6 +6,7 @@ import {
   useMemo,
   useRef,
   useState,
+  Fragment,
 } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Loader2, X } from "lucide-react";
@@ -17,15 +18,15 @@ import {
 import NoteModalRouter from "@/app/components/milestone-modals/NoteModalRouter";
 import AlternatingTimelinePath from "@/app/components/story/AlternatingTimelinePath";
 import TimelineMilestoneRow from "@/app/components/story/TimelineMilestoneRow";
-import {
-  AlternatingVisitorNode,
-  AlternatingVisitorPatch,
-} from "@/app/components/story/AlternatingVisitorRow";
+import TimelineYearRow from "@/app/components/story/TimelineYearRow";
+import VisitorTimelineEndRow from "@/app/components/story/VisitorTimelineEndRow";
 import VisitorNoteComposer from "@/app/components/story/VisitorNoteComposer";
 import {
   buildAlternatingLayout,
-  buildAlternatingPathSegments,
-  ALTERNATING_ROW_HEIGHT,
+  buildPathWithVisitorAnchor,
+  groupEntriesByYear,
+  spineHeightWithVisitor,
+  timelineLayoutTransition,
 } from "@/app/lib/alternatingTimeline";
 import {
   loadVisitorNote,
@@ -52,6 +53,8 @@ export default function MilestoneTimeline() {
   const [composerOpen, setComposerOpen] = useState(false);
   const [visitorNoteHydrated, setVisitorNoteHydrated] = useState(false);
   const [sessionNotice, setSessionNotice] = useState<string | null>(null);
+  const [collapsedYears, setCollapsedYears] = useState<Set<number>>(() => new Set());
+  const [collapsingYears, setCollapsingYears] = useState<Set<number>>(() => new Set());
 
   const timelineRef = useRef<HTMLDivElement>(null);
   const openerRef = useRef<HTMLElement | null>(null);
@@ -63,6 +66,7 @@ export default function MilestoneTimeline() {
   const revealTimersRef = useRef<number[]>([]);
   const pumpingRef = useRef(false);
   const sessionNoticeTimerRef = useRef<number | null>(null);
+  const collapseTimerRef = useRef<Map<number, number>>(new Map());
 
   const showSessionNotice = useCallback((message: string) => {
     setSessionNotice(message);
@@ -81,6 +85,13 @@ export default function MilestoneTimeline() {
       sessionNoticeTimerRef.current = null;
     }
     setSessionNotice(null);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      collapseTimerRef.current.forEach((id) => window.clearTimeout(id));
+      collapseTimerRef.current.clear();
+    };
   }, []);
 
   useEffect(() => {
@@ -129,29 +140,91 @@ export default function MilestoneTimeline() {
   const layout = useMemo(
     () =>
       buildAlternatingLayout(ordered, {
-        includeVisitorSlot: true,
+        collapsedYears,
       }),
-    [ordered],
+    [ordered, collapsedYears],
   );
 
-  const pathSegments = useMemo(
-    () =>
-      buildAlternatingPathSegments(layout, {
-        includeVisitor: true,
-      }),
-    [layout],
-  );
+  const lastRevealIndex = Math.max(0, layout.revealItemCount - 1);
 
   const effectiveSkipReveal = skipScrollReveal || reducedMotion;
   const animateReveal = timelineReady && !effectiveSkipReveal;
   const fullyRevealed =
     effectiveSkipReveal ||
-    maxRevealed >= ordered.length - 1 ||
-    ordered.length === 0;
+    maxRevealed >= lastRevealIndex ||
+    layout.revealItemCount === 0;
 
-  const visitorSide =
-    layout.visitorRowIndex % 2 === 0 ? ("left" as const) : ("right" as const);
-  const visitorRowTop = layout.visitorRowIndex * ALTERNATING_ROW_HEIGHT;
+  const showVisitorOnSpine =
+    visitorNoteHydrated &&
+    timelineReady &&
+    fullyRevealed &&
+    !(composerOpen && !visitorNote);
+
+  const pathSegments = useMemo(
+    () => buildPathWithVisitorAnchor(layout, showVisitorOnSpine),
+    [layout, showVisitorOnSpine],
+  );
+
+  const spineHeight = spineHeightWithVisitor(layout, showVisitorOnSpine);
+
+  const yearGroups = useMemo(() => groupEntriesByYear(ordered), [ordered]);
+
+  const milestoneByEntryId = useMemo(() => {
+    const map = new Map<string, (typeof layout.milestoneRows)[number]>();
+    for (const row of layout.milestoneRows) {
+      map.set(row.entry.id, row);
+    }
+    return map;
+  }, [layout.milestoneRows]);
+
+  const toggleYearCollapsed = useCallback(
+    (year: number) => {
+      setCollapsedYears((prev) => {
+        if (prev.has(year)) {
+          const pending = collapseTimerRef.current.get(year);
+          if (pending !== undefined) {
+            window.clearTimeout(pending);
+            collapseTimerRef.current.delete(year);
+          }
+          setCollapsingYears((c) => {
+            const next = new Set(c);
+            next.delete(year);
+            return next;
+          });
+          const next = new Set(prev);
+          next.delete(year);
+          return next;
+        }
+
+        setCollapsingYears((c) => new Set(c).add(year));
+        const existing = collapseTimerRef.current.get(year);
+        if (existing !== undefined) window.clearTimeout(existing);
+
+        const delay = reducedMotion ? 0 : 420;
+        const timerId = window.setTimeout(() => {
+          setCollapsedYears((p) => new Set(p).add(year));
+          setCollapsingYears((c) => {
+            const next = new Set(c);
+            next.delete(year);
+            return next;
+          });
+          collapseTimerRef.current.delete(year);
+        }, delay);
+        collapseTimerRef.current.set(year, timerId);
+        return prev;
+      });
+    },
+    [reducedMotion],
+  );
+
+  useEffect(() => {
+    const last = lastRevealIndex;
+    if (maxRevealedRef.current > last) {
+      maxRevealedRef.current = last;
+      revealTargetRef.current = Math.min(revealTargetRef.current, last);
+      setMaxRevealed(last);
+    }
+  }, [lastRevealIndex]);
 
   const markSessionRevealed = useCallback(
     (message: string) => {
@@ -179,22 +252,20 @@ export default function MilestoneTimeline() {
   }, [clearRevealTimers]);
 
   useEffect(() => {
-    if (effectiveSkipReveal && ordered.length > 0) {
-      const last = ordered.length - 1;
-      maxRevealedRef.current = last;
-      revealTargetRef.current = last;
-      setMaxRevealed(last);
+    if (effectiveSkipReveal && layout.revealItemCount > 0) {
+      maxRevealedRef.current = lastRevealIndex;
+      revealTargetRef.current = lastRevealIndex;
+      setMaxRevealed(lastRevealIndex);
     }
-  }, [effectiveSkipReveal, ordered.length]);
+  }, [effectiveSkipReveal, layout.revealItemCount, lastRevealIndex]);
 
   const handleSkipReveal = useCallback(() => {
     clearRevealTimers();
-    const last = Math.max(0, ordered.length - 1);
-    maxRevealedRef.current = last;
-    revealTargetRef.current = last;
-    setMaxRevealed(last);
+    maxRevealedRef.current = lastRevealIndex;
+    revealTargetRef.current = lastRevealIndex;
+    setMaxRevealed(lastRevealIndex);
     markSessionRevealed("Đã bỏ qua hiệu ứng — lần sau mở thẳng dòng thời gian");
-  }, [clearRevealTimers, ordered.length, markSessionRevealed]);
+  }, [clearRevealTimers, lastRevealIndex, markSessionRevealed]);
 
   const handleResetReveal = useCallback(() => {
     clearRevealTimers();
@@ -235,7 +306,7 @@ export default function MilestoneTimeline() {
         maxRevealedRef.current = next;
         setMaxRevealed(next);
 
-        if (next >= ordered.length - 1) {
+        if (next >= lastRevealIndex) {
           markSessionRevealed(
             "Đã xem hết hành trình — lần sau mở thẳng dòng thời gian",
           );
@@ -254,7 +325,7 @@ export default function MilestoneTimeline() {
       pumpingRef.current = true;
       pump();
     },
-    [timelineReady, effectiveSkipReveal, ordered.length, markSessionRevealed],
+    [timelineReady, effectiveSkipReveal, lastRevealIndex, markSessionRevealed],
   );
 
   useEffect(() => {
@@ -401,12 +472,14 @@ export default function MilestoneTimeline() {
             </p>
           </div>
         ) : (
-          <div
+          <motion.div
             ref={timelineRef}
             className="relative mx-auto w-full max-w-[760px]"
             aria-busy={!timelineReady}
             aria-live="polite"
-            style={{ minHeight: layout.height }}
+            initial={false}
+            animate={{ height: spineHeight }}
+            transition={timelineLayoutTransition(reducedMotion)}
           >
             {!timelineReady && (
               <div
@@ -433,50 +506,60 @@ export default function MilestoneTimeline() {
             <AlternatingTimelinePath
               segments={pathSegments}
               width={layout.width}
-              height={layout.height}
+              height={spineHeight}
             />
 
             <ul className="relative z-10 m-0 list-none p-0">
-              {layout.rows.map((row) => (
-                <TimelineMilestoneRow
-                  key={`${row.entry.id}-${revealEpoch}`}
-                  row={row}
-                  isRevealed={row.index <= maxRevealed}
-                  animateReveal={animateReveal}
+              {layout.yearRows.map((yearRow) => {
+                const entries =
+                  yearGroups.find((g) => g.year === yearRow.year)?.entries ?? [];
+
+                return (
+                  <Fragment key={`year-group-${yearRow.year}-${revealEpoch}`}>
+                    <TimelineYearRow
+                      row={yearRow}
+                      isRevealed={yearRow.revealIndex <= maxRevealed}
+                      animateReveal={animateReveal}
+                      reducedMotion={reducedMotion}
+                      onToggleYear={toggleYearCollapsed}
+                      onEnterView={handleNoteEnterView}
+                    />
+                    {!collapsedYears.has(yearRow.year) &&
+                      entries.map((entry) => {
+                        const row = milestoneByEntryId.get(entry.id);
+                        if (!row) return null;
+                        return (
+                          <TimelineMilestoneRow
+                            key={`${entry.id}-${revealEpoch}`}
+                            row={row}
+                            isRevealed={row.revealIndex <= maxRevealed}
+                            animateReveal={animateReveal}
+                            reducedMotion={reducedMotion}
+                            isCollapsing={collapsingYears.has(yearRow.year)}
+                            onOpen={handleOpen}
+                            onEnterView={handleNoteEnterView}
+                          />
+                        );
+                      })}
+                  </Fragment>
+                );
+              })}
+
+              {showVisitorOnSpine && (
+                <VisitorTimelineEndRow
+                  side={layout.visitorEnd.side}
+                  rowTop={layout.visitorEnd.rowTop}
+                  note={visitorNote}
+                  composerOpen={composerOpen}
                   reducedMotion={reducedMotion}
-                  onOpen={handleOpen}
-                  onEnterView={handleNoteEnterView}
+                  pulse={fullyRevealed}
+                  layoutAnimate
+                  onAdd={handleVisitorPatchClick}
+                  onOpenNote={handleVisitorCardOpen}
                 />
-              ))}
-
-              {visitorNoteHydrated &&
-                timelineReady &&
-                fullyRevealed &&
-                visitorNote && (
-                  <AlternatingVisitorNode
-                    side={visitorSide}
-                    rowTop={visitorRowTop}
-                    note={visitorNote}
-                    reducedMotion={reducedMotion}
-                    onOpen={handleVisitorCardOpen}
-                  />
-                )}
-
-              {visitorNoteHydrated &&
-                timelineReady &&
-                fullyRevealed &&
-                !visitorNote &&
-                !composerOpen && (
-                  <AlternatingVisitorPatch
-                    side={visitorSide}
-                    rowTop={visitorRowTop}
-                    pulse={fullyRevealed}
-                    reducedMotion={reducedMotion}
-                    onClick={handleVisitorPatchClick}
-                  />
-                )}
+              )}
             </ul>
-          </div>
+          </motion.div>
         )}
       </div>
 

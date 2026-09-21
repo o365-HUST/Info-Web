@@ -1,166 +1,100 @@
 "use client";
 
 import { motion } from "motion/react";
-import TimelineDot from "@/app/components/story/TimelineDot";
-import TimelineDateLabel from "@/app/components/story/TimelineDateLabel";
-import type { TimelineSide } from "@/app/lib/alternatingTimeline";
 import type { VisitorNote } from "@/app/lib/visitorNote";
 
-interface AlternatingVisitorRowProps {
-  side: TimelineSide;
-  rowTop: number;
-  note: VisitorNote;
+interface VisitorNoteSectionProps {
+  note: VisitorNote | null;
+  composerOpen: boolean;
   reducedMotion: boolean;
-  onOpen: (el: HTMLElement) => void;
-}
-
-export function AlternatingVisitorNode({
-  side,
-  rowTop,
-  note,
-  reducedMotion,
-  onOpen,
-}: AlternatingVisitorRowProps) {
-  const labelBlock = (
-    <div className={`max-w-[11rem] ${side === "left" ? "text-right" : "text-left"}`}>
-      <p className="font-display text-[12px] font-bold leading-snug text-ink text-pretty">
-        {note.headline}
-      </p>
-      {note.message && (
-        <p className="mt-0.5 line-clamp-2 text-[11px] leading-relaxed text-ink-light">
-          {note.message}
-        </p>
-      )}
-      <p className="mt-0.5 text-[10px] font-medium text-ink-muted">Ghi chú của bạn</p>
-    </div>
-  );
-
-  return (
-    <motion.li
-      className="absolute left-0 right-0 list-none"
-      style={{ top: rowTop }}
-      initial={reducedMotion ? false : { opacity: 0, scale: 0.85 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={
-        reducedMotion
-          ? { duration: 0.12 }
-          : { type: "spring", damping: 28, stiffness: 320 }
-      }
-    >
-      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 sm:gap-4">
-        <div className={`flex flex-col ${side === "left" ? "items-end pr-1 sm:pr-3" : ""}`}>
-          {side === "left" && (
-            <>
-              <TimelineDateLabel dateLabel={note.dateLabel} side={side} />
-              {labelBlock}
-            </>
-          )}
-        </div>
-
-        <div className="flex justify-center">
-          <button
-            type="button"
-            onClick={(e) => onOpen(e.currentTarget)}
-            aria-label={`Ghi chú của bạn: ${note.headline}. Nhấn để xem hoặc chỉnh sửa.`}
-            className="group flex flex-col items-center focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-4"
-          >
-            <TimelineDot />
-            <span className="mt-1.5 text-[10px] font-semibold text-accent opacity-0 transition-opacity group-hover:opacity-100">
-              Xem / sửa →
-            </span>
-          </button>
-        </div>
-
-        <div className={`flex flex-col ${side === "right" ? "items-start pl-1 sm:pl-3" : ""}`}>
-          {side === "right" && (
-            <>
-              <TimelineDateLabel dateLabel={note.dateLabel} side={side} />
-              {labelBlock}
-            </>
-          )}
-        </div>
-      </div>
-    </motion.li>
-  );
-}
-
-interface AlternatingVisitorPatchProps {
-  side: TimelineSide;
-  rowTop: number;
   pulse: boolean;
-  reducedMotion: boolean;
-  onClick: () => void;
+  onAdd: () => void;
+  onOpenNote: (el: HTMLElement) => void;
 }
 
-export function AlternatingVisitorPatch({
-  side,
-  rowTop,
-  pulse,
+export function VisitorNoteSection({
+  note,
+  composerOpen,
   reducedMotion,
-  onClick,
-}: AlternatingVisitorPatchProps) {
-  const hintBlock = (
-    <button
-      type="button"
-      onClick={onClick}
-      className="max-w-[11rem] text-left focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-4"
-    >
-      <p className="font-display text-[12px] font-bold leading-snug text-ink">
-        Ghim ghi chú của bạn
-      </p>
-      <p className="mt-0.5 text-[11px] leading-relaxed text-ink-light">
-        Một dòng kỷ niệm riêng ở cuối hành trình — chỉ lưu trên trình duyệt này.
-      </p>
-    </button>
-  );
+  pulse,
+  onAdd,
+  onOpenNote,
+}: VisitorNoteSectionProps) {
+  if (composerOpen && !note) return null;
 
   return (
-    <motion.li
-      className="absolute left-0 right-0 list-none"
-      style={{ top: rowTop }}
-      initial={reducedMotion ? false : { opacity: 0, scale: 0.85 }}
-      animate={{ opacity: 1, scale: 1 }}
+    <motion.div
+      className="mx-auto mt-10 w-full max-w-[760px] border-t border-dashed border-border pt-8"
+      initial={reducedMotion ? false : { opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={
         reducedMotion
           ? { duration: 0.12 }
           : { type: "spring", damping: 28, stiffness: 320 }
       }
     >
-      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 sm:gap-4">
-        <div className={`flex flex-col ${side === "left" ? "items-end pr-1 sm:pr-3" : ""}`}>
-          {side === "left" && (
-            <>
-              <TimelineDateLabel dateLabel="Của bạn" side={side} />
-              <div className="text-right">{hintBlock}</div>
-            </>
-          )}
-        </div>
-
-        <div className="flex justify-center">
+      {note ? (
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0 flex-1 rounded-[var(--radius-2xl)] border border-border bg-card p-4 text-left shadow-card [box-shadow:var(--shadow-card),inset_0_1px_0_0_var(--border-subtle)]">
+            <p className="font-display text-[10px] font-extrabold uppercase tracking-[0.14em] text-ink-muted">
+              Ghi chú của bạn
+            </p>
+            <p className="mt-1 font-display text-base font-bold leading-snug text-ink text-pretty">
+              {note.headline}
+            </p>
+            {note.message && (
+              <p className="mt-1 line-clamp-3 text-sm leading-relaxed text-ink-light">
+                {note.message}
+              </p>
+            )}
+            {note.dateLabel && (
+              <p className="mt-2 text-[11px] font-medium text-ink-muted">{note.dateLabel}</p>
+            )}
+          </div>
           <button
             type="button"
-            onClick={onClick}
-            aria-label="Thêm ghi chú của bạn vào cuối hành trình"
-            className={`group flex flex-col items-center focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-4 ${
-              pulse && !reducedMotion
-                ? "animate-[visitorPatchPulse_2.4s_ease-in-out_infinite]"
-                : ""
-            }`}
+            onClick={(e) => onOpenNote(e.currentTarget)}
+            className="shrink-0 rounded-full border border-border bg-surface px-5 py-2.5 text-sm font-semibold text-ink shadow-xs transition-colors hover:border-accent/40 hover:text-accent focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-4"
           >
-            <TimelineDot variant="cta" />
-            <span className="mt-1.5 text-[10px] font-semibold text-accent">Thêm +</span>
+            Xem / chỉnh sửa
           </button>
         </div>
-
-        <div className={`flex flex-col ${side === "right" ? "items-start pl-1 sm:pl-3" : ""}`}>
-          {side === "right" && (
-            <>
-              <TimelineDateLabel dateLabel="Của bạn" side={side} />
-              {hintBlock}
-            </>
-          )}
+      ) : (
+        <div
+          className={`flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between ${
+            pulse && !reducedMotion
+              ? "animate-[visitorPatchPulse_2.4s_ease-in-out_infinite]"
+              : ""
+          }`}
+        >
+          <div className="min-w-0 flex-1">
+            <p className="font-display text-lg font-bold leading-snug text-ink">
+              Ghim ghi chú của bạn
+            </p>
+            <p className="mt-1 max-w-xl text-sm leading-relaxed text-ink-light text-pretty">
+              Một dòng kỷ niệm riêng sau hành trình — chỉ lưu trên trình duyệt này.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onAdd}
+            aria-label="Thêm ghi chú của bạn sau hành trình"
+            className="shrink-0 rounded-full border-2 border-ink/80 bg-accent px-6 py-2.5 text-sm font-bold text-ink shadow-card transition-[transform,box-shadow] hover:shadow-md active:scale-[0.96] focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-4"
+          >
+            Thêm ghi chú
+          </button>
         </div>
-      </div>
-    </motion.li>
+      )}
+    </motion.div>
   );
+}
+
+/** @deprecated Visitor rows on the rail — use VisitorNoteSection below the timeline. */
+export function AlternatingVisitorNode() {
+  return null;
+}
+
+/** @deprecated */
+export function AlternatingVisitorPatch() {
+  return null;
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import type { StoryTimelineIcon } from "@/app/data/storyTimeline";
+import { TIMELINE_RAIL_ICON_TACTILE } from "@/app/components/story/cards/milestoneTileStyles";
 import {
   Award,
   Flag,
@@ -43,7 +44,7 @@ export default function TimelineIconPill({
 
   return (
     <span
-      className={`relative z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-ink/80 shadow-sm ${accentClass} ${className}`}
+      className={`relative z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${accentClass} ${TIMELINE_RAIL_ICON_TACTILE} ${className}`}
       aria-hidden="true"
     >
       <Icon className="h-5 w-5" strokeWidth={2.25} />

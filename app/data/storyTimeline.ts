@@ -254,24 +254,6 @@ const RAW_ENTRIES: Omit<StoryTimelineEntry, "variant" | "icon" | "accentClass">[
       title: "Fanpage đạt 42k followers",
       description: "Fanpage CLB o365 – HUST đạt 42k followers.",
     },
-    {
-      id: "alumni-spotlight-2026",
-      type: "alumni",
-      year: 2026,
-      dateLabel: "09/2026",
-      sortKey: "2026-09-15",
-      title: "Cựu thành viên tiêu biểu",
-      alumniName: "Nguyễn Minh Anh",
-      alumniRole: "Microsoft MVP · Cựu Trưởng ban Kỹ thuật",
-      alumniAvatar: "/assets/marquee/marquee-08.jpg",
-      alumniQuote:
-        "CLB o365 là nơi mình học cách biến kỹ năng Office thành giá trị thật cho cộng đồng sinh viên Bách khoa.",
-      alumniLink: "https://www.microsoft.com",
-      description:
-        "Gen 1.0 — góp phần xây dựng hệ thống quản trị và website CLB trong giai đoạn đầu.",
-      relatedPostId: "devlog-phan-ban",
-      threaded: false,
-    },
   ];
 
 function enrich(entry: (typeof RAW_ENTRIES)[number]): StoryTimelineEntry {
@@ -296,3 +278,22 @@ export function storyEntryToMilestone(entry: StoryTimelineEntry): Milestone {
 export function resolveTimelineVariant(type: MilestoneType): StoryTimelineVariant {
   return variantFor({ type } as Milestone);
 }
+
+// {
+//   id: "alumni-spotlight-2026",
+//   type: "alumni",
+//   year: 2026,
+//   dateLabel: "09/2026",
+//   sortKey: "2026-09-15",
+//   title: "Cựu thành viên tiêu biểu",
+//   alumniName: "Nguyễn Minh Anh",
+//   alumniRole: "Microsoft MVP · Cựu Trưởng ban Kỹ thuật",
+//   alumniAvatar: "/assets/marquee/marquee-08.jpg",
+//   alumniQuote:
+//     "CLB o365 là nơi mình học cách biến kỹ năng Office thành giá trị thật cho cộng đồng sinh viên Bách khoa.",
+//   alumniLink: "https://www.microsoft.com",
+//   description:
+//     "Gen 1.0 — góp phần xây dựng hệ thống quản trị và website CLB trong giai đoạn đầu.",
+//   relatedPostId: "devlog-phan-ban",
+//   threaded: false,
+// },

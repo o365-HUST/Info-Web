@@ -1,5 +1,21 @@
 import { TYPE_LABELS, normalizeMilestoneType } from "@/app/lib/milestoneBoard";
+import type { StoryTimelineVariant } from "@/app/data/storyTimeline";
 import type { Milestone } from "@/app/types";
+
+export function storyVariantForMilestone(milestone: Milestone): StoryTimelineVariant {
+  const type = normalizeMilestoneType(milestone.type);
+  if (type === "alumni") return "alumni";
+  if (type === "photo") return "photo";
+  if (type === "thanh_tich") return "achievement";
+  if (
+    milestone.id === "tien-than-2023" ||
+    milestone.id === "ngay-sinh-2024" ||
+    milestone.id === "doi-ten-o365-2024"
+  ) {
+    return "founding";
+  }
+  return "default";
+}
 
 export function modalTitle(milestone: Milestone): string {
   const type = normalizeMilestoneType(milestone.type);

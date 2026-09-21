@@ -4,6 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X } from "lucide-react";
 import {
+  DOTTED_MODAL_CLOSE,
+  VISITOR_MODAL_SHELL,
+} from "@/app/components/story/cards/milestoneTileStyles";
+import {
   VISITOR_HEADLINE_MAX,
   VISITOR_MESSAGE_MAX,
   createVisitorNote,
@@ -147,13 +151,18 @@ export default function VisitorNoteComposer({
                 ? { duration: 0.12 }
                 : { type: "spring", damping: 30, stiffness: 320 }
             }
-            className="relative z-[81] w-full max-w-md rounded-xl border border-border bg-card p-5 shadow-lg"
+            className={`relative z-[81] p-5 ${VISITOR_MODAL_SHELL}`}
           >
-            <div className="mb-4 flex items-start justify-between gap-3">
+            <p
+              className={`mb-2 font-display text-lg font-extrabold uppercase tracking-[0.14em] text-rose-700 dark:text-rose-300 sm:text-xl`}
+            >
+              Của bạn
+            </p>
+            <div className="mb-4 flex items-start justify-between gap-3 pr-10">
               <div>
                 <h2
                   id="visitor-note-composer-title"
-                  className="font-display text-lg font-bold text-ink tracking-tight m-0"
+                  className="font-display text-lg font-bold text-ink tracking-tight m-0 sm:text-xl"
                 >
                   {initial ? "Sửa ghi chú của bạn" : "Ghi dấu của bạn"}
                 </h2>
@@ -161,21 +170,21 @@ export default function VisitorNoteComposer({
                   Chỉ lưu trên trình duyệt này — không gửi lên server.
                 </p>
               </div>
-              <button
-                type="button"
-                onClick={onClose}
-                aria-label="Đóng"
-                className="shrink-0 rounded-lg p-1.5 text-ink-muted hover:bg-surface hover:text-ink focus-visible:outline-2 focus-visible:outline-accent"
-              >
-                <X className="h-4 w-4" />
-              </button>
             </div>
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Đóng"
+              className={`absolute right-3 top-3 ${DOTTED_MODAL_CLOSE}`}
+            >
+              <X className="h-4 w-4" />
+            </button>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label
                   htmlFor="visitor-note-headline"
-                  className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.18em] text-accent"
+                  className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.18em] text-rose-700 dark:text-rose-300"
                 >
                   Dòng chính
                 </label>
@@ -188,7 +197,7 @@ export default function VisitorNoteComposer({
                   maxLength={VISITOR_HEADLINE_MAX}
                   required
                   placeholder="Tên, lớp, khoá…"
-                  className="w-full rounded-lg border border-border bg-surface px-3 py-2.5 text-sm text-ink focus-visible:outline-2 focus-visible:outline-accent"
+                  className="w-full rounded-xl border-2 border-dashed border-ink/25 bg-surface px-3 py-2.5 text-sm text-ink focus-visible:outline-2 focus-visible:outline-accent"
                 />
                 <p className="mt-1 text-[11px] text-ink-muted m-0">
                   {headline.length}/{VISITOR_HEADLINE_MAX}
@@ -198,7 +207,7 @@ export default function VisitorNoteComposer({
               <div>
                 <label
                   htmlFor="visitor-note-message"
-                  className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.18em] text-accent"
+                  className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.18em] text-rose-700 dark:text-rose-300"
                 >
                   Lời nhắn (tuỳ chọn)
                 </label>
@@ -209,7 +218,7 @@ export default function VisitorNoteComposer({
                   maxLength={VISITOR_MESSAGE_MAX}
                   rows={3}
                   placeholder="Viết vài dòng gửi CLB…"
-                  className="w-full resize-none rounded-lg border border-border bg-surface px-3 py-2.5 text-sm text-ink leading-relaxed focus-visible:outline-2 focus-visible:outline-accent"
+                  className="w-full resize-none rounded-xl border-2 border-dashed border-ink/25 bg-surface px-3 py-2.5 text-sm text-ink leading-relaxed focus-visible:outline-2 focus-visible:outline-accent"
                 />
                 <p className="mt-1 text-[11px] text-ink-muted m-0">
                   {message.length}/{VISITOR_MESSAGE_MAX}
@@ -219,14 +228,14 @@ export default function VisitorNoteComposer({
               <div className="flex flex-wrap items-center gap-2 pt-1">
                 <button
                   type="submit"
-                  className="inline-flex items-center justify-center rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-accent-fg hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-accent active:scale-[0.98]"
+                  className="inline-flex items-center justify-center rounded-full border-2 border-dashed border-rose-500/50 bg-rose-100 px-4 py-2.5 text-sm font-semibold text-ink [box-shadow:var(--timeline-chunky-shadow)] transition-[transform,box-shadow] hover:-translate-y-0.5 active:shadow-[var(--timeline-chunky-shadow-press)] focus-visible:outline-2 focus-visible:outline-accent dark:bg-rose-900 dark:text-rose-50"
                 >
                   {initial ? "Lưu thay đổi" : "Dán lên bảng"}
                 </button>
                 <button
                   type="button"
                   onClick={onClose}
-                  className="inline-flex items-center justify-center rounded-lg border border-border bg-surface px-4 py-2.5 text-sm font-semibold text-ink hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-accent"
+                  className="inline-flex items-center justify-center rounded-full border-2 border-dashed border-ink/30 bg-surface px-4 py-2.5 text-sm font-semibold text-ink hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-accent"
                 >
                   Huỷ
                 </button>
