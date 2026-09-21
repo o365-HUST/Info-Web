@@ -17,10 +17,9 @@ export default function AlternatingTimelinePath({
 
   return (
     <svg
-      className="pointer-events-none absolute inset-0 z-0"
-      width={width}
-      height={height}
+      className="pointer-events-none absolute inset-0 z-0 h-full w-full"
       viewBox={`0 0 ${width} ${height}`}
+      preserveAspectRatio="none"
       aria-hidden="true"
     >
       {segments.map((seg, i) => (

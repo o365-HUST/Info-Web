@@ -101,9 +101,17 @@ export function milestoneRowHeight(entry: StoryTimelineEntry): number {
 
 export function buildAlternatingLayout(
   entries: StoryTimelineEntry[],
-  options?: { collapsedYears?: ReadonlySet<number> | readonly number[] },
+  options?: {
+    collapsedYears?: ReadonlySet<number> | readonly number[];
+    /** Measured spine container width (px); defaults to max layout width. */
+    containerWidth?: number;
+  },
 ): AlternatingLayout {
-  const width = ALTERNATING_MAX_WIDTH;
+  const measured = options?.containerWidth;
+  const width =
+    measured && measured > 0
+      ? Math.min(measured, ALTERNATING_MAX_WIDTH)
+      : ALTERNATING_MAX_WIDTH;
   const railX = width / 2;
   const collapsed = normalizeCollapsedYears(options?.collapsedYears);
   const groups = groupEntriesByYear(entries);

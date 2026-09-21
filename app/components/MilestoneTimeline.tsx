@@ -27,6 +27,7 @@ import {
   groupEntriesByYear,
   spineHeightWithVisitor,
   timelineLayoutTransition,
+  ALTERNATING_MAX_WIDTH,
 } from "@/app/lib/alternatingTimeline";
 import {
   loadVisitorNote,
@@ -56,6 +57,7 @@ export default function MilestoneTimeline() {
   const [sessionNotice, setSessionNotice] = useState<string | null>(null);
   const [collapsedYears, setCollapsedYears] = useState<Set<number>>(() => new Set());
   const [collapsingYears, setCollapsingYears] = useState<Set<number>>(() => new Set());
+  const [spineWidth, setSpineWidth] = useState(ALTERNATING_MAX_WIDTH);
 
   const timelineRef = useRef<HTMLDivElement>(null);
   const openerRef = useRef<HTMLElement | null>(null);
@@ -139,12 +141,30 @@ export default function MilestoneTimeline() {
     return map;
   }, [blogPosts]);
 
+  useEffect(() => {
+    const el = timelineRef.current;
+    if (!el || ordered.length === 0) return;
+
+    const syncWidth = () => {
+      const w = el.getBoundingClientRect().width;
+      if (w > 0) {
+        setSpineWidth(Math.min(w, ALTERNATING_MAX_WIDTH));
+      }
+    };
+
+    syncWidth();
+    const ro = new ResizeObserver(() => syncWidth());
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [ordered.length, revealEpoch]);
+
   const layout = useMemo(
     () =>
       buildAlternatingLayout(ordered, {
         collapsedYears,
+        containerWidth: spineWidth,
       }),
-    [ordered, collapsedYears],
+    [ordered, collapsedYears, spineWidth],
   );
 
   const lastRevealIndex = Math.max(0, layout.revealItemCount - 1);
