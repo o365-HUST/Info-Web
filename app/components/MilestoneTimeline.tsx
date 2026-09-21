@@ -39,6 +39,7 @@ import type { BlogPost } from "@/app/types";
 const SESSION_REVEAL_KEY = "o365_story_revealed";
 const LOADER_MIN_MS = 300;
 const REVEAL_STAGGER_MS = 100;
+const SHOW_SESSION_TOASTS = process.env.NODE_ENV === "development";
 
 export default function MilestoneTimeline() {
   const ordered = STORY_TIMELINE;
@@ -69,6 +70,7 @@ export default function MilestoneTimeline() {
   const collapseTimerRef = useRef<Map<number, number>>(new Map());
 
   const showSessionNotice = useCallback((message: string) => {
+    if (!SHOW_SESSION_TOASTS) return;
     setSessionNotice(message);
     if (sessionNoticeTimerRef.current !== null) {
       window.clearTimeout(sessionNoticeTimerRef.current);
@@ -283,7 +285,7 @@ export default function MilestoneTimeline() {
     setMaxRevealed(-1);
     setRevealEpoch((e) => e + 1);
     if (hadSession) {
-      showSessionNotice("Đã xóa trạng thái phiên - hiệu ứng sẽ chạy lại");
+      showSessionNotice("Hiệu ứng sẽ chạy lại");
     }
     timelineRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [clearRevealTimers, showSessionNotice]);
@@ -308,7 +310,7 @@ export default function MilestoneTimeline() {
 
         if (next >= lastRevealIndex) {
           markSessionRevealed(
-            "Đã xem hết hành trình - lần sau mở thẳng dòng thời gian",
+            "Đã xem hết hành trình",
           );
           pumpingRef.current = false;
           return;
@@ -398,7 +400,7 @@ export default function MilestoneTimeline() {
       style={{ background: "var(--bg)" }}
     >
       <AnimatePresence>
-        {sessionNotice && (
+        {SHOW_SESSION_TOASTS && sessionNotice && (
           <motion.div
             role="status"
             aria-live="polite"
