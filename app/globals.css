@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Theme toggles via html.light / html.dark (not prefers-color-scheme). */
+@custom-variant dark (&:where(html.dark, html.dark *));
+@custom-variant light (&:where(html.light, html.light *));
+
 /* ─── Design Tokens (dark = default) ─── */
 :root,
 html.dark {
@@ -35,6 +39,15 @@ html.dark {
   --story-pastel-green: #123728;
   --story-pastel-peach: #2e1c12;
   --story-pastel-rose: #3d2236;
+
+  /* Story timeline / modal accent labels */
+  --story-pop-default: #93c5fd;
+  --story-pop-founding: #fde68a;
+  --story-pop-achievement: #fbcfe8;
+  --story-pop-alumni: #6ee7b7;
+  --story-pop-alumni-strong: #ecfdf5;
+  --story-pop-photo: #fed7aa;
+  --story-pop-visitor: #fda4af;
 
   --radius-sm: 6px;
   --radius-md: 10px;
@@ -94,6 +107,14 @@ html.light {
   --story-pastel-green: #f0fdf4;
   --story-pastel-peach: #fffaf5;
   --story-pastel-rose: #fff1f2;
+
+  --story-pop-default: #1d4ed8;
+  --story-pop-founding: #78350f;
+  --story-pop-achievement: #831843;
+  --story-pop-alumni: #065f46;
+  --story-pop-alumni-strong: #064e3b;
+  --story-pop-photo: #7c2d12;
+  --story-pop-visitor: #be123c;
 
   --photo-scrim: linear-gradient(
     105deg,
@@ -336,7 +357,7 @@ p, .text-pretty {
   margin-top: 1.75rem;
   margin-bottom: 0.75rem;
   padding-top: 0.75rem;
-  border-top: 1px solid rgba(214, 227, 240, 0.4);
+  border-top: 1px solid var(--border);
 }
 
 .prose-o365 h3 {

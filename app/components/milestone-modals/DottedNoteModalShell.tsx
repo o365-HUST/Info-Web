@@ -6,6 +6,8 @@ import {
   DOTTED_MODAL_CLOSE,
   dottedModalShellClass,
   milestoneDatePopClass,
+  MODAL_OVERLAY_CLASS,
+  STORY_MODAL_DATE_SHADOW,
 } from "@/app/components/story/cards/milestoneTileStyles";
 import { storyVariantForMilestone } from "./milestoneModalUtils";
 
@@ -41,13 +43,13 @@ export default function DottedNoteModalShell({
       reducedMotion={reducedMotion}
       closeRef={closeRef}
       ariaLabelledBy={titleId}
-      overlayClassName="bg-black/45"
+      overlayClassName={MODAL_OVERLAY_CLASS}
       closeButtonClassName={DOTTED_MODAL_CLOSE}
       dialogClassName={dottedModalShellClass(variant, maxWidthClass)}
     >
       <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-5 pb-6 pt-11">
         <p
-          className={`mb-2 font-display text-lg font-extrabold uppercase leading-none tracking-[0.14em] sm:text-xl ${dateTint} [text-shadow:0_1px_0_var(--bg),0_0_10px_var(--bg)]`}
+          className={`mb-2 font-display text-lg font-extrabold uppercase leading-none tracking-[0.14em] sm:text-xl ${dateTint} ${STORY_MODAL_DATE_SHADOW}`}
         >
           {dateLabel}
         </p>

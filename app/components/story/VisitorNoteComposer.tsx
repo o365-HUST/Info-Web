@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { X } from "lucide-react";
 import {
   DOTTED_MODAL_CLOSE,
+  MODAL_OVERLAY_CLASS,
   VISITOR_MODAL_SHELL,
 } from "@/app/components/story/cards/milestoneTileStyles";
 import {
@@ -135,7 +136,7 @@ export default function VisitorNoteComposer({
             type="button"
             aria-label="Đóng"
             onClick={onClose}
-            className="absolute inset-0 bg-black/45"
+            className={`absolute inset-0 ${MODAL_OVERLAY_CLASS}`}
           />
 
           <motion.div
@@ -154,7 +155,7 @@ export default function VisitorNoteComposer({
             className={`relative z-[81] p-5 ${VISITOR_MODAL_SHELL}`}
           >
             <p
-              className={`mb-2 font-display text-lg font-extrabold uppercase tracking-[0.14em] text-rose-700 dark:text-rose-300 sm:text-xl`}
+              className="mb-2 font-display text-lg font-extrabold uppercase tracking-[0.14em] text-[var(--story-pop-visitor)] sm:text-xl [text-shadow:0_1px_0_var(--bg),0_0_12px_var(--bg)]"
             >
               Của bạn
             </p>
@@ -184,7 +185,7 @@ export default function VisitorNoteComposer({
               <div>
                 <label
                   htmlFor="visitor-note-headline"
-                  className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.18em] text-rose-700 dark:text-rose-300"
+                  className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--story-pop-visitor)]"
                 >
                   Dòng chính
                 </label>
@@ -207,7 +208,7 @@ export default function VisitorNoteComposer({
               <div>
                 <label
                   htmlFor="visitor-note-message"
-                  className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.18em] text-rose-700 dark:text-rose-300"
+                  className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--story-pop-visitor)]"
                 >
                   Lời nhắn (tuỳ chọn)
                 </label>
@@ -228,7 +229,7 @@ export default function VisitorNoteComposer({
               <div className="flex flex-wrap items-center gap-2 pt-1">
                 <button
                   type="submit"
-                  className="inline-flex items-center justify-center rounded-full border-2 border-dashed border-pink-400/50 bg-[var(--story-pastel-rose)] px-4 py-2.5 text-sm font-semibold text-ink [box-shadow:var(--timeline-chunky-shadow)] transition-[transform,box-shadow] hover:-translate-y-0.5 active:shadow-[var(--timeline-chunky-shadow-press)] focus-visible:outline-2 focus-visible:outline-accent dark:text-pink-50"
+                  className="inline-flex items-center justify-center rounded-full border-2 border-dashed border-pink-400/50 bg-[var(--story-pastel-rose)] px-4 py-2.5 text-sm font-semibold text-ink [box-shadow:var(--timeline-chunky-shadow)] transition-[transform,box-shadow] hover:-translate-y-0.5 active:shadow-[var(--timeline-chunky-shadow-press)] focus-visible:outline-2 focus-visible:outline-accent"
                 >
                   {initial ? "Lưu thay đổi" : "Dán lên bảng"}
                 </button>

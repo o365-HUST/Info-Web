@@ -10,27 +10,27 @@ const VARIANT_TILE: Record<
 > = {
   default: {
     surface: `${TILE_TACTILE} border-blue-400/50 bg-[var(--story-pastel-blue)]`,
-    datePop: "text-blue-700 dark:text-blue-300",
+    datePop: "text-[var(--story-pop-default)]",
     maxWidth: "max-w-[17.5rem] sm:max-w-[19rem]",
   },
   founding: {
     surface: `${TILE_TACTILE} border-amber-400/55 bg-[var(--story-pastel-yellow)]`,
-    datePop: "text-amber-900 dark:text-amber-200",
+    datePop: "text-[var(--story-pop-founding)]",
     maxWidth: "max-w-[17.5rem] sm:max-w-[19rem]",
   },
   achievement: {
     surface: `${TILE_TACTILE} border-pink-400/50 bg-[var(--story-pastel-pink)]`,
-    datePop: "text-pink-900 dark:text-pink-200",
+    datePop: "text-[var(--story-pop-achievement)]",
     maxWidth: "max-w-[17.5rem] sm:max-w-[19rem]",
   },
   alumni: {
     surface: `${TILE_TACTILE} border-emerald-400/50 bg-[var(--story-pastel-green)]`,
-    datePop: "text-emerald-800 dark:text-emerald-300",
+    datePop: "text-[var(--story-pop-alumni)]",
     maxWidth: "max-w-[17.5rem] sm:max-w-[19rem]",
   },
   photo: {
     surface: `${TILE_TACTILE} border-orange-400/50 bg-[var(--story-pastel-peach)] p-3`,
-    datePop: "text-orange-900 dark:text-orange-200",
+    datePop: "text-[var(--story-pop-photo)]",
     maxWidth: "max-w-[21rem] sm:max-w-[23rem]",
   },
 };
@@ -51,8 +51,14 @@ export function dottedModalShellClass(
   return `relative flex ${widthClass} w-full max-h-[85vh] flex-col overflow-hidden ${VARIANT_TILE[variant].surface}`;
 }
 
+export const MODAL_OVERLAY_CLASS = "bg-overlay";
+
 export const DOTTED_MODAL_CLOSE =
   "flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border-2 border-dashed border-ink/35 bg-card text-ink [box-shadow:var(--timeline-chunky-shadow)] transition-[transform,box-shadow] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-[var(--timeline-chunky-shadow-press)]";
+
+/** Date stamp above dotted modals — readable on page bg in both themes. */
+export const STORY_MODAL_DATE_SHADOW =
+  "[text-shadow:0_1px_0_var(--bg),0_0_12px_var(--bg)]";
 
 export const VISITOR_MODAL_SHELL = `relative flex w-full max-w-md max-h-[90vh] flex-col overflow-hidden ${TILE_TACTILE} border-pink-400/50 bg-[var(--story-pastel-rose)]`;
 

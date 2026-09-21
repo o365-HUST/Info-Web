@@ -13,6 +13,8 @@ import {
   DOTTED_MODAL_CLOSE,
   dottedSurfaceClass,
   milestoneDatePopClass,
+  MODAL_OVERLAY_CLASS,
+  STORY_MODAL_DATE_SHADOW,
 } from "@/app/components/story/cards/milestoneTileStyles";
 import RelatedPostLink from "./RelatedPostLink";
 import { modalDateLabel, modalTitle } from "./milestoneModalUtils";
@@ -50,7 +52,7 @@ export default function PhotoFrameModal({
       transition={{ duration: 0.2 }}
     >
       <div
-        className="absolute inset-0 bg-black/45"
+        className={`absolute inset-0 ${MODAL_OVERLAY_CLASS}`}
         onClick={onClose}
         aria-hidden="true"
       />
@@ -76,7 +78,7 @@ export default function PhotoFrameModal({
         transition={{ type: "spring", duration: 0.3, bounce: 0 }}
       >
         <p
-          className={`mb-2 text-center font-display text-lg font-extrabold uppercase tracking-[0.14em] sm:text-xl ${dateTint}`}
+          className={`mb-2 text-center font-display text-lg font-extrabold uppercase tracking-[0.14em] sm:text-xl ${dateTint} ${STORY_MODAL_DATE_SHADOW}`}
         >
           {dateLabel}
         </p>
