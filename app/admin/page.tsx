@@ -489,6 +489,28 @@ export default function AdminPage() {
                         >
                           {post.published !== false ? "Xuất bản" : "Bản nháp"}
                         </span>
+                        {(post.heroSpot ||
+                          post.featuredSpot ||
+                          post.featured ||
+                          post.pinned) && (
+                          <div className="absolute bottom-2.5 left-2.5 flex flex-wrap gap-1">
+                            {post.heroSpot && (
+                              <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-violet-600/90 text-surface">
+                                Hero
+                              </span>
+                            )}
+                            {(post.featuredSpot || post.featured) && (
+                              <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-accent/90 text-surface">
+                                Featured
+                              </span>
+                            )}
+                            {post.pinned && (
+                              <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-ink/80 text-surface">
+                                Ghim
+                              </span>
+                            )}
+                          </div>
+                        )}
                       </div>
 
                       <div className="text-[11px] text-ink-muted font-mono mb-1">

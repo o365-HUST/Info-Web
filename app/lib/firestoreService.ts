@@ -23,6 +23,7 @@ import {
   BLOG_POSTS,
   RECRUITMENT_INFO,
 } from "../data/clubData";
+import { sortPostsForListing } from "./blogUtils";
 
 const LOCAL_POSTS_KEY = "o365_cms_posts";
 const LOCAL_RECRUITMENT_KEY = "o365_cms_recruitment";
@@ -144,8 +145,8 @@ export async function getRelatedPosts(
   limitCount: number = 3
 ): Promise<BlogPost[]> {
   const allPosts = await getPosts();
-  const published = allPosts.filter(
-    (p) => p.id !== currentId && p.published !== false
+  const published = sortPostsForListing(
+    allPosts.filter((p) => p.id !== currentId && p.published !== false),
   );
   if (tag) {
     const sameTag = published.filter((p) => p.tag === tag);

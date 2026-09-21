@@ -1,10 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { BlogPost } from "@/app/types";
 import { X, Image as ImageIcon, Sparkles, Check, Globe, Upload, Loader2 } from "lucide-react";
 import { uploadMediaAsset, deleteMediaAsset } from "@/app/lib/storageService";
-import TipTapEditor from "./TipTapEditor";
+import { BLOG_POST_TAGS } from "@/app/lib/blogUtils";
+import TipTapEditor, {
+  type TipTapEditorHandle,
+} from "./TipTapEditor";
 
 interface PostEditorModalProps {
   post: BlogPost | null;
@@ -12,15 +15,6 @@ interface PostEditorModalProps {
   onClose: () => void;
   onSave: (postData: Omit<BlogPost, "id">, id?: string) => Promise<void>;
 }
-
-const CATEGORIES = [
-  "Devlog",
-  "Cuộc thi",
-  "Hành trình",
-  "Workshop",
-  "Kỹ năng số",
-  "Thông báo",
-];
 
 export default function PostEditorModal({
   post,
@@ -40,6 +34,9 @@ export default function PostEditorModal({
   const [content, setContent] = useState("");
   const [url, setUrl] = useState("#");
   const [published, setPublished] = useState(true);
+  const [heroSpot, setHeroSpot] = useState(false);
+  const [featuredSpot, setFeaturedSpot] = useState(false);
+  const [pinned, setPinned] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   // Deferred cover upload state: 0 network bytes until user clicks "Lưu/Tạo bài viết"
@@ -47,6 +44,7 @@ export default function PostEditorModal({
   const [coverPreviewUrl, setCoverPreviewUrl] = useState("");
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadError, setUploadError] = useState("");
+  const tipTapRef = useRef<TipTapEditorHandle>(null);
 
   const handleCoverFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -100,6 +98,9 @@ export default function PostEditorModal({
       setContent(post.content || post.excerpt);
       setUrl(post.url || "#");
       setPublished(post.published ?? true);
+      setHeroSpot(post.heroSpot === true);
+      setFeaturedSpot(post.featuredSpot === true || post.featured === true);
+      setPinned(post.pinned === true);
     } else {
       // Default new post values
       const today = new Date();
@@ -116,6 +117,9 @@ export default function PostEditorModal({
       setContent("");
       setUrl("#");
       setPublished(true);
+      setHeroSpot(false);
+      setFeaturedSpot(false);
+      setPinned(false);
     }
   }, [post, isOpen]);
 
@@ -148,6 +152,14 @@ export default function PostEditorModal({
         }
       }
 
+      let finalContent = content.trim() || excerpt.trim();
+      if (tipTapRef.current?.hasPendingImages()) {
+        finalContent = await tipTapRef.current.flushPendingImages(
+          finalContent,
+          (progress) => setUploadProgress(progress),
+        );
+      }
+
       await onSave(
         {
           title: title.trim(),
@@ -158,9 +170,12 @@ export default function PostEditorModal({
             authorDescription.trim() || "Đại sứ số Học đường ĐHBK Hà Nội",
           thumbnail: finalThumbnail,
           excerpt: excerpt.trim(),
-          content: content.trim() || excerpt.trim(),
+          content: finalContent,
           url: url.trim() || "#",
           published,
+          heroSpot,
+          featuredSpot,
+          pinned,
         },
         post?.id
       );
@@ -229,7 +244,7 @@ export default function PostEditorModal({
                 onChange={(e) => setTag(e.target.value)}
                 className="w-full px-3 py-2.5 rounded-xl border border-border bg-surface text-ink text-sm focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent"
               >
-                {CATEGORIES.map((cat) => (
+                {BLOG_POST_TAGS.map((cat) => (
                   <option key={cat} value={cat}>
                     {cat}
                   </option>
@@ -277,6 +292,54 @@ export default function PostEditorModal({
                 className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-surface text-ink text-sm focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent"
               />
             </div>
+          </div>
+
+          <div className="rounded-xl border border-border bg-card/40 p-4 space-y-2">
+            <p className="text-[11px] font-bold text-ink uppercase tracking-wider m-0">
+              Vị trí trên trang Blog
+            </p>
+            <label className="flex items-start gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={heroSpot}
+                onChange={(e) => setHeroSpot(e.target.checked)}
+                className="mt-0.5 w-4 h-4 rounded text-accent focus:ring-accent border-border"
+              />
+              <span className="text-xs text-ink leading-snug">
+                <span className="font-semibold">Hero spot</span>
+                <span className="text-ink-light"> — Ô lớn bên trái (1 bài).</span>
+              </span>
+            </label>
+            <label className="flex items-start gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={featuredSpot}
+                onChange={(e) => setFeaturedSpot(e.target.checked)}
+                className="mt-0.5 w-4 h-4 rounded text-accent focus:ring-accent border-border"
+              />
+              <span className="text-xs text-ink leading-snug">
+                <span className="font-semibold">Featured spot</span>
+                <span className="text-ink-light">
+                  {" "}
+                  — Cột Nổi bật (tối đa 3; không trùng Hero).
+                </span>
+              </span>
+            </label>
+            <label className="flex items-start gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={pinned}
+                onChange={(e) => setPinned(e.target.checked)}
+                className="mt-0.5 w-4 h-4 rounded text-accent focus:ring-accent border-border"
+              />
+              <span className="text-xs text-ink leading-snug">
+                <span className="font-semibold">Ghim đầu danh sách</span>
+                <span className="text-ink-light">
+                  {" "}
+                  — Đứng trước các bài không ghim.
+                </span>
+              </span>
+            </label>
           </div>
 
           {/* Cover Image URL with deferred upload option and preview */}
@@ -387,8 +450,10 @@ export default function PostEditorModal({
               Nội dung chi tiết bài viết (WYSIWYG Rich Editor)
             </label>
             <TipTapEditor
+              ref={tipTapRef}
               content={content}
               onChange={setContent}
+              ribbonStickyClass="top-0"
               placeholder="Bắt đầu viết nội dung bài viết... Bạn có thể định dạng in đậm, tiêu đề, danh sách hoặc chèn ảnh trực quan như Microsoft Word."
             />
           </div>

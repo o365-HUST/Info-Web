@@ -332,6 +332,7 @@ function ResourceEditorContent() {
                   content={content}
                   onChange={setContent}
                   uploadFolder={`resources/${slug}/inline`}
+                  deferImageUpload={false}
                   placeholder="Soạn nội dung hướng dẫn, chèn tiêu đề H2/H3, danh sách, ảnh hoặc liên kết..."
                 />
               </div>

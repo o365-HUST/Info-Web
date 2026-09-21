@@ -1,4 +1,4 @@
-import type {
+﻿import type {
   ClubInfo,
   RecruitmentInfo,
   Department,
@@ -721,6 +721,8 @@ export const BLOG_POSTS: BlogPost[] = [
     thumbnail: "/assets/blog/thumb-devlog.jpg",
     url: "/blog/devlog-phan-ban",
     published: true,
+    heroSpot: true,
+    featuredSpot: true,
     content: `## Khởi đầu và Bài toán Đặt ra
 
 Khi bước vào năm học mới 2026, Câu lạc bộ Đại sứ Chuyển đổi số o365 - ĐHBK Hà Nội nhận thấy nhu cầu cấp thiết về một cổng thông tin chính thức. Website cũ không còn đáp ứng được tốc độ cập nhật thông tin tuyển sinh, quản trị các sự kiện thường niên như MOSWC và lưu trữ tài liệu kỹ thuật dành cho sinh viên.
@@ -757,6 +759,7 @@ Chúng tôi sẽ tiếp tục cập nhật các tính năng mới trong chuỗi 
     thumbnail: "/assets/blog/thumb-moswc.jpg",
     url: "/blog/moswc-2026",
     published: true,
+    featuredSpot: true,
     content: `## Sân chơi Đẳng cấp Quốc tế cho Sinh viên Bách khoa
 
 Cuộc thi Vô địch Tin học Văn phòng Thế giới (MOSWC) hàng năm luôn là một trong những sự kiện trọng tâm mà CLB o365 đồng hành tổ chức tại Đại học Bách khoa Hà Nội. Năm 2026 ghi nhận số lượng thí sinh đăng ký kỷ lục với hơn 1.200 sinh viên tham gia tranh tài ở 3 nội dung: Microsoft Word, Microsoft Excel và Microsoft PowerPoint.
@@ -785,6 +788,7 @@ Ban Chuyên môn của CLB đã xây dựng lộ trình ôn tập kéo dài 6 tu
     thumbnail: "/assets/blog/thumb-redjourney.jpg",
     url: "/blog/hanh-trinh-do",
     published: true,
+    featuredSpot: true,
     content: `## Dấu ấn Giao lưu Văn hóa và Công nghệ
 
 Chuyến công tác và giao lưu học thuật tại Quảng Tây, Trung Quốc là một kỷ niệm khó quên đối với các thành viên đại diện CLB o365. Chuyến đi không chỉ là cơ hội để học hỏi mô hình chuyển đổi số trong giáo dục của nước bạn, mà còn là dịp để sinh viên Bách khoa thể hiện sự năng động và tự tin trên trường quốc tế.
@@ -819,22 +823,12 @@ export const DOCUMENT_CATEGORIES = [
     updated: "2025",
   },
   {
-    id: "huong-dan-su-dung-microsoft-teams",
-    title: "Hướng dẫn sử dụng Microsoft Teams",
-    description: "Sử dụng Teams trong học tập và làm việc nhóm hiệu quả",
-    icon: "MessageSquare",
-    tag: "Microsoft 365",
-    format: "Hướng dẫn",
-    topics: ["Teams", "Lớp học trực tuyến", "Làm việc nhóm"],
-    updated: "2025",
-  },
-  {
     id: "xay-dung-ke-hoach-hoc-tap",
     title: "Xây dựng kế hoạch học tập",
-    description: "Phương pháp và biểu mẫu quản lý thời gian, học tập khoa học",
+    description: "Công cụ hỗ trợ quản lý thời gian, học tập khoa học",
     icon: "CalendarDays",
     tag: "Kỹ năng học tập",
-    format: "Biểu mẫu",
+    format: "Công cụ",
     topics: ["Quản lý thời gian", "Kế hoạch kỳ", "Excel & Forms"],
     updated: "2024",
   },

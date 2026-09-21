@@ -105,6 +105,14 @@ export interface BlogPost {
   published?: boolean;
   author?: string;
   authorDescription?: string;
+  /** Large hero tile on /blog bento (max one shown). */
+  heroSpot?: boolean;
+  /** Right-column Nổi bật cards (max 3; excludes hero). */
+  featuredSpot?: boolean;
+  /** @deprecated Use featuredSpot — still read for older Firestore docs. */
+  featured?: boolean;
+  /** Sort before non-pinned posts regardless of date. */
+  pinned?: boolean;
 }
 
 export type MilestoneType = "moc" | "thanh_tich" | "alumni" | "photo";

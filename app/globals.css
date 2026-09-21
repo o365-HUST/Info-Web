@@ -312,6 +312,22 @@ p, .text-pretty {
   opacity: 0.7;
 }
 
+.tiptap .tiptap-video-embed {
+  aspect-ratio: 16 / 9;
+  margin: 1rem 0;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  border: 1px solid var(--border);
+  background: var(--card);
+}
+
+.tiptap .tiptap-video-embed__frame {
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+  border: 0;
+}
+
 .prose-o365 h2 {
   font-size: 1.5rem;
   font-weight: 800;
@@ -434,6 +450,31 @@ p, .text-pretty {
   margin: 1.5rem auto;
   max-width: 100%;
   height: auto;
+}
+
+.prose-o365 .tiptap-video-embed,
+.prose-o365 iframe.tiptap-video-embed__frame {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+}
+
+.prose-o365 .tiptap-video-embed {
+  aspect-ratio: 16 / 9;
+  margin: 1.5rem 0;
+  overflow: hidden;
+  border-radius: 1rem;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+  background: var(--card);
+}
+
+.prose-o365 .tiptap-video-embed__frame,
+.prose-o365 iframe {
+  width: 100%;
+  height: 100%;
+  min-height: 240px;
+  border: 0;
 }
 
 .prose-o365 hr {

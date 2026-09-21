@@ -19,6 +19,10 @@ function looksLikeHtml(content: string): boolean {
     return true;
   }
 
+  if (/data-video-embed/i.test(t)) {
+    return true;
+  }
+
   // Any leading HTML tag (avoid treating markdown as HTML)
   if (/^<[a-z!?][^>]*>/i.test(t) && !t.startsWith("<http")) {
     return true;
