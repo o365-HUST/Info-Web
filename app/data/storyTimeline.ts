@@ -62,15 +62,15 @@ function iconFor(m: Milestone): StoryTimelineIcon {
 function accentFor(m: Milestone): string | undefined {
   switch (variantFor(m)) {
     case "founding":
-      return "bg-accent text-ink";
+      return "bg-yellow-300 text-ink";
     case "achievement":
-      return "bg-amber-400 text-ink";
+      return "bg-pink-400 text-ink";
     case "alumni":
       return "bg-emerald-400 text-ink";
     case "photo":
-      return "bg-violet-400 text-ink";
+      return "bg-orange-400 text-ink";
     default:
-      return "bg-accent text-ink";
+      return "bg-blue-400 text-ink";
   }
 }
 

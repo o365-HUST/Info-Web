@@ -268,7 +268,7 @@ function FlipPhotoZone({
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       aria-label={label}
-      className={`${PHOTO_FRAME_IMAGE_CLASS} relative cursor-pointer overflow-hidden rounded-2xl border-2 border-dashed border-violet-500/45 bg-violet-100 outline-none transition-[filter] hover:brightness-[0.97] focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 dark:bg-violet-950`}
+      className={`${PHOTO_FRAME_IMAGE_CLASS} relative cursor-pointer overflow-hidden rounded-2xl border-2 border-dashed border-orange-400/45 bg-[var(--story-pastel-peach)] outline-none transition-[filter] hover:brightness-[0.97] focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2`}
     >
       {children}
     </button>

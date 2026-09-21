@@ -51,7 +51,7 @@ export default function AlumniSpotlightModal({
               className="h-24 w-24 rounded-full border-2 border-dashed border-emerald-500/50 object-cover [box-shadow:var(--timeline-chunky-shadow)]"
             />
           ) : (
-            <div className="flex h-24 w-24 items-center justify-center rounded-full border-2 border-dashed border-emerald-500/50 bg-emerald-100 font-display text-2xl font-bold text-emerald-900 [box-shadow:var(--timeline-chunky-shadow)] dark:bg-emerald-900 dark:text-emerald-100">
+            <div className="flex h-24 w-24 items-center justify-center rounded-full border-2 border-dashed border-emerald-400/50 bg-[var(--story-pastel-green)] font-display text-2xl font-bold text-emerald-900 [box-shadow:var(--timeline-chunky-shadow)] dark:text-emerald-100">
               {initials || "?"}
             </div>
           )}
@@ -67,7 +67,7 @@ export default function AlumniSpotlightModal({
       </div>
 
       {milestone.alumniQuote && (
-        <blockquote className="relative mt-6 rounded-[var(--radius-2xl)] border-2 border-dashed border-emerald-500/40 bg-emerald-50 px-5 py-4 dark:bg-emerald-950">
+        <blockquote className="relative mt-6 rounded-[var(--radius-2xl)] border-2 border-dashed border-emerald-400/40 bg-[var(--story-pastel-green)] px-5 py-4">
           <Quote
             className="absolute left-3 top-3 h-5 w-5 text-emerald-600/30 dark:text-emerald-300/30"
             aria-hidden="true"
@@ -90,7 +90,7 @@ export default function AlumniSpotlightModal({
             href={milestone.alumniLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-dashed border-emerald-600/50 bg-emerald-100 px-4 py-2.5 text-sm font-semibold text-emerald-950 transition-[transform,box-shadow] hover:-translate-y-0.5 [box-shadow:var(--timeline-chunky-shadow)] active:shadow-[var(--timeline-chunky-shadow-press)] dark:bg-emerald-900 dark:text-emerald-50"
+            className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-dashed border-emerald-500/50 bg-[var(--story-pastel-green)] px-4 py-2.5 text-sm font-semibold text-emerald-950 transition-[transform,box-shadow] hover:-translate-y-0.5 [box-shadow:var(--timeline-chunky-shadow)] active:shadow-[var(--timeline-chunky-shadow-press)] dark:text-emerald-50"
           >
             Xem hồ sơ
             <ExternalLink className="h-4 w-4" />

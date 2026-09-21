@@ -28,6 +28,14 @@ html.dark {
   --timeline-chunky-shadow: 0 3px 0 0 rgba(0, 0, 0, 0.28);
   --timeline-chunky-shadow-press: 0 1px 0 0 rgba(0, 0, 0, 0.24);
 
+  /* Story timeline / modal pastels (opaque) */
+  --story-pastel-blue: #1a3358;
+  --story-pastel-yellow: #2e2a18;
+  --story-pastel-pink: #3d2236;
+  --story-pastel-green: #123728;
+  --story-pastel-peach: #2e1c12;
+  --story-pastel-rose: #3d2236;
+
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 14px;
@@ -78,6 +86,14 @@ html.light {
   --shadow-lg: 0 16px 48px rgba(11, 26, 46, 0.14);
   --timeline-chunky-shadow: 0 3px 0 0 rgba(11, 26, 46, 0.22);
   --timeline-chunky-shadow-press: 0 1px 0 0 rgba(11, 26, 46, 0.2);
+
+  /* Story timeline / modal pastels (opaque) */
+  --story-pastel-blue: #eff6ff;
+  --story-pastel-yellow: #fffef7;
+  --story-pastel-pink: #fff5f9;
+  --story-pastel-green: #f0fdf4;
+  --story-pastel-peach: #fffaf5;
+  --story-pastel-rose: #fff1f2;
 
   --photo-scrim: linear-gradient(
     105deg,

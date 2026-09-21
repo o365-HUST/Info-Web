@@ -228,7 +228,7 @@ export default function VisitorNoteComposer({
               <div className="flex flex-wrap items-center gap-2 pt-1">
                 <button
                   type="submit"
-                  className="inline-flex items-center justify-center rounded-full border-2 border-dashed border-rose-500/50 bg-rose-100 px-4 py-2.5 text-sm font-semibold text-ink [box-shadow:var(--timeline-chunky-shadow)] transition-[transform,box-shadow] hover:-translate-y-0.5 active:shadow-[var(--timeline-chunky-shadow-press)] focus-visible:outline-2 focus-visible:outline-accent dark:bg-rose-900 dark:text-rose-50"
+                  className="inline-flex items-center justify-center rounded-full border-2 border-dashed border-pink-400/50 bg-[var(--story-pastel-rose)] px-4 py-2.5 text-sm font-semibold text-ink [box-shadow:var(--timeline-chunky-shadow)] transition-[transform,box-shadow] hover:-translate-y-0.5 active:shadow-[var(--timeline-chunky-shadow-press)] focus-visible:outline-2 focus-visible:outline-accent dark:text-pink-50"
                 >
                   {initial ? "Lưu thay đổi" : "Dán lên bảng"}
                 </button>

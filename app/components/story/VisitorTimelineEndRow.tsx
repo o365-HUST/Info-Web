@@ -112,7 +112,7 @@ export default function VisitorTimelineEndRow({
 
         <div className="flex justify-center">
           <span
-            className={`relative z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-rose-400 text-ink ${TIMELINE_RAIL_ICON_TACTILE}`}
+            className={`relative z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-pink-400 text-ink ${TIMELINE_RAIL_ICON_TACTILE}`}
             aria-hidden="true"
           >
             <Heart className="h-5 w-5" strokeWidth={2.25} />
