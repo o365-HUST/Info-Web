@@ -199,7 +199,6 @@ export default function EventsTeaser() {
 
   const handleSelect = useCallback((img: ShowcaseImage) => {
     setSelected((current) => (current?.src === img.src ? null : img));
-    setPaused(true);
   }, []);
 
   const handleClose = useCallback(() => {

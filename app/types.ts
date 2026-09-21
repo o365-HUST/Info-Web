@@ -54,16 +54,10 @@ export interface DepartmentGallerySlide {
 
 export type DepartmentSubUnitId = "knm" | "ky-thuat";
 
+/** Gallery slide tag only — sub-unit copy lives in departmentSubUnitsContent.ts */
 export interface DepartmentSubUnit {
   id: DepartmentSubUnitId;
-  index: "01" | "02";
   name: string;
-  tagline: string;
-  mission: string;
-  tools: string[];
-  /** Up to 3 bullets */
-  trainingFocus: string[];
-  accent?: "warm" | "cool";
 }
 
 export interface Department {
@@ -89,8 +83,6 @@ export interface Department {
   /** Activity photos for the Điểm nhấn gallery (not the hero team shot) */
   gallery?: DepartmentGallerySlide[];
   bentoItems?: DepartmentBentoItem[];
-  /** Internal mảng (e.g. KNM + Kĩ thuật within Ban Chuyên môn) */
-  subUnits?: DepartmentSubUnit[];
 }
 
 export interface BlogPost {

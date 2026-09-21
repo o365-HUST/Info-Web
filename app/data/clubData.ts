@@ -288,59 +288,12 @@ export const DEPARTMENTS: Department[] = [
       },
       {
         title: "Biến kiến thức thành giá trị thực tiễn",
-        desc: "Phối hợp hai mảng Kĩ năng mềm và Kĩ thuật — dạy công cụ sinh viên cần, build công cụ CLB và trường dùng được.",
+        desc: "Phối hợp hai mảng Kĩ năng mềm và Kĩ thuật - dạy công cụ sinh viên cần, build công cụ CLB và trường dùng được.",
       },
     ],
     skillsLearned: [
       "Phối hợp đào tạo và triển khai công cụ số trong môi trường CLB",
       "Viết tài liệu, hướng dẫn và hỗ trợ sinh viên trên chương trình thật",
-    ],
-    subUnits: [
-      {
-        id: "knm",
-        index: "01",
-        name: "Kĩ năng mềm",
-        tagline: "Dạy và hỗ trợ sinh viên dùng Microsoft 365",
-        mission:
-          "Nghiên cứu và triển khai Microsoft 365 trong công việc và cuộc sống; xây dựng lớp KNM tin học; hỗ trợ MOSWC và Trung tâm Chuyển đổi số.",
-        tools: [
-          "Word",
-          "Excel",
-          "PowerPoint",
-          "Teams",
-          "OneDrive",
-          "Forms",
-          "Outlook",
-          "MOSWC",
-        ],
-        trainingFocus: [
-          "Xây dựng và quản lý các lớp KNM tin học văn phòng và kỹ năng số",
-          "Soạn nội dung Word, Excel, PowerPoint, Teams và giải đáp Q&A Office 365",
-          "Hỗ trợ tổ chức, ôn luyện và định hướng thí sinh MOSWC (kể cả cấp ĐHBK Hà Nội)",
-        ],
-
-        accent: "warm",
-      },
-      {
-        id: "ky-thuat",
-        index: "02",
-        name: "Kĩ thuật",
-        tagline: "Xây công cụ và hỗ trợ kỹ thuật chuyển đổi số",
-        mission:
-          "Hỗ trợ kỹ thuật trong các hoạt động chuyển đổi số; tìm hiểu và phát triển ứng dụng phục vụ CLB và Đại học.",
-        tools: [
-          "Power Apps",
-          "Power Automate",
-          "SharePoint",
-          "Microsoft 365",
-        ],
-        trainingFocus: [
-          "Prototype và triển khai ứng dụng hỗ trợ hoạt động nội bộ CLB",
-          "Tự động hóa quy trình và tích hợp công cụ số cho ban và sự kiện",
-          "Hỗ trợ kỹ thuật cho các chương trình chuyển đổi số của trường",
-        ],
-        accent: "cool",
-      },
     ],
     memberHighlights: [
       {
@@ -589,7 +542,7 @@ export const DEPARTMENTS: Department[] = [
         src: "/assets/departments/EVENTS/carousel-02.jpg",
         alt: "Khán phòng workshop của CLB o365-HUST",
         title: "Workshop tại giảng đường",
-        caption: "Một buổi tập huấn — hàng ghế đầy sinh viên Bách khoa.",
+        caption: "Buổi tập huấn vô cùng thú vị",
         fit: "cover",
       },
       {
