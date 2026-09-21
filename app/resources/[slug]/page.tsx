@@ -84,13 +84,13 @@ export default function DocumentDetailPage({ params }: PageProps) {
           ) : (
             <div className="flex flex-col lg:flex-row gap-10 relative">
               <div className="flex-1 min-w-0" id="document-content">
-                <div className="rounded-2xl border border-border bg-surface p-6 sm:p-10 shadow-card mb-8">
+                <div className="mb-8 max-w-none">
                   <MarkdownRenderer content={content} />
                 </div>
 
                 {attachments.length > 0 && (
-                  <div className="rounded-2xl border border-border bg-surface p-6 sm:p-10 shadow-card">
-                    <h2 className="font-display text-xl sm:text-2xl font-bold text-ink mb-6 border-b border-border pb-4">
+                  <div className="mt-12 pt-8 border-t border-border">
+                    <h2 className="font-display text-xl sm:text-2xl font-bold text-ink mb-6">
                       Tài liệu đính kèm
                     </h2>
                     <div className="space-y-8">

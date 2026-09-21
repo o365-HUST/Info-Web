@@ -161,7 +161,7 @@ export default function Navbar() {
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          <div className="hidden lg:flex items-center gap-1 mr-1">
+          <div className="hidden lg:flex items-center mr-1">
             <ThemeToggle />
           </div>
 
@@ -179,7 +179,7 @@ export default function Navbar() {
           </a>
           )}
 
-          <div className="lg:hidden">
+          <div className="flex items-center lg:hidden">
             <ThemeToggle />
           </div>
 

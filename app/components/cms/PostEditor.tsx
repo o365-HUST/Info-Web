@@ -4,7 +4,6 @@ import { useState, useCallback, useRef } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import ImageExtension from "@tiptap/extension-image";
-import LinkExtension from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
 import { Bold, Italic, List, ListOrdered, Link as LinkIcon, Image as ImageIcon, Save, Trash2, GripVertical, FileUp, X } from "lucide-react";
 import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from "firebase/storage";
@@ -30,9 +29,10 @@ export default function PostEditor({ slug, initialTitle, initialContent, initial
 
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        link: { openOnClick: false },
+      }),
       ImageExtension,
-      LinkExtension.configure({ openOnClick: false }),
       Placeholder.configure({ placeholder: "Nhập nội dung tài liệu..." }),
     ],
     content: initialContent,

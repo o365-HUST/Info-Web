@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { useEditor, EditorContent, type Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import TiptapImage from "@tiptap/extension-image";
-import TiptapLink from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
 import { marked } from "marked";
 import {
@@ -118,17 +117,17 @@ export default function TipTapEditor({
         heading: {
           levels: [2, 3],
         },
+        link: {
+          openOnClick: false,
+          HTMLAttributes: {
+            class: "text-accent font-semibold hover:underline",
+          },
+        },
       }),
       TiptapImage.configure({
         inline: false,
         HTMLAttributes: {
           class: "rounded-2xl border border-border shadow-card my-6 max-w-full mx-auto",
-        },
-      }),
-      TiptapLink.configure({
-        openOnClick: false,
-        HTMLAttributes: {
-          class: "text-accent font-semibold hover:underline",
         },
       }),
       Placeholder.configure({

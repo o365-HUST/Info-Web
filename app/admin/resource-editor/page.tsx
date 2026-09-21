@@ -483,7 +483,7 @@ function ResourceEditorContent() {
 
                 <div id="resource-preview-content" className="flex flex-col lg:flex-row gap-10">
                   <div className="flex-1 min-w-0">
-                    <div className="rounded-2xl border border-border bg-surface p-6 sm:p-10 mb-8">
+                    <div className="mb-8 max-w-none">
                       {content.trim() ? (
                         <MarkdownRenderer content={content} />
                       ) : (
@@ -494,8 +494,8 @@ function ResourceEditorContent() {
                     </div>
 
                     {attachments.length > 0 && (
-                      <div className="rounded-2xl border border-border bg-surface p-6 sm:p-10">
-                        <h3 className="font-display text-xl font-bold text-ink mb-6 border-b border-border pb-4">
+                      <div className="mt-12 pt-8 border-t border-border">
+                        <h3 className="font-display text-xl font-bold text-ink mb-6">
                           Tài liệu đính kèm
                         </h3>
                         <div className="space-y-8">
