@@ -13,7 +13,11 @@ type ShowcaseImage = {
   index: number;
 };
 
-const SHOWCASE_IMAGES: ShowcaseImage[] = Array.from({ length: 20 }, (_, i) => {
+const SHOWCASE_IMAGE_COUNT = 12;
+
+const SHOWCASE_IMAGES: ShowcaseImage[] = Array.from(
+  { length: SHOWCASE_IMAGE_COUNT },
+  (_, i) => {
   const n = String(i + 1).padStart(2, "0");
   return {
     src: `/assets/marquee/marquee-${n}.jpg`,
@@ -30,7 +34,7 @@ const thirdRow = SHOWCASE_IMAGES.slice(third * 2);
 const MARQUEE_SHARED = {
   className: "w-full",
   baseVelocity: 6,
-  repeat: 3,
+  repeat: 2,
   draggable: false,
   scrollSpringConfig: { damping: 50, stiffness: 400 },
   slowDownFactor: 0.1,

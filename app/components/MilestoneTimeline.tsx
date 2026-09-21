@@ -60,6 +60,7 @@ export default function MilestoneTimeline() {
   const [spineWidth, setSpineWidth] = useState(ALTERNATING_MAX_WIDTH);
 
   const timelineRef = useRef<HTMLDivElement>(null);
+  const timelineListRef = useRef<HTMLUListElement>(null);
   const openerRef = useRef<HTMLElement | null>(null);
   const visitorOpenerRef = useRef<HTMLElement | null>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -351,6 +352,45 @@ export default function MilestoneTimeline() {
   );
 
   useEffect(() => {
+    if (!animateReveal || !timelineReady) return;
+    const root = timelineListRef.current;
+    if (!root) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const raw = entry.target.getAttribute("data-reveal-index");
+          if (raw == null) continue;
+          handleNoteEnterView(Number(raw));
+        }
+      },
+      { rootMargin: "0px 0px -12% 0px", threshold: 0.15 },
+    );
+
+    const syncObserved = () => {
+      observer.disconnect();
+      root.querySelectorAll<HTMLElement>("[data-reveal-index]").forEach((el) => {
+        const index = Number(el.getAttribute("data-reveal-index"));
+        if (Number.isFinite(index) && index > maxRevealedRef.current) {
+          observer.observe(el);
+        }
+      });
+    };
+
+    syncObserved();
+    return () => observer.disconnect();
+  }, [
+    animateReveal,
+    timelineReady,
+    maxRevealed,
+    revealEpoch,
+    collapsedYears,
+    handleNoteEnterView,
+    layout.revealItemCount,
+  ]);
+
+  useEffect(() => {
     const elapsed = Date.now() - loaderMountTime.current;
     const remaining = Math.max(0, LOADER_MIN_MS - elapsed);
     const timer = window.setTimeout(() => setTimelineReady(true), remaining);
@@ -531,7 +571,10 @@ export default function MilestoneTimeline() {
               height={spineHeight}
             />
 
-            <ul className="relative z-10 m-0 list-none p-0">
+            <ul
+              ref={timelineListRef}
+              className="relative z-10 m-0 list-none p-0"
+            >
               {layout.yearRows.map((yearRow) => {
                 const entries =
                   yearGroups.find((g) => g.year === yearRow.year)?.entries ?? [];
@@ -544,7 +587,6 @@ export default function MilestoneTimeline() {
                       animateReveal={animateReveal}
                       reducedMotion={reducedMotion}
                       onToggleYear={toggleYearCollapsed}
-                      onEnterView={handleNoteEnterView}
                     />
                     {!collapsedYears.has(yearRow.year) &&
                       entries.map((entry) => {
@@ -559,7 +601,6 @@ export default function MilestoneTimeline() {
                             reducedMotion={reducedMotion}
                             isCollapsing={collapsingYears.has(yearRow.year)}
                             onOpen={handleOpen}
-                            onEnterView={handleNoteEnterView}
                           />
                         );
                       })}
