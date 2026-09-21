@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { motion } from "motion/react";
 import {
   ALTERNATING_YEAR_ROW_HEIGHT,
@@ -15,7 +15,6 @@ interface TimelineYearRowProps {
   animateReveal: boolean;
   reducedMotion: boolean;
   onToggleYear: (year: number) => void;
-  onEnterView: (revealIndex: number) => void;
 }
 
 export default function TimelineYearRow({
@@ -24,30 +23,10 @@ export default function TimelineYearRow({
   animateReveal,
   reducedMotion,
   onToggleYear,
-  onEnterView,
 }: TimelineYearRowProps) {
   const ref = useRef<HTMLLIElement>(null);
   const controlsId = `story-year-${row.year}-milestones`;
   const layoutT = timelineLayoutTransition(reducedMotion);
-
-  useEffect(() => {
-    if (!animateReveal || isRevealed) return;
-    const el = ref.current;
-    if (!el) return;
-
-    const observer = new IntersectionObserver(
-      ([observed]) => {
-        if (observed?.isIntersecting) {
-          onEnterView(row.revealIndex);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: "0px 0px -12% 0px", threshold: 0.3 },
-    );
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [animateReveal, isRevealed, row.revealIndex, onEnterView]);
 
   const hidden = animateReveal && !isRevealed;
 
@@ -55,6 +34,9 @@ export default function TimelineYearRow({
     <motion.li
       ref={ref}
       id={row.collapsed ? controlsId : undefined}
+      data-reveal-index={
+        animateReveal && !isRevealed ? row.revealIndex : undefined
+      }
       className="absolute left-0 right-0 list-none"
       initial={false}
       animate={{

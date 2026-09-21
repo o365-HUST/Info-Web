@@ -3,17 +3,24 @@
 import Link from "next/link";
 import { useRef, useState, useEffect, useMemo } from "react";
 import { motion, useInView } from "motion/react";
-import { BLOG_POSTS } from "@/app/data/clubData";
 import { subscribePosts } from "@/app/lib/firestoreService";
 import { pickHomepagePosts } from "@/app/lib/blogUtils";
 import type { BlogPost } from "@/app/types";
 import { ArrowRight, Calendar } from "lucide-react";
 import Image from "next/image";
 
-export default function BlogPosts() {
+interface BlogPostsProps {
+  initialPosts: BlogPost[];
+}
+
+export default function BlogPosts({ initialPosts }: BlogPostsProps) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
-  const [posts, setPosts] = useState<BlogPost[]>(BLOG_POSTS);
+  const [posts, setPosts] = useState<BlogPost[]>(initialPosts);
+
+  useEffect(() => {
+    setPosts(initialPosts);
+  }, [initialPosts]);
 
   useEffect(() => {
     const unsub = subscribePosts((livePosts) => {

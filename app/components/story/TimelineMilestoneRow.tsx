@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { motion } from "motion/react";
 import type { StoryTimelineEntry } from "@/app/data/storyTimeline";
 import type { AlternatingMilestoneRow } from "@/app/lib/alternatingTimeline";
@@ -23,7 +23,6 @@ interface TimelineMilestoneRowProps {
   reducedMotion: boolean;
   isCollapsing?: boolean;
   onOpen: (id: string, el: HTMLElement) => void;
-  onEnterView: (revealIndex: number) => void;
 }
 
 function MilestoneCard({ entry }: { entry: StoryTimelineEntry }) {
@@ -48,31 +47,11 @@ export default function TimelineMilestoneRow({
   reducedMotion,
   isCollapsing = false,
   onOpen,
-  onEnterView,
 }: TimelineMilestoneRowProps) {
   const ref = useRef<HTMLLIElement>(null);
   const { entry, side, revealIndex, rowHeight } = row;
   const layoutT = timelineLayoutTransition(reducedMotion);
   const dateLabel = entry.dateLabel ?? String(entry.year);
-
-  useEffect(() => {
-    if (!animateReveal || isRevealed) return;
-    const el = ref.current;
-    if (!el) return;
-
-    const observer = new IntersectionObserver(
-      ([observed]) => {
-        if (observed?.isIntersecting) {
-          onEnterView(revealIndex);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: "0px 0px -12% 0px", threshold: 0.15 },
-    );
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [animateReveal, isRevealed, revealIndex, onEnterView]);
 
   const hiddenByReveal = animateReveal && !isRevealed;
 
@@ -109,6 +88,9 @@ export default function TimelineMilestoneRow({
     <motion.li
       ref={ref}
       id={row.yearControlsId}
+      data-reveal-index={
+        animateReveal && !isRevealed ? revealIndex : undefined
+      }
       className={`absolute left-0 right-0 list-none [content-visibility:auto] [contain-intrinsic-size:auto_220px] ${isCollapsing ? "overflow-hidden" : "overflow-visible"}`}
       initial={false}
       animate={{

@@ -5,8 +5,13 @@ import DepartmentsTeaser from "./components/DepartmentsTeaser";
 import EventsTeaser from "./components/EventsTeaser";
 import BlogPosts from "./components/BlogPosts";
 import Footer from "./components/Footer";
+import { getPublishedPosts } from "@/app/lib/postsServer";
 
-export default function Page() {
+export const revalidate = 60;
+
+export default async function Page() {
+  const posts = await getPublishedPosts();
+
   return (
     <>
       <main className="flex-1">
@@ -15,7 +20,7 @@ export default function Page() {
         <Achievements />
         <DepartmentsTeaser />
         <EventsTeaser />
-        <BlogPosts />
+        <BlogPosts initialPosts={posts} />
       </main>
       <Footer />
     </>
