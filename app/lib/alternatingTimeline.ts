@@ -2,8 +2,12 @@ import type { StoryTimelineEntry } from "@/app/data/storyTimeline";
 
 export type TimelineSide = "left" | "right";
 
+/** Default / text milestone tile body (card only). */
 export const ALTERNATING_ROW_HEIGHT = 220;
-export const ALTERNATING_PHOTO_ROW_HEIGHT = 300;
+/** Photo tile body: 4:3 image at max tile width + title (approx.). */
+export const ALTERNATING_PHOTO_ROW_HEIGHT = 360;
+/** Date stamp above tile + “Xem chi tiết” hint below the button. */
+export const ALTERNATING_MILESTONE_CHROME = 72;
 export const ALTERNATING_YEAR_ROW_HEIGHT = 64;
 export const ALTERNATING_VISITOR_ROW_HEIGHT = 200;
 export const ALTERNATING_ICON_SIZE = 48;
@@ -94,9 +98,11 @@ export function groupEntriesByYear(
 }
 
 export function milestoneRowHeight(entry: StoryTimelineEntry): number {
-  return entry.variant === "photo"
-    ? ALTERNATING_PHOTO_ROW_HEIGHT
-    : ALTERNATING_ROW_HEIGHT;
+  const body =
+    entry.variant === "photo"
+      ? ALTERNATING_PHOTO_ROW_HEIGHT
+      : ALTERNATING_ROW_HEIGHT;
+  return body + ALTERNATING_MILESTONE_CHROME;
 }
 
 export function buildAlternatingLayout(

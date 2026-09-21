@@ -91,7 +91,7 @@ export default function TimelineMilestoneRow({
       data-reveal-index={
         animateReveal && !isRevealed ? revealIndex : undefined
       }
-      className={`absolute left-0 right-0 list-none [content-visibility:auto] [contain-intrinsic-size:auto_220px] ${isCollapsing ? "overflow-hidden" : "overflow-visible"}`}
+      className={`absolute left-0 right-0 z-[1] list-none ${isCollapsing ? "overflow-hidden" : "overflow-visible"}`}
       initial={false}
       animate={{
         top: row.rowTop,
@@ -110,7 +110,7 @@ export default function TimelineMilestoneRow({
           : { type: "spring", damping: 26, stiffness: 280 },
       }}
     >
-      <div className="grid h-full grid-cols-[1fr_auto_1fr] items-center gap-2 sm:gap-4">
+      <div className="grid h-full grid-cols-[1fr_auto_1fr] items-start gap-2 pt-1 sm:gap-4 sm:pt-1.5">
         <div
           className={`flex flex-col justify-center ${
             side === "left" ? "items-end pr-1 sm:pr-3" : ""
@@ -119,7 +119,7 @@ export default function TimelineMilestoneRow({
           {side === "left" && cardBlock}
         </div>
 
-        <div className="flex justify-center">
+        <div className="flex justify-center self-center">
           <TimelineIconPill icon={entry.icon} accentClass={entry.accentClass} />
         </div>
 

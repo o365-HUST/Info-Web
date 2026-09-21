@@ -19,7 +19,7 @@ export default function TimelineDateLabel({
 
   return (
     <p
-      className={`relative z-[1] mb-1.5 -translate-y-1 font-display text-lg font-extrabold uppercase leading-none tracking-[0.14em] sm:text-xl sm:tracking-[0.16em] ${tint} ${
+      className={`relative z-[1] mb-1.5 py-0.5 font-display text-lg font-extrabold uppercase leading-snug tracking-[0.14em] sm:text-xl sm:tracking-[0.16em] ${tint} ${
         side === "left" ? "self-start text-left" : "self-end text-right"
       } [text-shadow:0_1px_0_var(--bg),0_0_12px_var(--bg)]`}
     >
